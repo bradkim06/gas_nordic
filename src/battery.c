@@ -5,6 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include "switch.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -300,7 +301,9 @@ void battmon(void)
 		int batt_mV = battery_sample();
 		unsigned int batt_pptt = battery_level_pptt(batt_mV, levels);
 
-		LOG_INF("%d mV; %u pptt", batt_mV, batt_pptt);
+		bool low_batt_status = (batt_pptt < 1000) ? true : false;
+		switch_ctrl(LOW_BATT_INDICATOR, low_batt_status);
+		LOG_INF("%d mV; %u pptt, low batt led : %d", batt_mV, batt_pptt, low_batt_status);
 
 		k_msleep(10 * MSEC_PER_SEC);
 	}
