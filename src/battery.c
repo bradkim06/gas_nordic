@@ -294,7 +294,7 @@ void battmon(void)
 	}
 
 	// battery stable time delay
-	k_msleep(2 * MSEC_PER_SEC);
+	k_sleep(K_SECONDS(1));
 
 	while (1) {
 		/* Burn battery so you can see that this works over time */

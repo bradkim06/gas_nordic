@@ -59,7 +59,7 @@ void gas_mon(void)
 	}
 
 	// gas stable time delay
-	k_msleep(20 * MSEC_PER_SEC);
+	k_sleep(K_SECONDS(10));
 
 	while (1) {
 		LOG_DBG("ADC reading[%u]:", count++);
