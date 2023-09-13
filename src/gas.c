@@ -8,9 +8,9 @@
 /* scheduling priority used by each thread */
 #define PRIORITY 7
 
-#define FOREACH_GAS(FRUIT)                                                                         \
-	FRUIT(o2)                                                                                  \
-	FRUIT(gas)
+#define FOREACH_GAS(GAS_MODEL)                                                                     \
+	GAS_MODEL(o2)                                                                              \
+	GAS_MODEL(gas)
 
 #define GENERATE_ENUM(ENUM)	ENUM,
 #define GENERATE_STRING(STRING) #STRING,
