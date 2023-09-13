@@ -1,0 +1,19 @@
+# Copyright (c) 2023 Libre Solar Technologies GmbH
+# SPDX-License-Identifier: Apache-2.0
+
+description: GPIO pin to switch a power output on or off
+
+compatible: "power-switch"
+
+child-binding:
+  description: GPIO LED child node
+  properties:
+    gpios:
+      type: phandle-array
+      required: true
+      description: |
+        The GPIO connected to the gate driver for the MOSFET.
+    label:
+      type: string
+      description: |
+        a load with high current demands should be switched on or off via a MOSFET
