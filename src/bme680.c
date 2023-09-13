@@ -72,6 +72,9 @@ static void bme680_mon(void)
 		return;
 	}
 
+	// delay turn on sensor
+	k_msleep(MSEC_PER_SEC);
+
 	if (!device_is_ready(dev)) {
 		LOG_ERR("device not ready.");
 		return;
