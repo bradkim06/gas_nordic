@@ -16,8 +16,6 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
-#include "battery.h"
-
 LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
 
 #define VBATT	    DT_PATH(vbatt)
@@ -34,6 +32,46 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
  */
 #define BATTERY_ADC_GAIN ADC_GAIN_1_6
 #endif
+
+/* size of stack area used by each thread */
+#define STACKSIZE 1024
+
+/* scheduling priority used by each thread */
+#define PRIORITY 7
+
+/** A point in a battery discharge curve sequence.
+ *
+ * A discharge curve is defined as a sequence of these points, where
+ * the first point has #lvl_pptt set to 10000 and the last point has
+ * #lvl_pptt set to zero.  Both #lvl_pptt and #lvl_mV should be
+ * monotonic decreasing within the sequence.
+ */
+struct battery_level_point {
+	/** Remaining life at #lvl_mV. */
+	uint16_t lvl_pptt;
+
+	/** Battery voltage at #lvl_pptt remaining life. */
+	uint16_t lvl_mV;
+};
+
+/** A discharge curve specific to the power source. */
+static const struct battery_level_point levels[] = {
+	/* "Curve" here eyeballed from captured data for the [Adafruit
+	 * 3.7v 2000 mAh](https://www.adafruit.com/product/2011) LIPO
+	 * under full load that started with a charge of 3.96 V and
+	 * dropped about linearly to 3.58 V over 15 hours.  It then
+	 * dropped rapidly to 3.10 V over one hour, at which point it
+	 * stopped transmitting.
+	 *
+	 * Based on eyeball comparisons we'll say that 15/16 of life
+	 * goes between 3.95 and 3.55 V, and 1/16 goes between 3.55 V
+	 * and 3.1 V.
+	 */
+
+	{10000, 3950},
+	{625, 3550},
+	{0, 3100},
+};
 
 struct io_channel_config {
 	uint8_t channel;
@@ -154,7 +192,13 @@ static int battery_setup(void)
 
 SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
-int battery_measure_enable(bool enable)
+/** Enable or disable measurement of the battery voltage.
+ *
+ * @param enable true to enable, false to disable
+ *
+ * @return zero on success, or a negative error code.
+ */
+static int battery_measure_enable(bool enable)
 {
 	int rc = -ENOENT;
 
@@ -169,7 +213,12 @@ int battery_measure_enable(bool enable)
 	return rc;
 }
 
-int battery_sample(void)
+/** Measure the battery voltage.
+ *
+ * @return the battery voltage in millivolts, or a negative error
+ * code.
+ */
+static int battery_sample(void)
 {
 	int rc = -ENOENT;
 
@@ -199,7 +248,18 @@ int battery_sample(void)
 	return (rc < 0) ? 0 : rc;
 }
 
-unsigned int battery_level_pptt(unsigned int batt_mV, const struct battery_level_point *curve)
+/** Calculate the estimated battery level based on a measured voltage.
+ *
+ * @param batt_mV a measured battery voltage level.
+ *
+ * @param curve the discharge curve for the type of battery installed
+ * on the system.
+ *
+ * @return the estimated remaining capacity in parts per ten
+ * thousand.
+ */
+static unsigned int battery_level_pptt(unsigned int batt_mV,
+				       const struct battery_level_point *curve)
 {
 	const struct battery_level_point *pb = curve;
 
@@ -223,3 +283,27 @@ unsigned int battery_level_pptt(unsigned int batt_mV, const struct battery_level
 	       ((pa->lvl_pptt - pb->lvl_pptt) * (batt_mV - pb->lvl_mV) / (pa->lvl_mV - pb->lvl_mV));
 }
 
+void battmon(void)
+{
+	int rc = battery_measure_enable(true);
+
+	if (rc != 0) {
+		LOG_ERR("Failed initialize battery measurement: %d", rc);
+		return;
+	}
+
+	// battery stable time delay
+	k_msleep(2 * MSEC_PER_SEC);
+
+	while (1) {
+		/* Burn battery so you can see that this works over time */
+		int batt_mV = battery_sample();
+		unsigned int batt_pptt = battery_level_pptt(batt_mV, levels);
+
+		LOG_INF("%d mV; %u pptt", batt_mV, batt_pptt);
+
+		k_msleep(10 * MSEC_PER_SEC);
+	}
+}
+
+K_THREAD_DEFINE(battmon_id, STACKSIZE, battmon, NULL, NULL, NULL, PRIORITY, 0, 0);

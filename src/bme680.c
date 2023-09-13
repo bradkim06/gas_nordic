@@ -34,19 +34,19 @@ static int load_sw_setup(void)
 	int err;
 
 	if (!gpio_is_ready_dt(&load_switch)) {
-		LOG_ERR("The load switch pin GPIO port is not ready.\n");
+		LOG_ERR("The load switch pin GPIO port is not ready.");
 		return -ENODEV;
 	}
 
-	LOG_INF("Initializing pin with inactive level.\n");
+	LOG_INF("Initializing pin with inactive level.");
 
 	err = gpio_pin_configure_dt(&load_switch, GPIO_OUTPUT_INACTIVE);
 	if (err != 0) {
-		LOG_ERR("Configuring GPIO pin failed: %d\n", err);
+		LOG_ERR("Configuring GPIO pin failed: %d", err);
 		return err;
 	}
 
-	LOG_INF("load switch Waiting one second.\n");
+	LOG_INF("load switch Waiting one second.");
 
 	return 0;
 }
@@ -57,7 +57,7 @@ static int load_sw_ctrl(bool power)
 {
 	int err = gpio_pin_set_dt(&load_switch, power);
 	if (err != 0) {
-		LOG_ERR("Setting GPIO pin level failed: %d\n", err);
+		LOG_ERR("Setting GPIO pin level failed: %d", err);
 		return err;
 	}
 	return 0;
@@ -73,11 +73,11 @@ static void bme680_mon(void)
 	}
 
 	if (!device_is_ready(dev)) {
-		LOG_ERR("device not ready.\n");
+		LOG_ERR("device not ready.");
 		return;
 	}
 
-	LOG_INF("Device %p name is %s\n", dev, dev->name);
+	LOG_INF("Device %p name is %s", dev, dev->name);
 
 	while (1) {
 		k_sleep(K_MSEC(3000));
@@ -88,7 +88,7 @@ static void bme680_mon(void)
 		sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &humidity);
 		sensor_channel_get(dev, SENSOR_CHAN_GAS_RES, &gas_res);
 
-		LOG_DBG("T: %d.%06d; P: %d.%06d; H: %d.%06d; G: %d.%06d\n", temp.val1, temp.val2,
+		LOG_DBG("T: %d.%06d; P: %d.%06d; H: %d.%06d; G: %d.%06d", temp.val1, temp.val2,
 			press.val1, press.val2, humidity.val1, humidity.val2, gas_res.val1,
 			gas_res.val2);
 	}
