@@ -59,11 +59,11 @@ int switch_ctrl(enum load_switch sw, bool power, bool wait)
 	}
 
 	if (wait) {
-		LOG_DBG("Turn on %s, Waiting one second", SW_STRING[sw]);
+		LOG_INF("Turn on %s, Waiting one second", SW_STRING[sw]);
 		k_sleep(K_SECONDS(1));
 	}
 
-	LOG_DBG("%s switching Finished", SW_STRING[sw]);
+	LOG_INF("%s switching Finished", SW_STRING[sw]);
 
 	return 0;
 }
