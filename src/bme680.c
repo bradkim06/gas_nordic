@@ -25,7 +25,7 @@ static void bme680_mon(void)
 	const struct device *const dev = DEVICE_DT_GET_ONE(bosch_bme680);
 	struct bme680 *p = &bme680_result;
 
-	switch_ctrl(BME680_SENSOR_EN, true);
+	switch_ctrl(BME680_SENSOR_EN, true, true);
 
 	if (!device_is_ready(dev)) {
 		LOG_ERR("device not ready.");

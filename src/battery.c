@@ -40,6 +40,8 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
 /* scheduling priority used by each thread */
 #define PRIORITY 7
 
+static bool batt_indicator_status = false;
+
 /** A point in a battery discharge curve sequence.
  *
  * A discharge curve is defined as a sequence of these points, where
@@ -286,6 +288,9 @@ static unsigned int battery_level_pptt(unsigned int batt_mV,
 
 void battmon(void)
 {
+	// battery monitoring enable load switch
+	switch_ctrl(BATT_MON_EN, true, true);
+
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {
@@ -302,9 +307,13 @@ void battmon(void)
 		unsigned int batt_pptt = battery_level_pptt(batt_mV, levels);
 
 		bool low_batt_status = (batt_pptt < 1000) ? true : false;
-		switch_ctrl(LOW_BATT_INDICATOR, low_batt_status);
-		LOG_INF("%d mV; %u pptt, low batt led : %d", batt_mV, batt_pptt, low_batt_status);
+		if (batt_indicator_status != low_batt_status) {
+			batt_indicator_status = low_batt_status;
+			switch_ctrl(LOW_BATT_INDICATOR, low_batt_status, false);
+			LOG_INF("low battery indicator change : %d", batt_indicator_status);
+		}
 
+		LOG_INF("%d mV; %u pptt, ", batt_mV, batt_pptt);
 		k_msleep(10 * MSEC_PER_SEC);
 	}
 }

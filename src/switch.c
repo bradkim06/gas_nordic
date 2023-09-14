@@ -5,7 +5,7 @@
 
 LOG_MODULE_REGISTER(LOAD_SW, CONFIG_GPIO_LOG_LEVEL);
 
-static const char *SW_STRING[] = {
+const char *SW_STRING[] = {
 	"BME680_SENSOR_EN",
 	"BATT_MON_EN",
 	"LOW_BATT_INDICATOR",
@@ -49,18 +49,21 @@ static int switch_setup(void)
 	return 0;
 }
 
-int switch_ctrl(enum load_switch index, bool power)
+int switch_ctrl(enum load_switch sw, bool power, bool wait)
 {
-	int err = gpio_pin_set_dt(&switchs_arr[index], power);
+	int err = gpio_pin_set_dt(&switchs_arr[sw], power);
 
 	if (err != 0) {
 		LOG_ERR("Setting GPIO pin level failed: %d", err);
 		return err;
 	}
 
-	LOG_DBG("Turn on %s, Waiting one second", SW_STRING[index]);
-	k_sleep(K_SECONDS(1));
-	LOG_DBG("%s switching Finished", SW_STRING[index]);
+	if (wait) {
+		LOG_DBG("Turn on %s, Waiting one second", SW_STRING[sw]);
+		k_sleep(K_SECONDS(1));
+	}
+
+	LOG_DBG("%s switching Finished", SW_STRING[sw]);
 
 	return 0;
 }

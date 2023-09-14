@@ -9,6 +9,6 @@ enum load_switch {
 	LOW_BATT_INDICATOR,
 };
 
-int switch_ctrl(enum load_switch index, bool power);
+int switch_ctrl(enum load_switch sw, bool power, bool wait);
 
 #endif
