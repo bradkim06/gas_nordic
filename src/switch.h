@@ -1,14 +1,15 @@
 #ifndef APP_SWITCH_H
 #define APP_SWITCH_H
 
+#include "enum_macro.h"
 #include <stdbool.h>
 
-enum load_switch {
-	BME680_SENSOR_EN = 0,
-	BATT_MON_EN,
-	LOW_BATT_INDICATOR,
-};
+#define LOADSW_DEVICE(X)                                                                           \
+	X(bme680, = 0)                                                                             \
+	X(batt_mon_en, )
 
-int switch_ctrl(enum load_switch sw, bool power, bool wait);
+DECLARE_ENUM(loadsw_dev, LOADSW_DEVICE);
+
+int switch_ctrl(enum loadsw_dev sw, bool power, bool wait);
 
 #endif

@@ -1,10 +1,10 @@
-/*
- * Copyright (c) 2018-2019 Peter Bigot Consulting, LLC
- * Copyright (c) 2019-2020 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @file battery.c
+ * @brief
+ * @author bradkim06
+ * @version v0.01
+ * @date 2023-09-18
  */
-
 #include "switch.h"
 #include <math.h>
 #include <stdio.h>
@@ -288,9 +288,6 @@ static unsigned int battery_level_pptt(unsigned int batt_mV,
 
 void battmon(void)
 {
-	// battery monitoring enable load switch
-	switch_ctrl(BATT_MON_EN, true, true);
-
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {
@@ -309,7 +306,7 @@ void battmon(void)
 		bool low_batt_status = (batt_pptt < 1000) ? true : false;
 		if (batt_indicator_status != low_batt_status) {
 			batt_indicator_status = low_batt_status;
-			switch_ctrl(LOW_BATT_INDICATOR, low_batt_status, false);
+			// switch_ctrl(LOW_BATT_INDICATOR, low_batt_status, false);
 			LOG_INF("low battery indicator change : %d", batt_indicator_status);
 		}
 

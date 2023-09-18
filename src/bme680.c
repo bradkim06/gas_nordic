@@ -1,9 +1,10 @@
-/*
- * Copyright (c) 2023 Libre Solar Technologies GmbH
- *
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @file bme680.c
+ * @brief
+ * @author bradkim06
+ * @version v0.01
+ * @date 2023-09-18
  */
-
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -24,8 +25,6 @@ static void bme680_mon(void)
 {
 	const struct device *const dev = DEVICE_DT_GET_ONE(bosch_bme680);
 	struct bme680 *p = &bme680_result;
-
-	switch_ctrl(BME680_SENSOR_EN, true, true);
 
 	if (!device_is_ready(dev)) {
 		LOG_ERR("device not ready.");

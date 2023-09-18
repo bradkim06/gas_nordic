@@ -1,6 +1,17 @@
+/**
+ * @file gas.c
+ * @brief
+ * @author bradkim06
+ * @version v0.01
+ * @date 2023-09-18
+ */
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/logging/log.h>
+
+#include "enum_macro.h"
+
+LOG_MODULE_REGISTER(GAS_MON, CONFIG_ADC_LOG_LEVEL);
 
 /* size of stack area used by each thread */
 #define STACKSIZE 1024
@@ -8,20 +19,11 @@
 /* scheduling priority used by each thread */
 #define PRIORITY 7
 
-#define FOREACH_GAS(GAS_MODEL)                                                                     \
-	GAS_MODEL(o2)                                                                              \
-	GAS_MODEL(gas)
+#define DEVICE_LIST(X)                                                                             \
+	X(O2, = 0)                                                                                 \
+	X(GAS, )
 
-#define GENERATE_ENUM(ENUM)	ENUM,
-#define GENERATE_STRING(STRING) #STRING,
-
-enum GAS_ENUM {
-	FOREACH_GAS(GENERATE_ENUM)
-};
-
-static const char *GAS_STRING[] = {FOREACH_GAS(GENERATE_STRING)};
-
-LOG_MODULE_REGISTER(GAS_MON, CONFIG_ADC_LOG_LEVEL);
+CREATE_ENUM(gas_device, DEVICE_LIST);
 
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
 #error "No suitable devicetree overlay specified"
@@ -93,7 +95,7 @@ void gas_mon(void)
 
 			LOG_INF("%s - channel %d: "
 				"%" PRId32 " = %" PRId32 " mV",
-				GAS_STRING[i], adc_channels[i].channel_id, val_mv, val_mv);
+				enum_to_str(i), adc_channels[i].channel_id, val_mv, val_mv);
 		}
 
 		k_sleep(K_MSEC(10000));
