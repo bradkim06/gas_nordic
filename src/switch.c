@@ -12,7 +12,7 @@
 #include "enum_macro.h"
 #include "switch.h"
 
-LOG_MODULE_REGISTER(LOAD_SW, CONFIG_GPIO_LOG_LEVEL);
+LOG_MODULE_REGISTER(LOAD_SW);
 DEFINE_ENUM(loadsw_dev, LOADSW_DEVICE)
 
 #define SENSOR_EN   DT_ALIAS(loadsw0)

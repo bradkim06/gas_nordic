@@ -12,7 +12,7 @@
 
 #include "led.h"
 
-LOG_MODULE_REGISTER(MAIN, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(MAIN);
 
 /**
  * @brief This thread performs kernel initialization, then calls the application’s main() function
@@ -33,11 +33,6 @@ int main(void)
 {
 	led_ctrl(state_g, true);
 	LOG_INF("Hello World! %s\n", CONFIG_BOARD);
-
-	while (true) {
-		LOG_INF("main thread");
-		k_msleep(60 * MSEC_PER_SEC);
-	}
 
 	return 0;
 }

@@ -10,6 +10,7 @@
 #include <zephyr/logging/log.h>
 
 #include "enum_macro.h"
+#include "bluetooth.h"
 
 LOG_MODULE_REGISTER(GAS_MON, CONFIG_ADC_LOG_LEVEL);
 
@@ -30,6 +31,8 @@ CREATE_ENUM(gas_device, DEVICE_LIST);
 #endif
 
 #define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
+
+#define CHANGE_GAS_RESULT(curr, prev) ((curr[0] != prev[0]) || (curr[1] != prev[1]))
 
 /* Data of ADC io-channels specified in devicetree. */
 static const struct adc_dt_spec adc_channels[] = {
@@ -61,9 +64,12 @@ void gas_mon(void)
 	}
 
 	// gas stable time delay
-	k_sleep(K_SECONDS(10));
+	k_sleep(K_SECONDS(1));
+	static int32_t prev_result[2];
 
 	while (1) {
+		static int32_t curr_result[2];
+
 		LOG_INF("ADC reading[%u]:", count++);
 		for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
 			int32_t val_mv;
@@ -96,9 +102,18 @@ void gas_mon(void)
 			LOG_INF("%s - channel %d: "
 				"%" PRId32 " = %" PRId32 " mV",
 				enum_to_str(i), adc_channels[i].channel_id, val_mv, val_mv);
+
+			curr_result[i] = val_mv;
 		}
 
-		k_sleep(K_MSEC(10000));
+		if (CHANGE_GAS_RESULT(curr_result, prev_result)) {
+			// ble transmit
+			LOG_WRN("gas change");
+			k_sem_give(&bt_sem);
+			memcpy(prev_result, curr_result, sizeof(curr_result));
+		}
+
+		k_sleep(K_MSEC(1000));
 	}
 }
 
