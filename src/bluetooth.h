@@ -17,6 +17,7 @@
 #define BT_UUID_HHS_LED BT_UUID_DECLARE_128(BT_UUID_HHS_LED_VAL)
 
 #define BT_EVENT_LIST(X)                                                                           \
+	X(NONE_EVT, = 0)                                                                           \
 	X(GAS_NOTIFY_EN, = 0x01)                                                                   \
 	X(ALARM, = 0x02)                                                                           \
 	X(GAS_VAL_CHANGE, = 0x04)

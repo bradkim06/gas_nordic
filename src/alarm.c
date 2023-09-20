@@ -31,7 +31,7 @@ static void test_counter_interrupt_fn(const struct device *counter_dev, uint8_t 
 				      uint32_t ticks, void *user_data)
 {
 	LOG_WRN("!!! Alarm !!!");
-	k_event_set(&bt_event, ALARM);
+	k_event_post(&bt_event, ALARM);
 
 	if (!notify_gas_enabled) {
 		return;

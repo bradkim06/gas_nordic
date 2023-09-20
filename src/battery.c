@@ -38,7 +38,7 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
 #define STACKSIZE 1024
 
 /* scheduling priority used by each thread */
-#define PRIORITY 7
+#define PRIORITY 9
 
 static bool batt_indicator_status = false;
 
@@ -308,7 +308,7 @@ void battmon(void)
 			LOG_INF("low battery indicator change : %d", batt_indicator_status);
 		}
 
-		LOG_INF("%d mV; %u pptt, ", batt_mV, batt_pptt);
+		LOG_DBG("%d mV; %u pptt, ", batt_mV, batt_pptt);
 		k_sleep(K_SECONDS(30));
 	}
 }

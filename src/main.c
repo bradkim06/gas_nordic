@@ -11,6 +11,7 @@
 #include <zephyr/logging/log.h>
 
 #include "led.h"
+#include "bluetooth.h"
 
 LOG_MODULE_REGISTER(MAIN);
 
@@ -32,6 +33,7 @@ normally and no error is raised.
 int main(void)
 {
 	led_ctrl(state_g, true);
+	k_event_init(&bt_event);
 
 	/* using __TIME__ ensure that a new binary will be built on every
 	 * compile which is convenient when testing firmware upgrade.
