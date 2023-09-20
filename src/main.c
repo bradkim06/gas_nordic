@@ -32,7 +32,8 @@ normally and no error is raised.
 int main(void)
 {
 	led_ctrl(state_g, true);
-	LOG_INF("Hello World! %s\n", CONFIG_BOARD);
+	LOG_INF("Board:%s SoC:%s Rom:%dkb Ram:%dkb", CONFIG_BOARD, CONFIG_SOC, CONFIG_FLASH_SIZE,
+		CONFIG_SRAM_SIZE);
 
 	return 0;
 }

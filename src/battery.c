@@ -240,7 +240,7 @@ static int battery_sample(void)
 
 			if (dcp->output_ohm != 0) {
 				rc = val * (uint64_t)dcp->full_ohm / dcp->output_ohm;
-				LOG_INF("raw %u ~ %u mV => %d mV", ddp->raw, val, rc);
+				LOG_DBG("raw %u ~ %u mV => %d mV", ddp->raw, val, rc);
 			} else {
 				rc = val;
 				LOG_INF("raw %u ~ %u mV", ddp->raw, val);
@@ -311,7 +311,7 @@ void battmon(void)
 		}
 
 		LOG_INF("%d mV; %u pptt, ", batt_mV, batt_pptt);
-		k_msleep(10 * MSEC_PER_SEC);
+		k_msleep(60 * MSEC_PER_SEC);
 	}
 }
 

@@ -70,7 +70,7 @@ void gas_mon(void)
 	while (1) {
 		static int32_t curr_result[2];
 
-		LOG_INF("ADC reading[%u]:", count++);
+		LOG_DBG("ADC reading[%u]:", count++);
 		for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
 			int32_t val_mv;
 
@@ -99,7 +99,7 @@ void gas_mon(void)
 				continue;
 			}
 
-			LOG_INF("%s - channel %d: "
+			LOG_DBG("%s - channel %d: "
 				"%" PRId32 " = %" PRId32 " mV",
 				enum_to_str(i), adc_channels[i].channel_id, val_mv, val_mv);
 

@@ -27,7 +27,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define STACKSIZE 1024
-#define PRIORITY  7
+#define PRIORITY  6
 
 #define NOTIFY_INTERVAL 2000
 
@@ -47,17 +47,17 @@ static const struct bt_data sd[] = {
 static void on_connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		LOG_INF("Connection failed (err %u)\n", err);
+		LOG_INF("Connection failed (err %u)", err);
 		return;
 	}
 
-	LOG_INF("Connected\n");
+	LOG_INF("Connected");
 	is_connect = true;
 }
 
 static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason %u)\n", reason);
+	LOG_INF("Disconnected (reason %u)", reason);
 	is_connect = false;
 }
 
@@ -92,20 +92,20 @@ int bt_setup(void)
 
 	err = bt_enable(NULL);
 	if (err) {
-		LOG_INF("Bluetooth init failed (err %d)\n", err);
+		LOG_INF("Bluetooth init failed (err %d)", err);
 		return err;
 	}
 	bt_conn_cb_register(&connection_callbacks);
 
-	LOG_INF("Bluetooth initialized\n");
+	LOG_INF("Bluetooth initialized");
 
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
-		LOG_INF("Advertising failed to start (err %d)\n", err);
+		LOG_INF("Advertising failed to start (err %d)", err);
 		return err;
 	}
 
-	LOG_INF("Advertising successfully started\n");
+	LOG_INF("Advertising successfully started");
 
 	k_sem_init(&bt_sem, 0, 1);
 
@@ -127,13 +127,14 @@ static int bt_hhs_gas_notify(char *sensor_value)
 static void send_data_thread(void)
 {
 	static char app_sensor_value[11] = {0};
-	sprintf(app_sensor_value, "%d\n", 12345678);
+	sprintf(app_sensor_value, "%d", 12345678);
 
 	while (1) {
 		/* Send notification, the function sends notifications only if a client is
 		 * subscribed */
-		if (k_sem_take(&bt_sem, K_SECONDS(61)) != 0) {
-			LOG_ERR("semaphore timeout");
+#define TIMEOUT_SEC 61
+		if (k_sem_take(&bt_sem, K_SECONDS(TIMEOUT_SEC)) != 0) {
+			LOG_ERR("semaphore timeout %d", TIMEOUT_SEC);
 		} else {
 			/* fetch available data */
 			LOG_INF("tx ble");
