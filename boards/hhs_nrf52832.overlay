@@ -1,0 +1,15 @@
+/ {
+	load_switchs{
+		compatible = "power-switch";
+
+		sw0: load_switch_0 {
+			     gpios = <&gpio0 18 GPIO_ACTIVE_HIGH>;
+			     label = "bme680 sensor load-switch";
+		     };
+
+		sw1: load_switch_1 {
+			     gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
+			     label = "battery monitor load-switch";
+		     };
+	};
+};
