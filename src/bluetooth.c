@@ -13,8 +13,10 @@
 
 LOG_MODULE_REGISTER(HHS_BT);
 
-struct k_sem bt_sem;
-K_SEM_DEFINE(bt_sem, 0, 1);
+struct k_event bt_event;
+K_EVENT_DEFINE(bt_event);
+
+DEFINE_ENUM(bt_tx_event, EVENT_LIST)
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
@@ -28,8 +30,6 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 
 #define STACKSIZE 1024
 #define PRIORITY  6
-
-#define NOTIFY_INTERVAL 2000
 
 static bool notify_gas_enabled = false;
 static bool is_connect = false;
@@ -65,7 +65,7 @@ static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_
 {
 	notify_gas_enabled = (value == BT_GATT_CCC_NOTIFY);
 	if (notify_gas_enabled) {
-		k_sem_give(&bt_sem);
+		k_event_set(&bt_event, GAS_NOTIFY_EN);
 	}
 }
 
@@ -107,7 +107,7 @@ int bt_setup(void)
 
 	LOG_INF("Advertising successfully started");
 
-	k_sem_init(&bt_sem, 0, 1);
+	k_event_init(&bt_event);
 
 	return 0;
 }
@@ -133,11 +133,14 @@ static void send_data_thread(void)
 		/* Send notification, the function sends notifications only if a client is
 		 * subscribed */
 #define TIMEOUT_SEC 61
-		if (k_sem_take(&bt_sem, K_SECONDS(TIMEOUT_SEC)) != 0) {
-			LOG_ERR("semaphore timeout %d", TIMEOUT_SEC);
+		uint32_t events;
+
+		events = k_event_wait(&bt_event, 0xFFFF, true, K_SECONDS(TIMEOUT_SEC));
+		if (events == 0) {
+			LOG_ERR("event timeout(%d sec) something wrong", TIMEOUT_SEC);
 		} else {
-			/* fetch available data */
-			LOG_INF("tx ble");
+			/* Access the desired input device(s) */
+			LOG_INF("%s(0x%02X) event occur", enum_to_str(events), events);
 			bt_hhs_gas_notify(app_sensor_value);
 		}
 	}

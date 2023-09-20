@@ -29,7 +29,7 @@ static void test_counter_interrupt_fn(const struct device *counter_dev, uint8_t 
 				      uint32_t ticks, void *user_data)
 {
 	LOG_WRN("!!! Alarm !!!");
-	k_sem_give(&bt_sem);
+	k_event_set(&bt_event, ALARM);
 
 	int err = counter_set_channel_alarm(counter_dev, ALARM_CHANNEL_ID, user_data);
 	if (err != 0) {

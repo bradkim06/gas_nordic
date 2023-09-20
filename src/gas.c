@@ -109,7 +109,7 @@ void gas_mon(void)
 		if (CHANGE_GAS_RESULT(curr_result, prev_result)) {
 			// ble transmit
 			LOG_WRN("gas change");
-			k_sem_give(&bt_sem);
+			k_event_set(&bt_event, GAS_VAL_CHANGE);
 			memcpy(prev_result, curr_result, sizeof(curr_result));
 		}
 
