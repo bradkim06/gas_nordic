@@ -193,8 +193,6 @@ static int battery_setup(void)
 	return rc;
 }
 
-SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-
 /** Enable or disable measurement of the battery voltage.
  *
  * @param enable true to enable, false to disable
@@ -296,7 +294,7 @@ void battmon(void)
 	}
 
 	// battery stable time delay
-	k_sleep(K_SECONDS(1));
+	k_msleep(500);
 
 	while (1) {
 		/* Burn battery so you can see that this works over time */
@@ -311,8 +309,9 @@ void battmon(void)
 		}
 
 		LOG_INF("%d mV; %u pptt, ", batt_mV, batt_pptt);
-		k_msleep(60 * MSEC_PER_SEC);
+		k_sleep(K_SECONDS(30));
 	}
 }
 
+SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 K_THREAD_DEFINE(battmon_id, STACKSIZE, battmon, NULL, NULL, NULL, PRIORITY, 0, 0);

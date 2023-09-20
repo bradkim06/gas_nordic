@@ -1,6 +1,8 @@
 #ifndef __APP_BT_H__
 #define __APP_BT_H__
 
+#include <stdbool.h>
+
 #include "enum_macro.h"
 
 /** @brief LBS Service UUID. */
@@ -14,14 +16,15 @@
 #define BT_UUID_HHS_GAS BT_UUID_DECLARE_128(BT_UUID_HHS_GAS_VAL)
 #define BT_UUID_HHS_LED BT_UUID_DECLARE_128(BT_UUID_HHS_LED_VAL)
 
-#define EVENT_LIST(X)                                                                              \
-	X(GAS_NOTIFY_EN, = 1)                                                                      \
-	X(ALARM, )                                                                                 \
-	X(GAS_VAL_CHANGE, )
+#define BT_EVENT_LIST(X)                                                                           \
+	X(GAS_NOTIFY_EN, = 0x01)                                                                   \
+	X(ALARM, = 0x02)                                                                           \
+	X(GAS_VAL_CHANGE, = 0x04)
 
-DECLARE_ENUM(bt_tx_event, EVENT_LIST)
+DECLARE_ENUM(bt_tx_event, BT_EVENT_LIST)
 
 extern struct k_event bt_event;
+extern bool notify_gas_enabled;
 
 int bt_setup(void);
 

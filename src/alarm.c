@@ -11,10 +11,10 @@ LOG_MODULE_REGISTER(ALARM);
 #define STACKSIZE 1024
 
 /* scheduling priority used by each thread */
-#define PRIORITY 7
+#define PRIORITY 16
 
 /* delay(us) */
-#define DELAY		 1000 * 1000 * 60
+#define ALARM_DELAY	 60 * 1000 * 1000
 #define ALARM_CHANNEL_ID 0
 
 struct counter_alarm_cfg alarm_cfg;
@@ -25,11 +25,17 @@ struct counter_alarm_cfg alarm_cfg;
 #error "Overlay for timer node not properly defined."
 #endif
 
+const struct device *const counter_dev = DEVICE_DT_GET(TIMER);
+
 static void test_counter_interrupt_fn(const struct device *counter_dev, uint8_t chan_id,
 				      uint32_t ticks, void *user_data)
 {
 	LOG_WRN("!!! Alarm !!!");
 	k_event_set(&bt_event, ALARM);
+
+	if (!notify_gas_enabled) {
+		return;
+	}
 
 	int err = counter_set_channel_alarm(counter_dev, ALARM_CHANNEL_ID, user_data);
 	if (err != 0) {
@@ -37,22 +43,27 @@ static void test_counter_interrupt_fn(const struct device *counter_dev, uint8_t 
 	}
 }
 
-int alarm_setup(void)
+static int alarm_setup(void)
 {
-	const struct device *const counter_dev = DEVICE_DT_GET(TIMER);
-	int err;
 
 	LOG_INF("Counter alarm sample");
 
 	if (!device_is_ready(counter_dev)) {
-		LOG_INF("device not ready.");
+		LOG_ERR("device not ready.");
 		return -ENODEV;
 	}
+
+	return 0;
+}
+
+int alarm_run(void)
+{
+	int err = 0;
 
 	counter_start(counter_dev);
 
 	alarm_cfg.flags = 0;
-	alarm_cfg.ticks = counter_us_to_ticks(counter_dev, DELAY);
+	alarm_cfg.ticks = counter_us_to_ticks(counter_dev, ALARM_DELAY);
 	alarm_cfg.callback = test_counter_interrupt_fn;
 	alarm_cfg.user_data = &alarm_cfg;
 

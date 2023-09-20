@@ -2,7 +2,10 @@
 #define __APP_GLOBAL_MACRO_H__
 
 // expansion macro for enum value definition
-#define ENUM_VALUE(name, assign) name assign,
+#define ENUM_VALUE_SUM(name, assign) name +
+
+// expansion macro for enum value & assign definition
+#define ENUM_VALUE_ASSIGN(name, assign) name assign,
 
 // expansion macro for enum to string conversion
 #define ENUM_CASE(name, assign)                                                                    \
@@ -12,7 +15,7 @@
 /// declare the access function and define enum values
 #define DECLARE_ENUM(EnumName, ENUM_DEF)                                                           \
 	enum EnumName {                                                                            \
-		ENUM_DEF(ENUM_VALUE)                                                               \
+		ENUM_DEF(ENUM_VALUE_ASSIGN) EnumName##_sum = ENUM_DEF(ENUM_VALUE_SUM) 0,           \
 	};
 
 /// define the access function names

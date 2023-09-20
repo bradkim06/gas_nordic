@@ -8,6 +8,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 
+#include "alarm.h"
 #include "bluetooth.h"
 #include "zephyr/init.h"
 
@@ -16,7 +17,7 @@ LOG_MODULE_REGISTER(HHS_BT);
 struct k_event bt_event;
 K_EVENT_DEFINE(bt_event);
 
-DEFINE_ENUM(bt_tx_event, EVENT_LIST)
+DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
@@ -31,7 +32,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 #define STACKSIZE 1024
 #define PRIORITY  6
 
-static bool notify_gas_enabled = false;
+bool notify_gas_enabled = false;
 static bool is_connect = false;
 
 static const struct bt_data ad[] = {
@@ -66,6 +67,7 @@ static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_
 	notify_gas_enabled = (value == BT_GATT_CCC_NOTIFY);
 	if (notify_gas_enabled) {
 		k_event_set(&bt_event, GAS_NOTIFY_EN);
+		alarm_run();
 	}
 }
 
@@ -133,10 +135,9 @@ static void send_data_thread(void)
 		/* Send notification, the function sends notifications only if a client is
 		 * subscribed */
 #define TIMEOUT_SEC 61
-		uint32_t events;
-
-		events = k_event_wait(&bt_event, 0xFFFF, true, K_SECONDS(TIMEOUT_SEC));
-		if (events == 0) {
+		uint32_t events =
+			k_event_wait(&bt_event, bt_tx_event_sum, true, K_SECONDS(TIMEOUT_SEC));
+		if ((events == 0) && notify_gas_enabled) {
 			LOG_ERR("event timeout(%d sec) something wrong", TIMEOUT_SEC);
 		} else {
 			/* Access the desired input device(s) */

@@ -32,6 +32,12 @@ normally and no error is raised.
 int main(void)
 {
 	led_ctrl(state_g, true);
+
+	/* using __TIME__ ensure that a new binary will be built on every
+	 * compile which is convenient when testing firmware upgrade.
+	 */
+	LOG_INF("build time: " __DATE__ " " __TIME__);
+
 	LOG_INF("Board:%s SoC:%s Rom:%dkb Ram:%dkb", CONFIG_BOARD, CONFIG_SOC, CONFIG_FLASH_SIZE,
 		CONFIG_SRAM_SIZE);
 
