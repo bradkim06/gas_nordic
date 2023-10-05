@@ -37,7 +37,7 @@ static int switch_setup(void)
 			return -ENODEV;
 		}
 
-		LOG_INF("Initializing pin with inactive level.");
+		LOG_INF("Initializing pin with active level.");
 
 		err = gpio_pin_configure_dt(&switchs_arr[i], GPIO_OUTPUT_ACTIVE);
 		if (err != 0) {
@@ -68,4 +68,4 @@ int switch_ctrl(enum loadsw_dev sw, bool power, bool wait)
 	return 0;
 }
 
-SYS_INIT(switch_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(switch_setup, APPLICATION, CONFIG_GPIO_INIT_PRIORITY);

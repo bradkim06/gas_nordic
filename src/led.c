@@ -63,4 +63,4 @@ int led_ctrl(enum led_dev color, bool power)
 	return 0;
 }
 
-SYS_INIT(led_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(led_setup, APPLICATION, CONFIG_GPIO_INIT_PRIORITY);

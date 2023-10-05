@@ -5,7 +5,6 @@
  * @version v0.01
  * @date 2023-09-18
  */
-#include "switch.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,22 +16,17 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
+#include "switch.h"
+#include "led.h"
+#include "hhs_math.h"
+#include "battery.h"
+
+static struct batt_value batt_pptt;
+
 LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
 
-#define VBATT	    DT_PATH(vbatt)
-#define ZEPHYR_USER DT_PATH(zephyr_user)
-
-#ifdef CONFIG_BOARD_THINGY52_NRF52832
-/* This board uses a divider that reduces max voltage to
- * reference voltage (600 mV).
- */
+#define VBATT		 DT_PATH(vbatt)
 #define BATTERY_ADC_GAIN ADC_GAIN_1
-#else
-/* Other boards may use dividers that only reduce battery voltage to
- * the maximum supported by the hardware (3.6 V)
- */
-#define BATTERY_ADC_GAIN ADC_GAIN_1_6
-#endif
 
 /* size of stack area used by each thread */
 #define STACKSIZE 1024
@@ -42,23 +36,8 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
 
 static bool batt_indicator_status = false;
 
-/** A point in a battery discharge curve sequence.
- *
- * A discharge curve is defined as a sequence of these points, where
- * the first point has #lvl_pptt set to 10000 and the last point has
- * #lvl_pptt set to zero.  Both #lvl_pptt and #lvl_mV should be
- * monotonic decreasing within the sequence.
- */
-struct battery_level_point {
-	/** Remaining life at #lvl_mV. */
-	uint16_t lvl_pptt;
-
-	/** Battery voltage at #lvl_pptt remaining life. */
-	uint16_t lvl_mV;
-};
-
 /** A discharge curve specific to the power source. */
-static const struct battery_level_point levels[] = {
+static const struct level_point levels[] = {
 	/* "Curve" here eyeballed from captured data for the [Adafruit
 	 * 3.7v 2000 mAh](https://www.adafruit.com/product/2011) LIPO
 	 * under full load that started with a charge of 3.96 V and
@@ -92,7 +71,6 @@ struct divider_config {
 };
 
 static const struct divider_config divider_config = {
-#if DT_NODE_HAS_STATUS(VBATT, okay)
 	.io_channel =
 		{
 			DT_IO_CHANNELS_INPUT(VBATT),
@@ -100,12 +78,6 @@ static const struct divider_config divider_config = {
 	.power_gpios = GPIO_DT_SPEC_GET_OR(VBATT, power_gpios, {}),
 	.output_ohm = DT_PROP(VBATT, output_ohms),
 	.full_ohm = DT_PROP(VBATT, full_ohms),
-#else  /* /vbatt exists */
-	.io_channel =
-		{
-			DT_IO_CHANNELS_INPUT(ZEPHYR_USER),
-		},
-#endif /* /vbatt exists */
 };
 
 struct divider_data {
@@ -114,12 +86,9 @@ struct divider_data {
 	struct adc_sequence adc_seq;
 	int16_t raw;
 };
+
 static struct divider_data divider_data = {
-#if DT_NODE_HAS_STATUS(VBATT, okay)
 	.adc = DEVICE_DT_GET(DT_IO_CHANNELS_CTLR(VBATT)),
-#else
-	.adc = DEVICE_DT_GET(DT_IO_CHANNELS_CTLR(ZEPHYR_USER)),
-#endif
 };
 
 static int divider_setup(void)
@@ -153,7 +122,7 @@ static int divider_setup(void)
 		.channels = BIT(0),
 		.buffer = &ddp->raw,
 		.buffer_size = sizeof(ddp->raw),
-		.oversampling = 4,
+		.oversampling = 8,
 		.calibrate = true,
 	};
 
@@ -241,7 +210,7 @@ static int battery_sample(void)
 				LOG_DBG("raw %u ~ %u mV => %d mV", ddp->raw, val, rc);
 			} else {
 				rc = val;
-				LOG_INF("raw %u ~ %u mV", ddp->raw, val);
+				LOG_DBG("raw %u ~ %u mV", ddp->raw, val);
 			}
 		}
 	}
@@ -249,43 +218,10 @@ static int battery_sample(void)
 	return (rc < 0) ? 0 : rc;
 }
 
-/** Calculate the estimated battery level based on a measured voltage.
- *
- * @param batt_mV a measured battery voltage level.
- *
- * @param curve the discharge curve for the type of battery installed
- * on the system.
- *
- * @return the estimated remaining capacity in parts per ten
- * thousand.
- */
-static unsigned int battery_level_pptt(unsigned int batt_mV,
-				       const struct battery_level_point *curve)
-{
-	const struct battery_level_point *pb = curve;
-
-	if (batt_mV >= pb->lvl_mV) {
-		/* Measured voltage above highest point, cap at maximum. */
-		return pb->lvl_pptt;
-	}
-	/* Go down to the last point at or below the measured voltage. */
-	while ((pb->lvl_pptt > 0) && (batt_mV < pb->lvl_mV)) {
-		++pb;
-	}
-	if (batt_mV < pb->lvl_mV) {
-		/* Below lowest point, cap at minimum */
-		return pb->lvl_pptt;
-	}
-
-	/* Linear interpolation between below and above points. */
-	const struct battery_level_point *pa = pb - 1;
-
-	return pb->lvl_pptt +
-	       ((pa->lvl_pptt - pb->lvl_pptt) * (batt_mV - pb->lvl_mV) / (pa->lvl_mV - pb->lvl_mV));
-}
-
 void battmon(void)
 {
+	moving_average_t *batt = allocate_moving_average(10);
+
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {
@@ -294,23 +230,34 @@ void battmon(void)
 	}
 
 	// battery stable time delay
-	k_msleep(500);
+	k_sleep(K_SECONDS(1));
 
 	while (1) {
 		/* Burn battery so you can see that this works over time */
-		int batt_mV = battery_sample();
-		unsigned int batt_pptt = battery_level_pptt(batt_mV, levels);
+		int curr_batt_mV = battery_sample();
+		int batt_mV = movingAvg(batt, curr_batt_mV);
 
-		bool low_batt_status = (batt_pptt < 1000) ? true : false;
+		unsigned int pptt = level_pptt(batt_mV, levels);
+		batt_pptt.val1 = pptt / 100;
+		batt_pptt.val2 = (pptt % 100) / 10;
+
+		bool low_batt_status = (pptt < 625) ? true : false;
 		if (batt_indicator_status != low_batt_status) {
 			batt_indicator_status = low_batt_status;
-			// switch_ctrl(LOW_BATT_INDICATOR, low_batt_status, false);
-			LOG_INF("low battery indicator change : %d", batt_indicator_status);
+			led_ctrl(lowbatt_y, low_batt_status);
+			LOG_WRN("curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
+			LOG_WRN("low battery indicator change : %d", batt_indicator_status);
+		} else {
+			LOG_INF("curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
 		}
 
-		LOG_DBG("%d mV; %u pptt, ", batt_mV, batt_pptt);
-		k_sleep(K_SECONDS(30));
+		k_sleep(K_SECONDS(60));
 	}
+}
+
+struct batt_value get_batt_percent(void)
+{
+	return batt_pptt;
 }
 
 SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

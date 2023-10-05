@@ -11,8 +11,12 @@
 
 #include "enum_macro.h"
 #include "bluetooth.h"
+#include "hhs_math.h"
+#include "gas.h"
 
 LOG_MODULE_REGISTER(GAS_MON, CONFIG_ADC_LOG_LEVEL);
+
+static struct gas_sensor_value curr_result[2];
 
 /* size of stack area used by each thread */
 #define STACKSIZE 1024
@@ -20,11 +24,7 @@ LOG_MODULE_REGISTER(GAS_MON, CONFIG_ADC_LOG_LEVEL);
 /* scheduling priority used by each thread */
 #define PRIORITY 7
 
-#define DEVICE_LIST(X)                                                                             \
-	X(O2, = 0)                                                                                 \
-	X(GAS, )
-
-CREATE_ENUM(gas_device, DEVICE_LIST);
+DEFINE_ENUM(gas_device, DEVICE_LIST)
 
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
 #error "No suitable devicetree overlay specified"
@@ -32,7 +32,15 @@ CREATE_ENUM(gas_device, DEVICE_LIST);
 
 #define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
 
-#define CHANGE_GAS_RESULT(curr, prev) ((curr[0] != prev[0]) || (curr[1] != prev[1]))
+#define CHANGE_GAS_RESULT(curr, prev) ((curr.val1 != prev.val1) || (curr.val2 != prev.val2))
+
+/** A discharge curve specific to the gas source. */
+static const struct level_point levels[] = {
+	// Maximum Overload 30% Oxygen
+	{3000, 551},
+	// Zero current (offset) <0.6 % vol O2
+	{60, 0},
+};
 
 /* Data of ADC io-channels specified in devicetree. */
 static const struct adc_dt_spec adc_channels[] = {
@@ -65,13 +73,16 @@ void gas_mon(void)
 
 	// gas stable time delay
 	k_sleep(K_SECONDS(1));
-	static int32_t prev_result[2];
+	static struct gas_sensor_value prev_pptt[2];
+	moving_average_t *gas[2];
+	for (int i = 0; i < 2; i++) {
+		gas[i] = allocate_moving_average(10);
+	}
 
 	while (1) {
-		static int32_t curr_result[2];
 
 		LOG_DBG("ADC reading[%u]:", count++);
-		for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
+		for (size_t i = 0U; i < ARRAY_SIZE(adc_channels) - 1; i++) {
 			int32_t val_mv;
 
 			(void)adc_sequence_init_dt(&adc_channels[i], &sequence);
@@ -99,22 +110,36 @@ void gas_mon(void)
 				continue;
 			}
 
-			LOG_DBG("%s - channel %d: "
-				"%" PRId32 " = %" PRId32 " mV",
-				enum_to_str(i), adc_channels[i].channel_id, val_mv, val_mv);
+			unsigned int gas_avg_pptt =
+				(unsigned int)movingAvg(gas[i], (int)level_pptt(val_mv, levels));
 
-			curr_result[i] = val_mv;
+			unsigned int remain_pptt = gas_avg_pptt % 10;
+			gas_avg_pptt -= remain_pptt;
+			gas_avg_pptt += (remain_pptt >= 5) ? 10 : 0;
+			gas_avg_pptt /= 10;
+
+			LOG_INF("%s - channel %d: "
+				"%" PRId32 " mV %u",
+				enum_to_str(i), adc_channels[i].channel_id, val_mv, gas_avg_pptt);
+
+			curr_result[i].val1 = gas_avg_pptt / 10;
+			curr_result[i].val2 = gas_avg_pptt % 10;
 		}
 
-		if (CHANGE_GAS_RESULT(curr_result, prev_result)) {
+		if (CHANGE_GAS_RESULT(curr_result[O2], prev_pptt[O2])) {
 			// ble transmit
 			LOG_WRN("gas value change");
 			k_event_post(&bt_event, GAS_VAL_CHANGE);
-			memcpy(prev_result, curr_result, sizeof(curr_result));
+			memcpy(prev_pptt, curr_result, sizeof(curr_result));
 		}
 
-		k_sleep(K_MSEC(1000));
+		k_sleep(K_MSEC(30000));
 	}
+}
+
+struct gas_sensor_value get_gas_value(enum gas_device dev)
+{
+	return curr_result[dev];
 }
 
 K_THREAD_DEFINE(gas_id, STACKSIZE, gas_mon, NULL, NULL, NULL, PRIORITY, 0, 0);

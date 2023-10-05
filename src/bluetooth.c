@@ -8,7 +8,9 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 
+#include "battery.h"
 #include "bluetooth.h"
+#include "gas.h"
 #include "zephyr/init.h"
 
 LOG_MODULE_REGISTER(HHS_BT);
@@ -113,7 +115,7 @@ int bt_setup(void)
 
 static int bt_hhs_gas_notify(char *sensor_value)
 {
-	LOG_HEXDUMP_INF(sensor_value, strlen(sensor_value), "tx data");
+	LOG_HEXDUMP_DBG(sensor_value, strlen(sensor_value), "tx data");
 
 	return bt_gatt_notify(NULL, &bt_hhs_svc.attrs[4], (void *)sensor_value,
 			      strlen(sensor_value));
@@ -121,16 +123,21 @@ static int bt_hhs_gas_notify(char *sensor_value)
 
 static void send_data_thread(void)
 {
-	static char app_sensor_value[11] = {0};
-	sprintf(app_sensor_value, "%d", 12345678);
+	static char app_sensor_value[20] = {0};
 
 	while (1) {
 		/* Send notification, the function sends notifications only if a client is
 		 * subscribed */
-#define TIMEOUT_SEC 60
+#define TIMEOUT_SEC 200
 		uint32_t events =
-			k_event_wait(&bt_event, bt_tx_event_sum, true, K_SECONDS(TIMEOUT_SEC));
-		LOG_INF("event : \t%s(0x%02X) ", enum_to_str(events), events);
+			k_event_wait(&bt_event, bt_tx_event_sum, true, K_MSEC(TIMEOUT_SEC));
+		LOG_DBG("event : \t%s(0x%02X) ", enum_to_str(events), events);
+
+		struct gas_sensor_value o2 = get_gas_value(O2);
+		struct gas_sensor_value gas = get_gas_value(GAS);
+		struct batt_value batt = get_batt_percent();
+		sprintf(app_sensor_value, "%d.%d,%d.%d,%d.%d\n", o2.val1, o2.val2, gas.val1,
+			gas.val2, batt.val1, batt.val2);
 
 		if (!notify_gas_enabled) {
 			continue;
