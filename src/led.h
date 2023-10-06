@@ -5,11 +5,11 @@
 #include <stdbool.h>
 
 #define LED_DEVICE(X)                                                                              \
-	X(state_g, = 0)                                                                            \
+	X(stablebatt_g, = 0)                                                                            \
 	X(lowbatt_y, )
 
 DECLARE_ENUM(led_dev, LED_DEVICE);
 
-int led_ctrl(enum led_dev color, bool power);
+void batt_status_led(bool is_low_batt);
 
 #endif

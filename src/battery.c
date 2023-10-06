@@ -33,7 +33,8 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
 /* scheduling priority used by each thread */
 #define PRIORITY 9
 
-static bool batt_indicator_status = false;
+#define LOW_BATT_THRESHOLD 2000
+
 
 /** A discharge curve specific to the power source. */
 static const struct level_point levels[] = {
@@ -240,17 +241,14 @@ void battmon(void)
 		batt_pptt.val1 = pptt / 100;
 		batt_pptt.val2 = (pptt % 100) / 10;
 
-		bool low_batt_status = (pptt < 625) ? true : false;
-		if (batt_indicator_status != low_batt_status) {
-			batt_indicator_status = low_batt_status;
-			led_ctrl(lowbatt_y, low_batt_status);
-			LOG_WRN("curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
-			LOG_WRN("low battery indicator change : %d", batt_indicator_status);
-		} else {
-			LOG_INF("curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
-		}
+        char logStr[100] = {0};
+        sprintf(logStr, "battery curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
 
-		k_sleep(K_SECONDS(60));
+		bool low_batt_status = (pptt < LOW_BATT_THRESHOLD) ? true : false;
+        COND_CODE_1(low_batt_status, (LOG_WRN("%s", logStr)), (LOG_INF("%s", logStr)));
+
+        batt_status_led(low_batt_status);
+		k_sleep(K_SECONDS(10));
 	}
 }
 

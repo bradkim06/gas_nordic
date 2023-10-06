@@ -32,7 +32,6 @@ normally and no error is raised.
  */
 int main(void)
 {
-	led_ctrl(state_g, true);
 	k_event_init(&bt_event);
 
 	/* using __TIME__ ensure that a new binary will be built on every

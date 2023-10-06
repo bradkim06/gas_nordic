@@ -37,7 +37,7 @@ DEFINE_ENUM(gas_device, DEVICE_LIST)
 /** A discharge curve specific to the gas source. */
 static const struct level_point levels[] = {
 	// Maximum Overload 30% Oxygen
-	{3000, 551},
+	{3000, 535},
 	// Zero current (offset) <0.6 % vol O2
 	{60, 0},
 };
