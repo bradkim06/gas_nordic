@@ -16,7 +16,6 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
-#include "switch.h"
 #include "led.h"
 #include "hhs_math.h"
 #include "battery.h"

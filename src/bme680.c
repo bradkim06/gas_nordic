@@ -9,7 +9,6 @@
 #include <zephyr/logging/log.h>
 
 #include "bme680.h"
-#include "switch.h"
 
 /* size of stack area used by each thread */
 #define STACKSIZE 1024
@@ -31,7 +30,7 @@ static void bme680_mon(void)
 		return;
 	}
 
-	LOG_INF("Device %p name is %s", dev, dev->name);
+	LOG_INF("Device %s ready", dev->name);
 
 	while (1) {
 		k_sleep(K_SECONDS(60));

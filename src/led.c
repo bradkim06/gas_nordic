@@ -33,7 +33,7 @@ static int led_setup(void)
 
 	for (size_t i = 0U; i < ARRAY_SIZE(led_arr); i++) {
 		if (!gpio_is_ready_dt(&led_arr[i])) {
-			LOG_ERR("The load switch pin GPIO port is not ready.");
+			LOG_ERR("The GPIO port is not ready.");
 			return -ENODEV;
 		}
 

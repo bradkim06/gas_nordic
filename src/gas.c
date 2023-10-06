@@ -133,7 +133,7 @@ void gas_mon(void)
 			memcpy(prev_pptt, curr_result, sizeof(curr_result));
 		}
 
-		k_sleep(K_MSEC(30000));
+		k_sleep(K_SECONDS(10));
 	}
 }
 
