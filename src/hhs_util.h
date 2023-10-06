@@ -33,5 +33,10 @@
 	DECLARE_ENUM(EnumType, ENUM_DEF)                                                           \
 	DEFINE_ENUM(EnumType, ENUM_DEF)
 
+#define CODE_IF_ELSE(enable, code1, code2)                                                         \
+	if (enable == 1) {                                                                         \
+		code1;                                                                             \
+	} else if (enable == 0) {                                                                  \
+		code2;                                                                             \
+	}
 #endif
-

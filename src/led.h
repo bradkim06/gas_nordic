@@ -1,7 +1,7 @@
 #ifndef __APP_LED_H__
 #define __APP_LED_H__
 
-#include "enum_macro.h"
+#include "hhs_util.h"
 #include <stdbool.h>
 
 #define LED_DEVICE(X)                                                                              \

@@ -9,20 +9,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <zephyr/kernel.h>
-#include <zephyr/init.h>
-#include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/adc.h>
+#include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/init.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include "led.h"
-#include "hhs_math.h"
 #include "battery.h"
+#include "hhs_math.h"
+#include "hhs_util.h"
+#include "led.h"
 
 static struct batt_value batt_pptt;
 
-LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
+LOG_MODULE_REGISTER(BATTERY, CONFIG_BOARD_HHS_LOG_LEVEL);
 
 #define VBATT		 DT_PATH(vbatt)
 #define BATTERY_ADC_GAIN ADC_GAIN_1
@@ -35,6 +36,7 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_ADC_LOG_LEVEL);
 
 #define LOW_BATT_THRESHOLD 2000
 
+static moving_average_t *batt;
 
 /** A discharge curve specific to the power source. */
 static const struct level_point levels[] = {
@@ -145,7 +147,7 @@ static int divider_setup(void)
 #endif /* CONFIG_ADC_var */
 
 	rc = adc_channel_setup(ddp->adc, accp);
-	LOG_INF("Setup AIN%u got %d(%s)", iocp->channel, rc, (rc ? "err" : "none err"));
+	LOG_DBG("Setup AIN%u got %d(%s)", iocp->channel, rc, (rc ? "err" : "none err"));
 
 	return rc;
 }
@@ -157,8 +159,11 @@ static int battery_setup(void)
 	int rc = divider_setup();
 
 	battery_ok = (rc == 0);
-	LOG_INF("Battery setup: %d(%s) %d(%s)", rc, (rc ? "err" : "none err"), battery_ok,
+	LOG_DBG("Battery setup: %d(%s) %d(%s)", rc, (rc ? "err" : "none err"), battery_ok,
 		(battery_ok ? "ok" : "fail"));
+
+	batt = allocate_moving_average(20);
+
 	return rc;
 }
 
@@ -207,10 +212,10 @@ static int battery_sample(void)
 
 			if (dcp->output_ohm != 0) {
 				rc = val * (uint64_t)dcp->full_ohm / dcp->output_ohm;
-				LOG_DBG("raw %u ~ %u mV => %d mV", ddp->raw, val, rc);
+				// LOG_DBG("raw %u ~ %u mV => %d mV", ddp->raw, val, rc);
 			} else {
 				rc = val;
-				LOG_DBG("raw %u ~ %u mV", ddp->raw, val);
+				// LOG_DBG("raw %u ~ %u mV", ddp->raw, val);
 			}
 		}
 	}
@@ -218,10 +223,28 @@ static int battery_sample(void)
 	return (rc < 0) ? 0 : rc;
 }
 
+static bool measuring(void)
+{
+	/* Burn battery so you can see that this works over time */
+	int curr_batt_mV = battery_sample();
+	int batt_mV = movingAvg(batt, curr_batt_mV);
+
+	unsigned int pptt = level_pptt(batt_mV, levels);
+	batt_pptt.val1 = pptt / 100;
+	batt_pptt.val2 = (pptt % 100) / 10;
+
+	char logStr[100] = {0};
+	sprintf(logStr, "curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
+
+	bool low_batt_status = (pptt < LOW_BATT_THRESHOLD) ? true : false;
+	CODE_IF_ELSE(low_batt_status, LOG_INF("low batt warnning %s", logStr),
+		     LOG_DBG("stable batt %s", logStr));
+
+	return low_batt_status;
+}
+
 void battmon(void)
 {
-	moving_average_t *batt = allocate_moving_average(10);
-
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {
@@ -229,26 +252,16 @@ void battmon(void)
 		return;
 	}
 
-	// battery stable time delay
-	k_sleep(K_SECONDS(1));
+	k_sleep(K_MSEC(1500));
+
+	for (int i = 0; i < 20; i++) {
+		k_sleep(K_MSEC(20));
+		batt_status_led(measuring());
+	}
 
 	while (1) {
-		/* Burn battery so you can see that this works over time */
-		int curr_batt_mV = battery_sample();
-		int batt_mV = movingAvg(batt, curr_batt_mV);
-
-		unsigned int pptt = level_pptt(batt_mV, levels);
-		batt_pptt.val1 = pptt / 100;
-		batt_pptt.val2 = (pptt % 100) / 10;
-
-        char logStr[100] = {0};
-        sprintf(logStr, "battery curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
-
-		bool low_batt_status = (pptt < LOW_BATT_THRESHOLD) ? true : false;
-        COND_CODE_1(low_batt_status, (LOG_WRN("%s", logStr)), (LOG_INF("%s", logStr)));
-
-        batt_status_led(low_batt_status);
-		k_sleep(K_SECONDS(10));
+		k_sleep(K_SECONDS(30));
+		batt_status_led(measuring());
 	}
 }
 

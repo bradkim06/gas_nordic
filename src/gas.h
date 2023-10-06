@@ -1,7 +1,7 @@
 #ifndef __APP_GAS_H__
 #define __APP_GAS_H__
 
-#include "enum_macro.h"
+#include "hhs_util.h"
 
 #define DEVICE_LIST(X)                                                                             \
 	X(O2, = 0)                                                                                 \

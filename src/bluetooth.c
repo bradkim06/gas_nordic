@@ -13,7 +13,7 @@
 #include "gas.h"
 #include "zephyr/init.h"
 
-LOG_MODULE_REGISTER(HHS_BT);
+LOG_MODULE_REGISTER(HHS_BT, CONFIG_BOARD_HHS_LOG_LEVEL);
 
 struct k_event bt_event;
 K_EVENT_DEFINE(bt_event);
@@ -23,7 +23,7 @@ DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
 	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-	32,			      /* Min Advertising Interval 20ms (32*0.625ms) */
+	160,			      /* Min Advertising Interval 100ms (160*0.625ms) */
 	3200,			      /* Max Advertising Interval 2000ms (3200*0.625ms) */
 	NULL);			      /* Set to NULL for undirected advertising */
 
@@ -49,7 +49,7 @@ static const struct bt_data sd[] = {
 static void on_connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		LOG_INF("Connection failed (err %u)", err);
+		LOG_ERR("Connection failed (err %u)", err);
 		return;
 	}
 
@@ -95,25 +95,17 @@ int bt_setup(void)
 
 	err = bt_enable(NULL);
 	if (err) {
-		LOG_INF("Bluetooth init failed (err %d)", err);
+		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return err;
 	}
 	bt_conn_cb_register(&connection_callbacks);
 
 	LOG_INF("Bluetooth initialized");
 
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_INF("Advertising failed to start (err %d)", err);
-		return err;
-	}
-
-	LOG_INF("Advertising successfully started");
-
 	return 0;
 }
 
-static int bt_hhs_gas_notify(char *sensor_value)
+static int bt_gas_notify(char *sensor_value)
 {
 	LOG_HEXDUMP_DBG(sensor_value, strlen(sensor_value), "tx data");
 
@@ -121,16 +113,26 @@ static int bt_hhs_gas_notify(char *sensor_value)
 			      strlen(sensor_value));
 }
 
-static void send_data_thread(void)
+static void bt_thread(void)
 {
+	k_sleep(K_SECONDS(2));
+
+	int err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	if (err) {
+		LOG_ERR("Advertising failed to start (err %d)", err);
+		return;
+	}
+
+	LOG_INF("Advertising successfully started");
+
 	static char app_sensor_value[20] = {0};
 
 	while (1) {
 		/* Send notification, the function sends notifications only if a client is
 		 * subscribed */
-#define TIMEOUT_SEC 200
+#define TIMEOUT_SEC 60
 		uint32_t events =
-			k_event_wait(&bt_event, bt_tx_event_sum, true, K_MSEC(TIMEOUT_SEC));
+			k_event_wait(&bt_event, bt_tx_event_sum, true, K_SECONDS(TIMEOUT_SEC));
 		LOG_DBG("event : \t%s(0x%02X) ", enum_to_str(events), events);
 
 		struct gas_sensor_value o2 = get_gas_value(O2);
@@ -143,9 +145,9 @@ static void send_data_thread(void)
 			continue;
 		}
 
-		bt_hhs_gas_notify(app_sensor_value);
+		bt_gas_notify(app_sensor_value);
 	}
 }
 
 SYS_INIT(bt_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-K_THREAD_DEFINE(send_data_thread_id, STACKSIZE, send_data_thread, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(bt_thread_id, STACKSIZE, bt_thread, NULL, NULL, NULL, PRIORITY, 0, 0);
