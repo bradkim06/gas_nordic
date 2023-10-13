@@ -68,7 +68,7 @@ led1: led_1 {
 /* datasheet value different, ideal 90uA +-20
  *
  * 1% current 5uA -> sensor vout = (Curr * Rl) * (1 + R1 / R2) =
- * Max Output Voltage(30% oxygen max overhead) = (5*30*0.001*0.001*100)*(1+5100/150) = 525mV
+ * Max Output Voltage(25% oxygen) = (4.85*25*0.001*0.001*100)*(1+5100/100) = 630mV
  * ADC Reference VDD 1/4 = 750mV
  */
 o2_mon: channel@1 {
