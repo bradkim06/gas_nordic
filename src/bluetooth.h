@@ -16,6 +16,8 @@
 #define BT_UUID_HHS_GAS BT_UUID_DECLARE_128(BT_UUID_HHS_GAS_VAL)
 #define BT_UUID_HHS_LED BT_UUID_DECLARE_128(BT_UUID_HHS_LED_VAL)
 
+#define TIMEOUT_SEC 60
+
 #define BT_EVENT_LIST(X)                                                                           \
 	X(TIMEOUT, = 0)                                                                            \
 	X(GAS_NOTIFY_EN, = 0x01)                                                                   \

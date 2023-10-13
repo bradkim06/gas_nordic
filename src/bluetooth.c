@@ -11,6 +11,7 @@
 #include "battery.h"
 #include "bluetooth.h"
 #include "gas.h"
+#include "hhs_util.h"
 #include "zephyr/init.h"
 
 LOG_MODULE_REGISTER(HHS_BT, CONFIG_BOARD_HHS_LOG_LEVEL);
@@ -107,7 +108,7 @@ int bt_setup(void)
 
 static int bt_gas_notify(char *sensor_value)
 {
-	LOG_HEXDUMP_DBG(sensor_value, strlen(sensor_value), "tx data");
+	LOG_HEXDUMP_INF(sensor_value, strlen(sensor_value), "tx data");
 
 	return bt_gatt_notify(NULL, &bt_hhs_svc.attrs[4], (void *)sensor_value,
 			      strlen(sensor_value));
@@ -130,10 +131,12 @@ static void bt_thread(void)
 	while (1) {
 		/* Send notification, the function sends notifications only if a client is
 		 * subscribed */
-#define TIMEOUT_SEC 60
 		uint32_t events =
 			k_event_wait(&bt_event, bt_tx_event_sum, true, K_SECONDS(TIMEOUT_SEC));
-		LOG_DBG("event : \t%s(0x%02X) ", enum_to_str(events), events);
+		char str[20];
+		CODE_IF_ELSE((events == TIMEOUT), sprintf(str, "%s second", xstr(TIMEOUT_SEC)),
+			     sprintf(str, "type 0x%02X", events));
+		LOG_INF("event : \t%s(%s)", enum_to_str(events), str);
 
 		struct gas_sensor_value o2 = get_gas_value(O2);
 		struct gas_sensor_value gas = get_gas_value(GAS);

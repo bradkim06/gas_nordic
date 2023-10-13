@@ -37,7 +37,7 @@ DEFINE_ENUM(gas_device, DEVICE_LIST)
 /** A discharge curve specific to the gas source. */
 static const struct level_point levels[] = {
 	// Maximum Overload 30% Oxygen
-	{3000, 525},
+	{2500, 630},
 	// Zero current (offset) <0.6 % vol O2
 	{60, 0},
 };
@@ -56,8 +56,6 @@ static void measuring()
 		/* buffer size in bytes, not number of samples */
 		.buffer_size = sizeof(buf),
 	};
-
-	unsigned int gas_avg_pptt = 0;
 
 	for (size_t i = 0U; i < ARRAY_SIZE(adc_channels) - 1; i++) {
 		int32_t val_mv;
@@ -87,7 +85,8 @@ static void measuring()
 			continue;
 		}
 
-		gas_avg_pptt = (unsigned int)movingAvg(gas[i], (int)level_pptt(val_mv, levels));
+		int32_t avg_mv = movingAvg(gas[i], val_mv);
+		unsigned int gas_avg_pptt = level_pptt(avg_mv, levels);
 
 		unsigned int remain_pptt = gas_avg_pptt % 10;
 		gas_avg_pptt -= remain_pptt;
@@ -98,14 +97,14 @@ static void measuring()
 		curr_result[i].val2 = gas_avg_pptt % 10;
 
 		LOG_DBG("%s - channel %d: "
-			"%" PRId32 "mV %d.%d%%",
-			enum_to_str(i), adc_channels[i].channel_id, val_mv, curr_result[i].val1,
-			curr_result[i].val2);
+			" curr %" PRId32 "mV avg %" PRId32 "mV %d.%d%%",
+			enum_to_str(i), adc_channels[i].channel_id, val_mv, avg_mv,
+			curr_result[i].val1, curr_result[i].val2);
 	}
 
 	if (CHANGE_GAS_RESULT(curr_result[O2], prev_pptt[O2])) {
 		// ble transmit
-		LOG_INF("gas value change %u", gas_avg_pptt);
+		LOG_INF("value changed %d.%d%%", curr_result[0].val1, curr_result[0].val2);
 		k_event_post(&bt_event, GAS_VAL_CHANGE);
 		memcpy(prev_pptt, curr_result, sizeof(curr_result));
 	}
