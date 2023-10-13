@@ -120,29 +120,29 @@ static void bme68x_calc_humidity(struct bme68x_data *data, uint16_t adc_humidity
 	data->calc_humidity = calc_hum;
 }
 
-static void bme68x_calc_gas_resistance(struct bme68x_data *data, uint8_t gas_range,
-				       uint16_t adc_gas_res)
-{
-	int64_t var1, var3;
-	uint64_t var2;
+// static void bme68x_calc_gas_resistance(struct bme68x_data *data, uint8_t gas_range,
+// 				       uint16_t adc_gas_res)
+// {
+// 	int64_t var1, var3;
+// 	uint64_t var2;
 
-	static const uint32_t look_up1[16] = {2147483647, 2147483647, 2147483647, 2147483647,
-					      2147483647, 2126008810, 2147483647, 2130303777,
-					      2147483647, 2147483647, 2143188679, 2136746228,
-					      2147483647, 2126008810, 2147483647, 2147483647};
+// 	static const uint32_t look_up1[16] = {2147483647, 2147483647, 2147483647, 2147483647,
+// 					      2147483647, 2126008810, 2147483647, 2130303777,
+// 					      2147483647, 2147483647, 2143188679, 2136746228,
+// 					      2147483647, 2126008810, 2147483647, 2147483647};
 
-	static const uint32_t look_up2[16] = {4096000000, 2048000000, 1024000000, 512000000,
-					      255744255,  127110228,  64000000,	  32258064,
-					      16016016,	  8000000,    4000000,	  2000000,
-					      1000000,	  500000,     250000,	  125000};
+// 	static const uint32_t look_up2[16] = {4096000000, 2048000000, 1024000000, 512000000,
+// 					      255744255,  127110228,  64000000,	  32258064,
+// 					      16016016,	  8000000,    4000000,	  2000000,
+// 					      1000000,	  500000,     250000,	  125000};
 
-	var1 = (int64_t)((1340 + (5 * (int64_t)data->range_sw_err)) *
-			 ((int64_t)look_up1[gas_range])) >>
-	       16;
-	var2 = (((int64_t)((int64_t)adc_gas_res << 15) - (int64_t)(16777216)) + var1);
-	var3 = (((int64_t)look_up2[gas_range] * (int64_t)var1) >> 9);
-	data->calc_gas_resistance = (uint32_t)((var3 + ((int64_t)var2 >> 1)) / (int64_t)var2);
-}
+// 	var1 = (int64_t)((1340 + (5 * (int64_t)data->range_sw_err)) *
+// 			 ((int64_t)look_up1[gas_range])) >>
+// 	       16;
+// 	var2 = (((int64_t)((int64_t)adc_gas_res << 15) - (int64_t)(16777216)) + var1);
+// 	var3 = (((int64_t)look_up2[gas_range] * (int64_t)var1) >> 9);
+// 	data->calc_gas_resistance = (uint32_t)((var3 + ((int64_t)var2 >> 1)) / (int64_t)var2);
+// }
 
 static uint8_t bme68x_calc_res_heat(struct bme68x_data *data, uint16_t heatr_temp)
 {
@@ -167,30 +167,31 @@ static uint8_t bme68x_calc_res_heat(struct bme68x_data *data, uint16_t heatr_tem
 	return heatr_res;
 }
 
-static uint8_t bme68x_calc_gas_wait(uint16_t dur)
-{
-	uint8_t factor = 0, durval;
+// static uint8_t bme68x_calc_gas_wait(uint16_t dur)
+// {
+// 	uint8_t factor = 0, durval;
 
-	if (dur >= 0xfc0) {
-		durval = 0xff; /* Max duration*/
-	} else {
-		while (dur > 0x3F) {
-			dur = dur / 4;
-			factor += 1;
-		}
-		durval = dur + (factor * 64);
-	}
+// 	if (dur >= 0xfc0) {
+// 		durval = 0xff; /* Max duration*/
+// 	} else {
+// 		while (dur > 0x3F) {
+// 			dur = dur / 4;
+// 			factor += 1;
+// 		}
+// 		durval = dur + (factor * 64);
+// 	}
 
-	return durval;
-}
+// 	return durval;
+// }
 
 static int bme68x_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
 	struct bme68x_data *data = dev->data;
 	uint8_t buff[BME68X_LEN_FIELD] = {0};
-	uint8_t gas_range;
+	// uint8_t gas_range;
 	uint32_t adc_temp, adc_press;
-	uint16_t adc_hum, adc_gas_res;
+	uint16_t adc_hum;
+	// uint16_t adc_hum, adc_gas_res;
 	int size = BME68X_LEN_FIELD;
 	int ret;
 
@@ -209,14 +210,14 @@ static int bme68x_sample_fetch(const struct device *dev, enum sensor_channel cha
 	adc_temp = (uint32_t)(((uint32_t)buff[5] << 12) | ((uint32_t)buff[6] << 4) |
 			      ((uint32_t)buff[7] >> 4));
 	adc_hum = (uint16_t)(((uint32_t)buff[8] << 8) | (uint32_t)buff[9]);
-	adc_gas_res = (uint16_t)((uint32_t)buff[13] << 2 | (((uint32_t)buff[14]) >> 6));
-	gas_range = buff[14] & BME68X_MSK_GAS_RANGE;
+	// adc_gas_res = (uint16_t)((uint32_t)buff[13] << 2 | (((uint32_t)buff[14]) >> 6));
+	// gas_range = buff[14] & BME68X_MSK_GAS_RANGE;
 
 	if (data->new_data) {
 		bme68x_calc_temp(data, adc_temp);
 		bme68x_calc_press(data, adc_press);
 		bme68x_calc_humidity(data, adc_hum);
-		bme68x_calc_gas_resistance(data, gas_range, adc_gas_res);
+		// bme68x_calc_gas_resistance(data, gas_range, adc_gas_res);
 	}
 
 	/* Trigger the next measurement */
@@ -258,14 +259,14 @@ static int bme68x_channel_get(const struct device *dev, enum sensor_channel chan
 		val->val1 = data->calc_humidity / 1000;
 		val->val2 = (data->calc_humidity % 1000) * 1000;
 		break;
-	case SENSOR_CHAN_GAS_RES:
-		/*
-		 * data->calc_gas_resistance has a resolution of 1 ohm.
-		 * So 100000 equals 100000 ohms.
-		 */
-		val->val1 = data->calc_gas_resistance;
-		val->val2 = 0;
-		break;
+	// case SENSOR_CHAN_GAS_RES:
+	// 	/*
+	// 	 * data->calc_gas_resistance has a resolution of 1 ohm.
+	// 	 * So 100000 equals 100000 ohms.
+	// 	 */
+	// 	val->val1 = data->calc_gas_resistance;
+	// 	val->val2 = 0;
+	// 	break;
 	default:
 		return -EINVAL;
 	}
@@ -322,13 +323,13 @@ static int bme68x_read_compensation(const struct device *dev)
 	data->par_h7 = (int8_t)buff[30];
 
 	/* Gas heater related coefficients */
-	data->par_gh1 = (int8_t)buff[35];
-	data->par_gh2 = (int16_t)(BME68X_CONCAT_BYTES(buff[34], buff[33]));
-	data->par_gh3 = (int8_t)buff[36];
+	// data->par_gh1 = (int8_t)buff[35];
+	// data->par_gh2 = (int16_t)(BME68X_CONCAT_BYTES(buff[34], buff[33]));
+	// data->par_gh3 = (int8_t)buff[36];
 
-	data->res_heat_val = (int8_t)buff[37];
-	data->res_heat_range = ((buff[39] & BME68X_MSK_RH_RANGE) >> 4);
-	data->range_sw_err = ((int8_t)(buff[41] & BME68X_MSK_RANGE_SW_ERR)) / 16;
+	// data->res_heat_val = (int8_t)buff[37];
+	// data->res_heat_range = ((buff[39] & BME68X_MSK_RH_RANGE) >> 4);
+	// data->range_sw_err = ((int8_t)(buff[41] & BME68X_MSK_RANGE_SW_ERR)) / 16;
 
 	return 0;
 }
@@ -389,7 +390,7 @@ static int bme68x_init(const struct device *dev)
 	// 	return err;
 	// }
 
-	// err = bme68x_reg_write(dev, BME68X_REG_CTRL_MEAS, BME68X_CTRL_MEAS_VAL);
+	err = bme68x_reg_write(dev, BME68X_REG_CTRL_MEAS, BME68X_CTRL_MEAS_VAL);
 
 	return err;
 }

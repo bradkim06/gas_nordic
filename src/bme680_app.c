@@ -39,7 +39,7 @@ static void bme680_mon(void)
 		sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &p->temp);
 		sensor_channel_get(dev, SENSOR_CHAN_PRESS, &p->press);
 		sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &p->humidity);
-		sensor_channel_get(dev, SENSOR_CHAN_GAS_RES, &p->gas_res);
+		// sensor_channel_get(dev, SENSOR_CHAN_GAS_RES, &p->gas_res);
 
 		LOG_INF("T: %d.%06d; P: %d.%06d; H: %d.%06d", p->temp.val1, p->temp.val2,
 			p->press.val1, p->press.val2, p->humidity.val1, p->humidity.val2);
