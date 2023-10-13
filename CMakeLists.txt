@@ -2,6 +2,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 set_property(GLOBAL PROPERTY CSTD c17)
+set(BOARD_ROOT ${CMAKE_SOURCE_DIR}) 
 set(BOARD hhs_nrf52832)
 
 find_package(Zephyr 3.3.99 EXACT)
