@@ -31,4 +31,3 @@ extern bool notify_gas_enabled;
 int bt_setup(void);
 
 #endif
-

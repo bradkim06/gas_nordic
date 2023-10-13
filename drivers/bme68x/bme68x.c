@@ -370,12 +370,12 @@ static int bme68x_init(const struct device *dev)
 	if (err < 0) {
 		return err;
 	}
-    
-    // gas off
+
+	// gas off
 	err = bme68x_reg_write(dev, BME68X_REG_CTRL_GAS_1, BME68X_CTRL_GAS_1_OFF);
-	if (err < 0) {
-		return err;
-	}
+	// if (err < 0) {
+	// 	return err;
+	// }
 
 	// err = bme68x_reg_write(dev, BME68X_REG_RES_HEAT0,
 	// 		       bme68x_calc_res_heat(data, BME68X_HEATR_TEMP));

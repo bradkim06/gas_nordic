@@ -19,16 +19,14 @@ static int bme68x_bus_check_i2c(const union bme68x_bus *bus)
 	return device_is_ready(bus->i2c.bus) ? 0 : -ENODEV;
 }
 
-static int bme68x_reg_read_i2c(const struct device *dev,
-			       uint8_t start, uint8_t *buf, int size)
+static int bme68x_reg_read_i2c(const struct device *dev, uint8_t start, uint8_t *buf, int size)
 {
 	const struct bme68x_config *config = dev->config;
 
 	return i2c_burst_read_dt(&config->bus.i2c, start, buf, size);
 }
 
-static int bme68x_reg_write_i2c(const struct device *dev,
-				uint8_t reg, uint8_t val)
+static int bme68x_reg_write_i2c(const struct device *dev, uint8_t reg, uint8_t val)
 {
 	const struct bme68x_config *config = dev->config;
 
