@@ -9,10 +9,14 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "battery.h"
 #include "led.h"
 
 LOG_MODULE_REGISTER(LED, CONFIG_BOARD_HHS_LOG_LEVEL);
 DEFINE_ENUM(led_dev, LED_DEVICE);
+
+#define LED_STACK_SIZE 512
+#define LED_PRIORITY   11
 
 /* The devicetree node identifier for the "led0" alias. */
 #define RUNNING_STATUS	  DT_ALIAS(led0)
@@ -51,32 +55,40 @@ static int led_setup(void)
 	return 0;
 }
 
-static int led_ctrl(enum led_dev color, bool power)
+static int led_ctrl(enum led_dev color)
 {
-	if (gpio_pin_get_dt(&led_arr[color]) == power) {
-		return 0;
-	}
-
-	int err = gpio_pin_set_dt(&led_arr[color], power);
+	int err = gpio_pin_set_dt(&led_arr[color], true);
 	if (err != 0) {
 		LOG_ERR("Setting LED GPIO pin level failed: %d", err);
 		return err;
 	}
 
-	LOG_INF("Turn %s LED %s", (power ? "On" : "Off"), enum_to_str(color));
+	LOG_INF("Turn On LED %s", enum_to_str(color));
+	k_sleep(K_MSEC(100));
+	LOG_INF("Turn Off LED %s", enum_to_str(color));
+
+	err = gpio_pin_set_dt(&led_arr[color], false);
+	if (err != 0) {
+		LOG_ERR("Setting LED GPIO pin level failed: %d", err);
+		return err;
+	}
 
 	return 0;
 }
 
-void batt_status_led(bool is_low_batt)
+static void batt_status_led(void)
 {
-	if (is_low_batt) {
-		led_ctrl(stablebatt_g, false);
-		led_ctrl(lowbatt_y, true);
-	} else {
-		led_ctrl(stablebatt_g, true);
-		led_ctrl(lowbatt_y, false);
+	struct batt_value batt = {0};
+    k_sleep(K_SECONDS(2));
+
+	while (1) {
+		batt = get_batt_percent();
+		enum led_dev color = (batt.val1 >= 20) ? stablebatt_g : lowbatt_y;
+
+		led_ctrl(color);
+		k_sleep(K_SECONDS(5));
 	}
 }
 
 SYS_INIT(led_setup, APPLICATION, CONFIG_GPIO_INIT_PRIORITY);
+K_THREAD_DEFINE(led_id, LED_STACK_SIZE, batt_status_led, NULL, NULL, NULL, LED_PRIORITY, 0, 0);

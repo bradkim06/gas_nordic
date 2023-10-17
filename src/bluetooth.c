@@ -16,6 +16,8 @@
 
 LOG_MODULE_REGISTER(HHS_BT, CONFIG_BOARD_HHS_LOG_LEVEL);
 
+struct bt_conn *my_conn = NULL;
+
 struct k_event bt_event;
 K_EVENT_DEFINE(bt_event);
 
@@ -24,7 +26,7 @@ DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
 	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-	160,			      /* Min Advertising Interval 100ms (160*0.625ms) */
+	800,			      /* Min Advertising Interval 500ms (800*0.625ms) */
 	3200,			      /* Max Advertising Interval 2000ms (3200*0.625ms) */
 	NULL);			      /* Set to NULL for undirected advertising */
 
@@ -33,36 +35,6 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 
 #define STACKSIZE 1024
 #define PRIORITY  10
-
-bool notify_gas_enabled = false;
-static bool is_connect = false;
-
-static const struct bt_data ad[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
-
-};
-
-static const struct bt_data sd[] = {
-	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_HHS_VAL),
-};
-
-static void on_connected(struct bt_conn *conn, uint8_t err)
-{
-	if (err) {
-		LOG_ERR("Connection failed (err %u)", err);
-		return;
-	}
-
-	LOG_INF("Connected");
-	is_connect = true;
-}
-
-static void on_disconnected(struct bt_conn *conn, uint8_t reason)
-{
-	LOG_INF("Disconnected (reason %u)", reason);
-	is_connect = false;
-}
 
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
@@ -85,9 +57,99 @@ BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
 
 );
 
+bool notify_gas_enabled = false;
+static bool is_connect = false;
+
+static const struct bt_data ad[] = {
+	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+
+};
+
+static const struct bt_data sd[] = {
+	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_HHS_VAL),
+};
+
+static void update_phy(struct bt_conn *conn)
+{
+	int err;
+	const struct bt_conn_le_phy_param preferred_phy = {
+		.options = BT_CONN_LE_PHY_OPT_NONE,
+		.pref_rx_phy = BT_GAP_LE_PHY_2M,
+		.pref_tx_phy = BT_GAP_LE_PHY_2M,
+	};
+	err = bt_conn_le_phy_update(conn, &preferred_phy);
+	if (err) {
+		LOG_ERR("bt_conn_le_phy_update() returned %d", err);
+	}
+}
+
+static void on_connected(struct bt_conn *conn, uint8_t err)
+{
+	if (err) {
+		LOG_ERR("Connection failed (err %u)", err);
+		return;
+	}
+
+	LOG_INF("Connected");
+	is_connect = true;
+	my_conn = bt_conn_ref(conn);
+
+	/* Declare a structure to store the connection parameters */
+	struct bt_conn_info info;
+	err = bt_conn_get_info(conn, &info);
+	if (err) {
+		LOG_ERR("bt_conn_get_info() returned %d", err);
+		return;
+	}
+
+	/* Add the connection parameters to your log */
+	double connection_interval = info.le.interval * 1.25; // in ms
+	uint16_t supervision_timeout = info.le.timeout * 10;  // in ms
+	LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms",
+		connection_interval, info.le.latency, supervision_timeout);
+
+	/* Update the PHY mode */
+	update_phy(my_conn);
+}
+
+static void on_disconnected(struct bt_conn *conn, uint8_t reason)
+{
+	LOG_INF("Disconnected (reason %u)", reason);
+	is_connect = false;
+	bt_conn_unref(my_conn);
+}
+
+void on_le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency,
+			 uint16_t timeout)
+{
+	double connection_interval = interval * 1.25; // in ms
+	uint16_t supervision_timeout = timeout * 10;  // in ms
+	LOG_INF("Connection parameters updated: interval %.2f ms, latency %d intervals, timeout %d "
+		"ms",
+		connection_interval, latency, supervision_timeout);
+}
+
+/* Write a callback function to inform about updates in the PHY */
+void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
+{
+	// PHY Updated
+	if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_1M) {
+		LOG_INF("PHY updated. New PHY: 1M");
+	} else if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_2M) {
+		LOG_INF("PHY updated. New PHY: 2M");
+	} else if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_CODED_S8) {
+		LOG_INF("PHY updated. New PHY: Long Range");
+	}
+}
+
 struct bt_conn_cb connection_callbacks = {
 	.connected = on_connected,
 	.disconnected = on_disconnected,
+	/* Add the callback for connection parameter updates */
+	.le_param_updated = on_le_param_updated,
+	/* Add the callback for PHY mode updates */
+	.le_phy_updated = on_le_phy_updated,
 };
 
 int bt_setup(void)
@@ -103,6 +165,14 @@ int bt_setup(void)
 
 	LOG_INF("Bluetooth initialized");
 
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	if (err) {
+		LOG_ERR("Advertising failed to start (err %d)", err);
+		return err;
+	}
+
+	LOG_INF("Advertising successfully started");
+
 	return 0;
 }
 
@@ -116,17 +186,8 @@ static int bt_gas_notify(char *sensor_value)
 
 static void bt_thread(void)
 {
-	k_sleep(K_SECONDS(2));
-
-	int err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)", err);
-		return;
-	}
-
-	LOG_INF("Advertising successfully started");
-
 	static char app_sensor_value[20] = {0};
+	k_sleep(K_SECONDS(2));
 
 	while (1) {
 		/* Send notification, the function sends notifications only if a client is

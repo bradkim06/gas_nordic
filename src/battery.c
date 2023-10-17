@@ -34,8 +34,6 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_BOARD_HHS_LOG_LEVEL);
 /* scheduling priority used by each thread */
 #define PRIORITY 9
 
-#define LOW_BATT_THRESHOLD 2000
-
 static moving_average_t *batt;
 
 /** A discharge curve specific to the power source. */
@@ -52,7 +50,7 @@ static const struct level_point levels[] = {
 	 * and 3.1 V.
 	 */
 
-	{10000, 3950},
+	{10000, 4000},
 	{625, 3550},
 	{0, 3100},
 };
@@ -162,7 +160,7 @@ static int battery_setup(void)
 	LOG_DBG("Battery setup: %d(%s) %d(%s)", rc, (rc ? "err" : "none err"), battery_ok,
 		(battery_ok ? "ok" : "fail"));
 
-	batt = allocate_moving_average(20);
+	batt = allocate_moving_average(10);
 
 	return rc;
 }
@@ -254,14 +252,14 @@ void battmon(void)
 
 	k_sleep(K_MSEC(1500));
 
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 10; i++) {
 		k_sleep(K_MSEC(20));
-		batt_status_led(measuring());
+		measuring();
 	}
 
 	while (1) {
-		k_sleep(K_SECONDS(30));
-		batt_status_led(measuring());
+		measuring();
+		k_sleep(K_SECONDS(60));
 	}
 }
 

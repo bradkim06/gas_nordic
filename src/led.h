@@ -10,6 +10,4 @@
 
 DECLARE_ENUM(led_dev, LED_DEVICE);
 
-void batt_status_led(bool is_low_batt);
-
 #endif

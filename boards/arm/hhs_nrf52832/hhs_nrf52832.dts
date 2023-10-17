@@ -54,10 +54,13 @@ led1: led_1 {
 	/* These aliases are provided for compatibility with samples */
 	aliases {
 		watchdog0 = &wdt0;
-		rtc = &rtc0;
 		led0 = &led0;
 		led1 = &led1;
 	};
+};
+
+&nfct {
+    status = "disabled";
 };
 
 &adc {
@@ -100,7 +103,7 @@ gas_mon: channel@2 {
 node-1 {
 	    gpio-hog;
 	    gpios = <18 GPIO_ACTIVE_HIGH>;
-	    output-high;
+	    output-low;
 	    line-name = "bme680 sensor enable pin";
     };
 };

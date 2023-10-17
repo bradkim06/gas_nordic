@@ -127,12 +127,12 @@ void gas_mon(void)
 	}
 
 	for (int i = 0; i < 2; i++) {
-		gas[i] = allocate_moving_average(20);
+		gas[i] = allocate_moving_average(10);
 	}
 
 	while (1) {
-		k_sleep(K_SECONDS(2));
 		measuring();
+		k_sleep(K_SECONDS(5));
 	}
 }
 
