@@ -12,7 +12,7 @@
 
 #include "bluetooth.h"
 
-LOG_MODULE_REGISTER(MAIN, CONFIG_BOARD_HHS_LOG_LEVEL);
+LOG_MODULE_REGISTER(MAIN, CONFIG_APP_LOG_LEVEL);
 
 /**
  * @brief This thread performs kernel initialization, then calls the application’s main() function

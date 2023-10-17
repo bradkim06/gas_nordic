@@ -17,7 +17,7 @@
 /* scheduling priority used by each thread */
 #define PRIORITY 7
 
-LOG_MODULE_REGISTER(BME680_MON, CONFIG_BOARD_HHS_LOG_LEVEL);
+LOG_MODULE_REGISTER(BME680_MON, CONFIG_APP_LOG_LEVEL);
 
 struct bme680 bme680_result;
 

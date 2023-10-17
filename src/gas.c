@@ -14,7 +14,7 @@
 #include "hhs_math.h"
 #include "hhs_util.h"
 
-LOG_MODULE_REGISTER(GAS_MON, CONFIG_BOARD_HHS_LOG_LEVEL);
+LOG_MODULE_REGISTER(GAS_MON, CONFIG_APP_LOG_LEVEL);
 
 static struct gas_sensor_value curr_result[2];
 

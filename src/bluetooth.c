@@ -14,7 +14,7 @@
 #include "hhs_util.h"
 #include "zephyr/init.h"
 
-LOG_MODULE_REGISTER(HHS_BT, CONFIG_BOARD_HHS_LOG_LEVEL);
+LOG_MODULE_REGISTER(HHS_BT, CONFIG_APP_LOG_LEVEL);
 
 struct bt_conn *my_conn = NULL;
 

@@ -11,8 +11,4 @@ config BOARD_ENABLE_DCDC
 	default y
 	depends on BOARD_HHS_NRF52832
 
-module = BOARD_HHS
-module-str = Board Control
-source "subsys/logging/Kconfig.template.log_config"
-
 endif # BOARD_HHS_NRF52832

@@ -18,7 +18,7 @@
 #include "battery.h"
 #include "hhs_util.h"
 
-LOG_MODULE_REGISTER(LED, CONFIG_BOARD_HHS_LOG_LEVEL);
+LOG_MODULE_REGISTER(LED, CONFIG_APP_LOG_LEVEL);
 
 #define LED_DEVICE(X)                                                                              \
 	X(stablebatt_g, = 0)                                                                       \

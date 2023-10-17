@@ -9,7 +9,6 @@ list(APPEND ZEPHYR_EXTRA_MODULES
 )
 
 find_package(Zephyr 3.3.99 EXACT)
-# find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(gas_ces)
 
 FILE(GLOB app_sources src/*.c)
