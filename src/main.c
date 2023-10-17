@@ -10,7 +10,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include "led.h"
 #include "bluetooth.h"
 
 LOG_MODULE_REGISTER(MAIN, CONFIG_BOARD_HHS_LOG_LEVEL);

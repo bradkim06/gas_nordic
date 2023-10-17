@@ -19,7 +19,6 @@
 #include "battery.h"
 #include "hhs_math.h"
 #include "hhs_util.h"
-#include "led.h"
 
 static struct batt_value batt_pptt;
 
