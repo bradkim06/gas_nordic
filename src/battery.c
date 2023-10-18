@@ -251,7 +251,7 @@ void battmon(void)
 
 	k_sleep(K_MSEC(1500));
 
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 10; i++) {
 		k_sleep(K_MSEC(3));
 		measuring();
 	}

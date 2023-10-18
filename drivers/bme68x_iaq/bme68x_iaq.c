@@ -20,8 +20,8 @@ LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_IAQ_LOG_LEVEL);
 
 #define DT_DRV_COMPAT bosch_bme680
 
-#define BSEC_TOTAL_HEAT_DUR		UINT16_C(140)
-#define BSEC_INPUT_PRESENT(x, shift)	(x.process_data & (1 << (shift - 1)))
+#define BSEC_TOTAL_HEAT_DUR	     UINT16_C(140)
+#define BSEC_INPUT_PRESENT(x, shift) (x.process_data & (1 << (shift - 1)))
 
 /* Temperature offset due to external heat sources. */
 static const float temp_offset = (CONFIG_BME68X_IAQ_TEMPERATURE_OFFSET / (float)100);
@@ -32,27 +32,26 @@ static const float temp_offset = (CONFIG_BME68X_IAQ_TEMPERATURE_OFFSET / (float)
  */
 static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[4] = {
 	{
-		.sensor_id   = BSEC_OUTPUT_IAQ,
+		.sensor_id = BSEC_OUTPUT_IAQ,
 		.sample_rate = BSEC_SAMPLE_RATE_IAQ,
 	},
 	{
-		.sensor_id   = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
+		.sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
 		.sample_rate = BSEC_SAMPLE_RATE,
 	},
 	{
-		.sensor_id   = BSEC_OUTPUT_RAW_PRESSURE,
+		.sensor_id = BSEC_OUTPUT_RAW_PRESSURE,
 		.sample_rate = BSEC_SAMPLE_RATE,
 	},
 	{
-		.sensor_id   = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
+		.sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
 		.sample_rate = BSEC_SAMPLE_RATE,
 	},
 };
 
-
 /* Definitions used to store and retrieve BSEC state from the settings API */
-#define SETTINGS_NAME_BSEC "bsec"
-#define SETTINGS_KEY_STATE "state"
+#define SETTINGS_NAME_BSEC  "bsec"
+#define SETTINGS_KEY_STATE  "state"
 #define SETTINGS_BSEC_STATE SETTINGS_NAME_BSEC "/" SETTINGS_KEY_STATE
 
 /* Stack size of internal BSEC thread. */
@@ -67,8 +66,8 @@ static struct i2c_dt_spec bme68x_i2c_spec;
 /* Semaphore to make sure output data isn't read while being updated */
 static K_SEM_DEFINE(output_sem, 1, 1);
 
-static int settings_load_handler(const char *key, size_t len,
-				 settings_read_cb read_cb, void *cb_arg, void *param)
+static int settings_load_handler(const char *key, size_t len, settings_read_cb read_cb,
+				 void *cb_arg, void *param)
 {
 	ARG_UNUSED(key);
 	struct bme68x_iaq_data *data = param;
@@ -87,7 +86,6 @@ static int settings_load_handler(const char *key, size_t len,
 	return -ENODATA;
 }
 
-
 /* Export current state of BSEC and save it to flash. */
 static void state_save(const struct device *dev)
 {
@@ -97,8 +95,7 @@ static void state_save(const struct device *dev)
 	LOG_DBG("saving state to flash");
 
 	ret = bsec_get_state(0, data->state_buffer, ARRAY_SIZE(data->state_buffer),
-				data->work_buffer, ARRAY_SIZE(data->work_buffer),
-				&data->state_len);
+			     data->work_buffer, ARRAY_SIZE(data->work_buffer), &data->state_len);
 
 	__ASSERT(ret == BSEC_OK, "bsec_get_state failed.");
 	__ASSERT(data->state_len <= sizeof(data->state_buffer), "state buffer too big to save.");
@@ -128,7 +125,7 @@ static int8_t bus_read(uint8_t reg_addr, uint8_t *reg_data_ptr, uint32_t len, vo
 /* delay function for bme68x driver */
 static void delay_us(uint32_t period, void *intf_ptr)
 {
-	k_usleep((int32_t) period);
+	k_usleep((int32_t)period);
 }
 
 /* function to handle output of BSEC */
@@ -140,19 +137,19 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 	for (size_t i = 0; i < n_outputs; ++i) {
 		switch (outputs[i].sensor_id) {
 		case BSEC_OUTPUT_IAQ:
-			data->latest.air_quality = (uint16_t) outputs[i].signal;
+			data->latest.air_quality = (uint16_t)outputs[i].signal;
 			LOG_DBG("IAQ: %d", data->latest.air_quality);
 			break;
 		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-			data->latest.temperature = (double) outputs[i].signal;
+			data->latest.temperature = (double)outputs[i].signal;
 			LOG_DBG("Temp: %.2f C", data->latest.temperature);
 			break;
 		case BSEC_OUTPUT_RAW_PRESSURE:
-			data->latest.pressure = (double) outputs[i].signal;
+			data->latest.pressure = (double)outputs[i].signal;
 			LOG_DBG("Press: %.2f Pa", data->latest.pressure);
 			break;
 		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-			data->latest.humidity = (double) outputs[i].signal;
+			data->latest.humidity = (double)outputs[i].signal;
 			LOG_DBG("Hum: %.2f %%", data->latest.humidity);
 			break;
 		default:
@@ -168,8 +165,8 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 
 /* convert raw bme68x output to valid input for BSEC */
 static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
-					 const struct bme68x_data *data,
-					 bsec_input_t *inputs, uint64_t timestamp_ns)
+					 const struct bme68x_data *data, bsec_input_t *inputs,
+					 uint64_t timestamp_ns)
 {
 	size_t i = 0;
 
@@ -196,7 +193,7 @@ static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
 	}
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_HUMIDITY)) {
 		inputs[i].sensor_id = BSEC_INPUT_HUMIDITY;
-		inputs[i].signal =  data->humidity;
+		inputs[i].signal = data->humidity;
 
 		if (IS_ENABLED(BME68X_DO_NOT_USE_FPU)) {
 			/* in this config, humidity is output in millipercent */
@@ -209,14 +206,14 @@ static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
 	}
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_PRESSURE)) {
 		inputs[i].sensor_id = BSEC_INPUT_PRESSURE;
-		inputs[i].signal =  data->pressure;
+		inputs[i].signal = data->pressure;
 		inputs[i].time_stamp = timestamp_ns;
 		LOG_DBG("Press: %.2f", inputs[i].signal);
 		i++;
 	}
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_GASRESISTOR)) {
 		inputs[i].sensor_id = BSEC_INPUT_GASRESISTOR;
-		inputs[i].signal =  data->gas_resistance;
+		inputs[i].signal = data->gas_resistance;
 		inputs[i].time_stamp = timestamp_ns;
 		LOG_DBG("Gas: %.2f", inputs[i].signal);
 		i++;
@@ -224,9 +221,9 @@ static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_PROFILE_PART)) {
 		inputs[i].sensor_id = BSEC_INPUT_PROFILE_PART;
 		if (sensor_settings.op_mode == BME68X_FORCED_MODE) {
-			inputs[i].signal =  0;
+			inputs[i].signal = 0;
 		} else {
-			inputs[i].signal =  data->gas_index;
+			inputs[i].signal = data->gas_index;
 		}
 		inputs[i].time_stamp = timestamp_ns;
 		LOG_DBG("Profile: %.2f", inputs[i].signal);
@@ -257,8 +254,8 @@ static int apply_sensor_settings(const struct device *dev, bsec_bme_settings_t s
 		/* shared heating duration in milliseconds (converted from microseconds) */
 		heater_config.shared_heatr_dur =
 			BSEC_TOTAL_HEAT_DUR -
-			(bme68x_get_meas_dur(sensor_settings.op_mode, &config, &data->dev)
-			/ INT64_C(1000));
+			(bme68x_get_meas_dur(sensor_settings.op_mode, &config, &data->dev) /
+			 INT64_C(1000));
 
 		__fallthrough;
 	case BME68X_FORCED_MODE:
@@ -296,8 +293,7 @@ static int apply_sensor_settings(const struct device *dev, bsec_bme_settings_t s
 	return 0;
 }
 
-static void fetch_and_process_output(const struct device *dev,
-				     bsec_bme_settings_t *sensor_settings,
+static void fetch_and_process_output(const struct device *dev, bsec_bme_settings_t *sensor_settings,
 				     uint64_t timestamp_ns)
 {
 	uint8_t n_fields = 0;
@@ -316,9 +312,8 @@ static void fetch_and_process_output(const struct device *dev,
 
 	for (size_t i = 0; i < n_fields; ++i) {
 		n_outputs = ARRAY_SIZE(bsec_requested_virtual_sensors);
-		n_inputs = sensor_data_to_bsec_inputs(*sensor_settings,
-							sensor_data + i,
-							inputs, timestamp_ns);
+		n_inputs = sensor_data_to_bsec_inputs(*sensor_settings, sensor_data + i, inputs,
+						      timestamp_ns);
 
 		if (n_inputs == 0) {
 			continue;
@@ -378,7 +373,6 @@ static void bsec_thread_fn(const struct device *dev)
 
 		k_sleep(K_SECONDS(BSEC_SAMPLE_PERIOD_S));
 	}
-
 }
 
 static int bme68x_bsec_init(const struct device *dev)
@@ -425,8 +419,8 @@ static int bme68x_bsec_init(const struct device *dev)
 		return err;
 	}
 
-	err = bsec_set_state(data->state_buffer, data->state_len,
-			     data->work_buffer, ARRAY_SIZE(data->work_buffer));
+	err = bsec_set_state(data->state_buffer, data->state_len, data->work_buffer,
+			     ARRAY_SIZE(data->work_buffer));
 	if (err != BSEC_OK && err != BSEC_E_CONFIG_EMPTY) {
 		LOG_ERR("Failed to set BSEC state: %d", err);
 	} else if (err == BSEC_OK) {
@@ -437,21 +431,17 @@ static int bme68x_bsec_init(const struct device *dev)
 				 ARRAY_SIZE(bsec_requested_virtual_sensors),
 				 data->required_sensor_settings, &data->n_required_sensor_settings);
 
-	k_thread_create(&data->thread,
-			thread_stack,
-			CONFIG_BME68X_IAQ_THREAD_STACK_SIZE,
-			(k_thread_entry_t)bsec_thread_fn,
-			(void *)dev, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+	k_thread_create(&data->thread, thread_stack, CONFIG_BME68X_IAQ_THREAD_STACK_SIZE,
+			(k_thread_entry_t)bsec_thread_fn, (void *)dev, NULL, NULL,
+			K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
 
-	k_timer_start(&bsec_save_state_timer,
-		      K_MINUTES(CONFIG_BME68X_IAQ_SAVE_INTERVAL_MINUTES),
+	k_timer_start(&bsec_save_state_timer, K_MINUTES(CONFIG_BME68X_IAQ_SAVE_INTERVAL_MINUTES),
 		      K_NO_WAIT);
 	return 0;
 }
 
-static int bme68x_trigger_set(const struct device *dev,
-		       const struct sensor_trigger *trig,
-		       sensor_trigger_handler_t handler)
+static int bme68x_trigger_set(const struct device *dev, const struct sensor_trigger *trig,
+			      sensor_trigger_handler_t handler)
 {
 	struct bme68x_iaq_data *data = dev->data;
 
@@ -460,11 +450,9 @@ static int bme68x_trigger_set(const struct device *dev,
 		return -ENOTSUP;
 	}
 
-	if ((trig->chan == SENSOR_CHAN_ALL)
-	    || (trig->chan == SENSOR_CHAN_HUMIDITY)
-	    || (trig->chan == SENSOR_CHAN_AMBIENT_TEMP)
-	    || (trig->chan == SENSOR_CHAN_PRESS)
-	    || (trig->chan == SENSOR_CHAN_IAQ)) {
+	if ((trig->chan == SENSOR_CHAN_ALL) || (trig->chan == SENSOR_CHAN_HUMIDITY) ||
+	    (trig->chan == SENSOR_CHAN_AMBIENT_TEMP) || (trig->chan == SENSOR_CHAN_PRESS) ||
+	    (trig->chan == SENSOR_CHAN_IAQ)) {
 		data->trigger = trig;
 		data->trg_handler = handler;
 	} else {
@@ -480,8 +468,7 @@ static int bme68x_sample_fetch(const struct device *dev, enum sensor_channel cha
 	return 0;
 }
 
-static int bme68x_channel_get(const struct device *dev,
-			      enum sensor_channel chan,
+static int bme68x_channel_get(const struct device *dev, enum sensor_channel chan,
 			      struct sensor_value *val)
 {
 	struct bme68x_iaq_data *data = dev->data;
@@ -512,13 +499,10 @@ static const struct sensor_driver_api bme68x_driver_api = {
 };
 
 /* there can be only one device supported here because of BSECs internal state */
-static struct bme68x_iaq_config config_0 =  {
+static struct bme68x_iaq_config config_0 = {
 	.i2c = I2C_DT_SPEC_INST_GET(0),
 };
 static struct bme68x_iaq_data data_0;
 
-SENSOR_DEVICE_DT_INST_DEFINE(0, bme68x_bsec_init, NULL,
-			      &data_0,
-			      &config_0,
-			      APPLICATION, CONFIG_SENSOR_INIT_PRIORITY,
-			      &bme68x_driver_api);
+SENSOR_DEVICE_DT_INST_DEFINE(0, bme68x_bsec_init, NULL, &data_0, &config_0, APPLICATION,
+			     CONFIG_SENSOR_INIT_PRIORITY, &bme68x_driver_api);

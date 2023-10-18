@@ -2,8 +2,13 @@
 #define __APP_VERSION_H__
 
 #define VERSION_NUM_H
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 10
+#define VERSION_MAJOR	   0
+#define VERSION_MINOR	   1
+#define VERSION_PATCHLEVEL 0
+
+#define VERSION_MAJOR_INIT	(VERSION_MAJOR + '0')
+#define VERSION_MINOR_INIT	(VERSION_MINOR + '0')
+#define VERSION_PATCHLEVEL_INIT (VERSION_PATCHLEVEL + '0')
 
 // source file build_defs.h
 // Example of __DATE__ string: "Jul 27 2012"
@@ -58,37 +63,5 @@
 
 #define BUILD_SEC_CH0 (__TIME__[6])
 #define BUILD_SEC_CH1 (__TIME__[7])
-
-#if VERSION_MAJOR > 100
-
-#define VERSION_MAJOR_INIT                                                                         \
-	((VERSION_MAJOR / 100) + '0'), (((VERSION_MAJOR % 100) / 10) + '0'),                       \
-		((VERSION_MAJOR % 10) + '0')
-
-#elif VERSION_MAJOR > 10
-
-#define VERSION_MAJOR_INIT ((VERSION_MAJOR / 10) + '0'), ((VERSION_MAJOR % 10) + '0')
-
-#else
-
-#define VERSION_MAJOR_INIT (VERSION_MAJOR + '0')
-
-#endif
-
-#if VERSION_MINOR > 100
-
-#define VERSION_MINOR_INIT                                                                         \
-	((VERSION_MINOR / 100) + '0'), (((VERSION_MINOR % 100) / 10) + '0'),                       \
-		((VERSION_MINOR % 10) + '0')
-
-#elif VERSION_MINOR > 10
-
-#define VERSION_MINOR_INIT ((VERSION_MINOR / 10) + '0'), ((VERSION_MINOR % 10) + '0')
-
-#else
-
-#define VERSION_MINOR_INIT (VERSION_MINOR + '0')
-
-#endif
 
 #endif

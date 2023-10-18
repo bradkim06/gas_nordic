@@ -11,6 +11,7 @@
 #include <zephyr/logging/log.h>
 
 #include "bluetooth.h"
+#include "version.h"
 
 LOG_MODULE_REGISTER(MAIN, CONFIG_APP_LOG_LEVEL);
 
@@ -29,15 +30,42 @@ normally and no error is raised.
  *
  * @return must be 0(none error)
  */
+
+const unsigned char fw_info[] = {
+	VERSION_MAJOR_INIT,
+	'.',
+	VERSION_MINOR_INIT,
+	'.',
+	VERSION_PATCHLEVEL_INIT,
+	'v',
+	' ',
+	BUILD_YEAR_CH0,
+	BUILD_YEAR_CH1,
+	BUILD_YEAR_CH2,
+	BUILD_YEAR_CH3,
+	'-',
+	BUILD_MONTH_CH0,
+	BUILD_MONTH_CH1,
+	'-',
+	BUILD_DAY_CH0,
+	BUILD_DAY_CH1,
+	'T',
+	BUILD_HOUR_CH0,
+	BUILD_HOUR_CH1,
+	':',
+	BUILD_MIN_CH0,
+	BUILD_MIN_CH1,
+	':',
+	BUILD_SEC_CH0,
+	BUILD_SEC_CH1,
+	'\0',
+};
+
 int main(void)
 {
 	k_event_init(&bt_event);
 
-	/* using __TIME__ ensure that a new binary will be built on every
-	 * compile which is convenient when testing firmware upgrade.
-	 */
-	LOG_INF("build time: " __DATE__ " " __TIME__);
-
+	LOG_INF("Firmware Info : %s", fw_info);
 	LOG_INF("Board:%s SoC:%s Rom:%dkb Ram:%dkb", CONFIG_BOARD, CONFIG_SOC, CONFIG_FLASH_SIZE,
 		CONFIG_SRAM_SIZE);
 
