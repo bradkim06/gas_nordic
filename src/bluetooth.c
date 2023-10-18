@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <errno.h>
+#include <time.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -15,6 +16,7 @@
 
 #include <zephyr/init.h>
 
+#include "version.h"
 #include "battery.h"
 #include "bluetooth.h"
 #include "gas.h"
@@ -22,6 +24,27 @@
 #include "bme680_app.h"
 
 LOG_MODULE_REGISTER(HHS_BT, CONFIG_APP_LOG_LEVEL);
+
+const unsigned char build_time[] = {BUILD_YEAR_CH0,
+				    BUILD_YEAR_CH1,
+				    BUILD_YEAR_CH2,
+				    BUILD_YEAR_CH3,
+				    '-',
+				    BUILD_MONTH_CH0,
+				    BUILD_MONTH_CH1,
+				    '-',
+				    BUILD_DAY_CH0,
+				    BUILD_DAY_CH1,
+				    'T',
+				    BUILD_HOUR_CH0,
+				    BUILD_HOUR_CH1,
+				    ':',
+				    BUILD_MIN_CH0,
+				    BUILD_MIN_CH1,
+				    ':',
+				    BUILD_SEC_CH0,
+				    BUILD_SEC_CH1,
+				    '\0'};
 
 struct bt_conn *my_conn = NULL;
 /* Create variable that holds callback for MTU negotiation */
@@ -255,6 +278,12 @@ static void bt_thread(void)
 	static char app_sensor_value[60] = {0};
 	k_sleep(K_SECONDS(2));
 
+	struct tm tm;
+	time_t epoch = 0;
+	if (strptime(build_time, "%Y-%m-%dT%X", &tm) != NULL) {
+		epoch = mktime(&tm);
+	}
+
 	while (1) {
 		/* Send notification, the function sends notifications only if a client is
 		 * subscribed */
@@ -265,16 +294,20 @@ static void bt_thread(void)
 			     sprintf(str, "type 0x%02X", events));
 		LOG_INF("event : \t%s(%s)", enum_to_str(events), str);
 
-		struct gas_sensor_value o2 = get_gas_value(O2);
-		struct gas_sensor_value gas = get_gas_value(GAS);
-		struct batt_value batt = get_batt_percent();
-		sprintf(app_sensor_value, "%d.%d;%d.%d;%d.%d;%d;%d;%d;%d\n", o2.val1, o2.val2,
-			gas.val1, gas.val2, batt.val1, batt.val2, bme680.temp.val1,
-			bme680.press.val1, bme680.humidity.val1, bme680.iaq.val1);
-
 		if (!notify_gas_enabled) {
 			continue;
 		}
+
+		struct gas_sensor_value o2 = get_gas_value(O2);
+		struct gas_sensor_value gas = get_gas_value(GAS);
+		struct batt_value batt = get_batt_percent();
+		time_t rawtime = (k_uptime_get() / 1000 + epoch);
+		char timestamp[20];
+		strftime(timestamp, 20, "%Y-%m-%dT%X", gmtime(&rawtime));
+
+		sprintf(app_sensor_value, "[%s] %d.%d;%d.%d;%d.%d;%d;%d;%d;%d\n", timestamp,
+			o2.val1, o2.val2, gas.val1, gas.val2, batt.val1, batt.val2,
+			bme680.temp.val1, bme680.press.val1, bme680.humidity.val1, bme680.iaq.val1);
 
 		bt_gas_notify(app_sensor_value);
 	}
