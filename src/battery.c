@@ -159,7 +159,7 @@ static int battery_setup(void)
 	LOG_DBG("Battery setup: %d(%s) %d(%s)", rc, (rc ? "err" : "none err"), battery_ok,
 		(battery_ok ? "ok" : "fail"));
 
-	batt = allocate_moving_average(10);
+	batt = allocate_moving_average(20);
 
 	return rc;
 }
@@ -251,14 +251,14 @@ void battmon(void)
 
 	k_sleep(K_MSEC(1500));
 
-	for (int i = 0; i < 10; i++) {
-		k_sleep(K_MSEC(20));
+	for (int i = 0; i < 20; i++) {
+		k_sleep(K_MSEC(3));
 		measuring();
 	}
 
 	while (1) {
-		measuring();
 		k_sleep(K_SECONDS(60));
+		measuring();
 	}
 }
 
