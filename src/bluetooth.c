@@ -1,22 +1,31 @@
 #include <stdio.h>
 #include <errno.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gap.h>
 #include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/addr.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/drivers/sensor.h>
+
+#include <zephyr/init.h>
 
 #include "battery.h"
 #include "bluetooth.h"
 #include "gas.h"
 #include "hhs_util.h"
-#include "zephyr/init.h"
+#include "bme680_app.h"
 
 LOG_MODULE_REGISTER(HHS_BT, CONFIG_APP_LOG_LEVEL);
 
 struct bt_conn *my_conn = NULL;
+/* Create variable that holds callback for MTU negotiation */
+static struct bt_gatt_exchange_params exchange_params;
 
 struct k_event bt_event;
 K_EVENT_DEFINE(bt_event);
@@ -49,7 +58,7 @@ static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_
 BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
 		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_LED, BT_GATT_CHRC_WRITE,
 					      BT_GATT_PERM_WRITE, NULL, NULL, NULL),
-		       /* STEP 12 - Create and add the MYSENSOR characteristic and its CCCD  */
+		       /* Create and add the MYSENSOR characteristic and its CCCD  */
 		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_GAS, BT_GATT_CHRC_NOTIFY,
 					      BT_GATT_PERM_NONE, NULL, NULL, NULL),
 		       BT_GATT_CCC(mylbsbc_ccc_gas_cfg_changed,
@@ -84,6 +93,44 @@ static void update_phy(struct bt_conn *conn)
 	}
 }
 
+/* Define the function to update the connection's data length */
+static void update_data_length(struct bt_conn *conn)
+{
+	int err;
+	struct bt_conn_le_data_len_param my_data_len = {
+#define BT_GAP_DATA_LEN_40 0x28
+		.tx_max_len = BT_GAP_DATA_LEN_MAX,
+		.tx_max_time = BT_GAP_DATA_TIME_DEFAULT,
+	};
+	err = bt_conn_le_data_len_update(my_conn, &my_data_len);
+	if (err) {
+		LOG_ERR("data_len_update failed (err %d)", err);
+	}
+}
+
+/* Implement callback function for MTU exchange */
+static void exchange_func(struct bt_conn *conn, uint8_t att_err,
+			  struct bt_gatt_exchange_params *params)
+{
+	LOG_INF("MTU exchange %s", att_err == 0 ? "successful" : "failed");
+	if (!att_err) {
+		uint16_t payload_mtu =
+			bt_gatt_get_mtu(conn) - 3; // 3 bytes used for Attribute headers.
+		LOG_INF("New MTU: %d bytes", payload_mtu);
+	}
+}
+
+static void update_mtu(struct bt_conn *conn)
+{
+	int err;
+	exchange_params.func = exchange_func;
+
+	err = bt_gatt_exchange_mtu(conn, &exchange_params);
+	if (err) {
+		LOG_ERR("bt_gatt_exchange_mtu failed (err %d)", err);
+	}
+}
+
 static void on_connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
@@ -111,6 +158,10 @@ static void on_connected(struct bt_conn *conn, uint8_t err)
 
 	/* Update the PHY mode */
 	update_phy(my_conn);
+
+	/* Update the data length and MTU */
+	update_data_length(my_conn);
+	update_mtu(my_conn);
 }
 
 static void on_disconnected(struct bt_conn *conn, uint8_t reason)
@@ -143,6 +194,17 @@ void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 	}
 }
 
+/* Write a callback function to inform about updates in data length */
+void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_info *info)
+{
+	uint16_t tx_len = info->tx_max_len;
+	uint16_t tx_time = info->tx_max_time;
+	uint16_t rx_len = info->rx_max_len;
+	uint16_t rx_time = info->rx_max_time;
+	LOG_INF("Data length updated. Length %d/%d bytes, time %d/%d us", tx_len, rx_len, tx_time,
+		rx_time);
+}
+
 struct bt_conn_cb connection_callbacks = {
 	.connected = on_connected,
 	.disconnected = on_disconnected,
@@ -150,6 +212,8 @@ struct bt_conn_cb connection_callbacks = {
 	.le_param_updated = on_le_param_updated,
 	/* Add the callback for PHY mode updates */
 	.le_phy_updated = on_le_phy_updated,
+	/* Add the callback for data length updates */
+	.le_data_len_updated = on_le_data_len_updated,
 };
 
 int bt_setup(void)
@@ -178,15 +242,17 @@ int bt_setup(void)
 
 static int bt_gas_notify(char *sensor_value)
 {
-	LOG_HEXDUMP_INF(sensor_value, strlen(sensor_value), "tx data");
+	char logstr[20];
+	size_t len = strlen(sensor_value);
+	sprintf(logstr, "tx data : %d", len);
+	LOG_HEXDUMP_INF(sensor_value, strlen(sensor_value), logstr);
 
-	return bt_gatt_notify(NULL, &bt_hhs_svc.attrs[4], (void *)sensor_value,
-			      strlen(sensor_value));
+	return bt_gatt_notify(NULL, &bt_hhs_svc.attrs[4], (void *)sensor_value, len);
 }
 
 static void bt_thread(void)
 {
-	static char app_sensor_value[20] = {0};
+	static char app_sensor_value[60] = {0};
 	k_sleep(K_SECONDS(2));
 
 	while (1) {
@@ -202,8 +268,9 @@ static void bt_thread(void)
 		struct gas_sensor_value o2 = get_gas_value(O2);
 		struct gas_sensor_value gas = get_gas_value(GAS);
 		struct batt_value batt = get_batt_percent();
-		sprintf(app_sensor_value, "%d.%d,%d.%d,%d.%d\n", o2.val1, o2.val2, gas.val1,
-			gas.val2, batt.val1, batt.val2);
+		sprintf(app_sensor_value, "%d.%d;%d.%d;%d.%d;%d;%d;%d;%d\n", o2.val1, o2.val2,
+			gas.val1, gas.val2, batt.val1, batt.val2, bme680.temp.val1,
+			bme680.press.val1, bme680.humidity.val1, bme680.iaq.val1);
 
 		if (!notify_gas_enabled) {
 			continue;

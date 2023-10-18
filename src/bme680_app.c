@@ -15,6 +15,8 @@
 
 #include <drivers/bme68x_iaq.h>
 
+#include "bme680_app.h"
+
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
 
 const struct sensor_trigger trig = {
@@ -22,20 +24,19 @@ const struct sensor_trigger trig = {
 	.type = SENSOR_TRIG_TIMER,
 };
 
-static void trigger_handler(const struct device *dev,
-			    const struct sensor_trigger *trig)
+bme680_t bme680;
+
+static void trigger_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
-	struct sensor_value temp, press, humidity, iaq;
-
 	// sensor_sample_fetch(dev);
-	sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &temp);
-	sensor_channel_get(dev, SENSOR_CHAN_PRESS, &press);
-	sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &humidity);
-	sensor_channel_get(dev, SENSOR_CHAN_IAQ, &iaq);
+	sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &bme680.temp);
+	sensor_channel_get(dev, SENSOR_CHAN_PRESS, &bme680.press);
+	sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &bme680.humidity);
+	sensor_channel_get(dev, SENSOR_CHAN_IAQ, &bme680.iaq);
 
-	LOG_INF("temp: %d.%02d; press: %d.%02d; humidity: %d.%02d; iaq: %d",
-		temp.val1, temp.val2, press.val1, press.val2,
-		humidity.val1, humidity.val2, iaq.val1);
+	LOG_DBG("temp: %d.%06d; press: %d.%06d; humidity: %d.%06d; iaq: %d", bme680.temp.val1,
+		bme680.temp.val2, bme680.press.val1, bme680.press.val2, bme680.humidity.val1,
+		bme680.humidity.val2, bme680.iaq.val1);
 };
 
 int bme680_mon(void)
@@ -58,9 +59,8 @@ int bme680_mon(void)
 	return 0;
 }
 
-
 /* size of stack area used by each thread */
 #define STACKSIZE 1024
 /* scheduling priority used by each thread */
-#define PRIORITY 7
+#define PRIORITY  7
 K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_mon, NULL, NULL, NULL, PRIORITY, 0, 0);
