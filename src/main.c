@@ -15,22 +15,6 @@
 
 LOG_MODULE_REGISTER(MAIN, CONFIG_APP_LOG_LEVEL);
 
-/**
- * @brief This thread performs kernel initialization, then calls the application’s main() function
-(if one is defined).
-
-By default, the main thread uses the highest configured preemptible thread priority (i.e. 0). If the
-kernel is not configured to support preemptible threads, the main thread uses the lowest configured
-cooperative thread priority (i.e. -1).
-
-The main thread is an essential thread while it is performing kernel initialization or executing the
-application’s main() function; this means a fatal system error is raised if the thread aborts. If
-main() is not defined, or if it executes and then does a normal return, the main thread terminates
-normally and no error is raised.
- *
- * @return must be 0(none error)
- */
-
 const unsigned char fw_info[] = {
 	VERSION_MAJOR_INIT,
 	'.',
@@ -61,6 +45,21 @@ const unsigned char fw_info[] = {
 	'\0',
 };
 
+/**
+ * @brief This thread performs kernel initialization, then calls the application’s main() function
+(if one is defined).
+
+By default, the main thread uses the highest configured preemptible thread priority (i.e. 0). If the
+kernel is not configured to support preemptible threads, the main thread uses the lowest configured
+cooperative thread priority (i.e. -1).
+
+The main thread is an essential thread while it is performing kernel initialization or executing the
+application’s main() function; this means a fatal system error is raised if the thread aborts. If
+main() is not defined, or if it executes and then does a normal return, the main thread terminates
+normally and no error is raised.
+ *
+ * @return must be 0(none error)
+ */
 int main(void)
 {
 	k_event_init(&bt_event);

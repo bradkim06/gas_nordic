@@ -3,13 +3,13 @@
 
 #include <zephyr/drivers/sensor.h>
 
-typedef struct bme680_iaq {
+struct bme680_iaq {
 	struct sensor_value temp;
 	struct sensor_value press;
 	struct sensor_value humidity;
 	struct sensor_value iaq;
-} bme680_t;
+};
 
-extern bme680_t bme680;
+extern struct bme680_iaq bme680;
 
 #endif

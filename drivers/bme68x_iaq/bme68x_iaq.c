@@ -504,5 +504,5 @@ static struct bme68x_iaq_config config_0 = {
 };
 static struct bme68x_iaq_data data_0;
 
-SENSOR_DEVICE_DT_INST_DEFINE(0, bme68x_bsec_init, NULL, &data_0, &config_0, APPLICATION,
+SENSOR_DEVICE_DT_INST_DEFINE(0, bme68x_bsec_init, NULL, &data_0, &config_0, POST_KERNEL,
 			     CONFIG_SENSOR_INIT_PRIORITY, &bme68x_driver_api);

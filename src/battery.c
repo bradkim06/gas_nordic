@@ -159,8 +159,6 @@ static int battery_setup(void)
 	LOG_DBG("Battery setup: %d(%s) %d(%s)", rc, (rc ? "err" : "none err"), battery_ok,
 		(battery_ok ? "ok" : "fail"));
 
-	batt = allocate_moving_average(20);
-
 	return rc;
 }
 
@@ -242,6 +240,7 @@ static bool measuring(void)
 
 void battmon(void)
 {
+	batt = allocate_moving_average(20);
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {

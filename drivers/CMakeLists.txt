@@ -1,2 +1,1 @@
-# add_subdirectory_ifdef(CONFIG_BME68X bme68x)
 add_subdirectory_ifdef(CONFIG_BME68X_IAQ bme68x_iaq)
