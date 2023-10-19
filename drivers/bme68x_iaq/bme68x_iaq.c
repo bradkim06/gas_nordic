@@ -14,11 +14,12 @@
 #include <zephyr/drivers/sensor.h>
 
 #include "bme68x_iaq.h"
+#include "bsec_datatypes.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_IAQ_LOG_LEVEL);
+LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_LOG_LEVEL);
 
-#define DT_DRV_COMPAT bosch_bme680
+#define DT_DRV_COMPAT bosch_bme68x
 
 #define BSEC_TOTAL_HEAT_DUR	     UINT16_C(140)
 #define BSEC_INPUT_PRESENT(x, shift) (x.process_data & (1 << (shift - 1)))
@@ -26,15 +27,17 @@ LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_IAQ_LOG_LEVEL);
 /* Temperature offset due to external heat sources. */
 static const float temp_offset = (CONFIG_BME68X_IAQ_TEMPERATURE_OFFSET / (float)100);
 
+#if defined(CONFIG_BME68X_IAQ)
+#define BSEC_N_OUTPUTS 6
+#else
+#define BSEC_N_OUTPUTS 3
+#endif
+
 /* Define which sensor values to request.
  * The order is not important, but output_ready needs to be updated if different types
  * of sensor values are requested.
  */
-static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[4] = {
-	{
-		.sensor_id = BSEC_OUTPUT_IAQ,
-		.sample_rate = BSEC_SAMPLE_RATE_IAQ,
-	},
+static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[BSEC_N_OUTPUTS] = {
 	{
 		.sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
 		.sample_rate = BSEC_SAMPLE_RATE,
@@ -47,6 +50,20 @@ static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[4] = {
 		.sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
 		.sample_rate = BSEC_SAMPLE_RATE,
 	},
+#if defined(CONFIG_BME68X_IAQ)
+	{
+		.sensor_id = BSEC_OUTPUT_IAQ,
+		.sample_rate = BSEC_SAMPLE_RATE_IAQ,
+	},
+	{
+		.sensor_id = BSEC_OUTPUT_CO2_EQUIVALENT,
+		.sample_rate = BSEC_SAMPLE_RATE_IAQ,
+	},
+	{
+		.sensor_id = BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
+		.sample_rate = BSEC_SAMPLE_RATE_IAQ,
+	},
+#endif
 };
 
 /* Definitions used to store and retrieve BSEC state from the settings API */
@@ -136,10 +153,6 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 	k_sem_take(&output_sem, K_FOREVER);
 	for (size_t i = 0; i < n_outputs; ++i) {
 		switch (outputs[i].sensor_id) {
-		case BSEC_OUTPUT_IAQ:
-			data->latest.air_quality = (uint16_t)outputs[i].signal;
-			LOG_DBG("IAQ: %d", data->latest.air_quality);
-			break;
 		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
 			data->latest.temperature = (double)outputs[i].signal;
 			LOG_DBG("Temp: %.2f C", data->latest.temperature);
@@ -152,6 +165,22 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 			data->latest.humidity = (double)outputs[i].signal;
 			LOG_DBG("Hum: %.2f %%", data->latest.humidity);
 			break;
+#if defined(CONFIG_BME68X_IAQ)
+		case BSEC_OUTPUT_IAQ:
+			data->latest.air_quality[0] = (uint16_t)outputs[i].signal;
+			data->latest.air_quality[1] = outputs[i].accuracy;
+			LOG_DBG("IAQ: %d (accuracy %d)", data->latest.air_quality[0],
+				data->latest.air_quality[1]);
+			break;
+		case BSEC_OUTPUT_CO2_EQUIVALENT:
+			data->latest.eCO2 = (double)outputs[i].signal;
+			LOG_DBG("CO2 %.2f", data->latest.eCO2);
+			break;
+		case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
+			data->latest.breathVOC = (double)outputs[i].signal;
+			LOG_DBG("VOC %.2f", data->latest.breathVOC);
+			break;
+#endif
 		default:
 			LOG_WRN("unknown bsec output id: %d", outputs[i].sensor_id);
 			break;
@@ -240,7 +269,11 @@ static int apply_sensor_settings(const struct device *dev, bsec_bme_settings_t s
 	struct bme68x_heatr_conf heater_config = {0};
 	struct bme68x_iaq_data *data = dev->data;
 
+#if defined(CONFIG_BME68X_IAQ)
 	heater_config.enable = BME68X_ENABLE;
+#else
+	heater_config.enable = BME68X_DISABLE;
+#endif
 	heater_config.heatr_temp = sensor_settings.heater_temperature;
 	heater_config.heatr_dur = sensor_settings.heater_duration;
 	heater_config.heatr_temp_prof = sensor_settings.heater_temperature_profile;
@@ -481,10 +514,18 @@ static int bme68x_channel_get(const struct device *dev, enum sensor_channel chan
 		sensor_value_from_double(val, data->latest.temperature);
 	} else if (chan == SENSOR_CHAN_PRESS) {
 		sensor_value_from_double(val, data->latest.pressure);
-	} else if (chan == SENSOR_CHAN_IAQ) {
-		val->val1 = data->latest.air_quality;
-		val->val2 = 0;
-	} else {
+	}
+#if defined(CONFIG_BME68X_IAQ)
+	else if (chan == SENSOR_CHAN_IAQ) {
+		val->val1 = data->latest.air_quality[0];
+		val->val2 = data->latest.air_quality[1];
+	} else if (chan == SENSOR_CHAN_CO2) {
+		sensor_value_from_double(val, data->latest.eCO2);
+	} else if (chan == SENSOR_CHAN_VOC) {
+		sensor_value_from_double(val, data->latest.breathVOC);
+	}
+#endif
+	else {
 		LOG_ERR("Unsupported sensor channel");
 		result = -ENOTSUP;
 	}

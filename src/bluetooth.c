@@ -275,7 +275,6 @@ static int bt_gas_notify(char *sensor_value)
 
 static void bt_thread(void)
 {
-	static char app_sensor_value[60] = {0};
 	k_sleep(K_SECONDS(2));
 
 	struct tm tm;
@@ -303,13 +302,24 @@ static void bt_thread(void)
 		struct batt_value batt = get_batt_percent();
 		time_t rawtime = (k_uptime_get() / 1000 + epoch);
 		char timestamp[20];
-		strftime(timestamp, 20, "%Y-%m-%dT%X", gmtime(&rawtime));
+		strftime(timestamp, 20, "%m-%dT%X", gmtime(&rawtime));
 
-		sprintf(app_sensor_value, "[%s] %d.%d;%d.%d;%d.%d;%d;%d;%d;%d\n", timestamp,
-			o2.val1, o2.val2, gas.val1, gas.val2, batt.val1, batt.val2,
-			bme680.temp.val1, bme680.press.val1, bme680.humidity.val1, bme680.iaq.val1);
+		char tx_data[100];
+		char *p = tx_data;
+		p += sprintf(p, "[%s] %u.%u;%u;%u.%u", timestamp, (uint8_t)o2.val1,
+			     (uint8_t)o2.val2, (uint16_t)gas.val1, (uint8_t)batt.val1,
+			     (uint8_t)batt.val2);
 
-		bt_gas_notify(app_sensor_value);
+#if defined(CONFIG_BME68X)
+		p += sprintf(p, ";%u;%u;%u", (uint8_t)bme680.temp.val1, (uint32_t)bme680.press.val1,
+			     (uint8_t)bme680.humidity.val1);
+#if defined(CONFIG_BME68X_IAQ)
+		p += sprintf(p, ";%u.%u;%u;%u", (uint8_t)bme680.iaq.val1, (uint8_t)bme680.iaq.val2,
+			     (uint32_t)bme680.eCO2.val1, (uint16_t)bme680.breathVOC.val1);
+#endif
+#endif
+		*(p + 1) = '\n';
+		bt_gas_notify(tx_data);
 	}
 }
 

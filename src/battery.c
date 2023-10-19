@@ -218,7 +218,7 @@ static int battery_sample(void)
 	return (rc < 0) ? 0 : rc;
 }
 
-static bool measuring(void)
+static bool measuring(bool isInit)
 {
 	/* Burn battery so you can see that this works over time */
 	int curr_batt_mV = battery_sample();
@@ -228,19 +228,20 @@ static bool measuring(void)
 	batt_pptt.val1 = pptt / 100;
 	batt_pptt.val2 = (pptt % 100) / 10;
 
-	char logStr[100] = {0};
-	sprintf(logStr, "curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
-
 	bool low_batt_status = (pptt < LOW_BATT_THRESHOLD) ? true : false;
-	CODE_IF_ELSE(low_batt_status, LOG_INF("low batt warnning %s", logStr),
-		     LOG_DBG("stable batt %s", logStr));
+	if (!isInit) {
+		char logStr[100] = {0};
+		sprintf(logStr, "curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
+		CODE_IF_ELSE(low_batt_status, LOG_INF("low batt warnning %s", logStr),
+			     LOG_DBG("stable batt %s", logStr));
+	}
 
 	return low_batt_status;
 }
 
 void battmon(void)
 {
-	batt = allocate_moving_average(20);
+	batt = allocate_moving_average(50);
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {
@@ -248,16 +249,16 @@ void battmon(void)
 		return;
 	}
 
-	k_sleep(K_MSEC(1500));
+	k_sleep(K_MSEC(2000));
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 50; i++) {
+		measuring(true);
 		k_sleep(K_MSEC(3));
-		measuring();
 	}
 
 	while (1) {
+		measuring(false);
 		k_sleep(K_SECONDS(60));
-		measuring();
 	}
 }
 

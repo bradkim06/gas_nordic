@@ -150,8 +150,8 @@ i2c: &i2c0 {
 	pinctrl-1 = <&i2c0_sleep>;
 	pinctrl-names = "default", "sleep";
 
-	bme680:bme680@76 {
-		compatible = "bosch,bme680";
+	bme68x:bme68x@76 {
+		compatible = "bosch,bme68x";
 		status = "okay";
 		friendly-name = "bosch environment sensor";
 		reg = <0x76>;

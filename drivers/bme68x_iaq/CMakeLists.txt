@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-message(APP_ROOT="${APP_ROOT}")
 zephyr_library()
 zephyr_library_include_directories(${APP_ROOT}/lib/bsec/src/inc)
 zephyr_library_include_directories(${APP_ROOT}/lib/bme68x/src/bme68x)
@@ -12,7 +11,8 @@ zephyr_library_sources(${APP_ROOT}/lib/bme68x/src/bme68x/bme68x.c)
 
 zephyr_library_compile_definitions(
   BSEC_SAMPLE_RATE=BSEC_SAMPLE_RATE_LP
-  BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_ULP
+  # BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_ULP
+  BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_LP
   BSEC_SAMPLE_PERIOD_S=3
 )
 

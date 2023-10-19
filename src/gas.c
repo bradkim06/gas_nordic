@@ -48,7 +48,7 @@ static const struct adc_dt_spec adc_channels[] = {
 static struct gas_sensor_value prev_pptt[2];
 static moving_average_t *gas[2];
 
-static void measuring()
+static void measuring(bool isInit)
 {
 	uint16_t buf;
 	struct adc_sequence sequence = {
@@ -96,16 +96,19 @@ static void measuring()
 		curr_result[i].val1 = gas_avg_pptt / 10;
 		curr_result[i].val2 = gas_avg_pptt % 10;
 
-		LOG_DBG("%s - channel %d: "
-			" curr %" PRId32 "mV avg %" PRId32 "mV %d.%d%%",
-			enum_to_str(i), adc_channels[i].channel_id, val_mv, avg_mv,
-			curr_result[i].val1, curr_result[i].val2);
+		if (!isInit) {
+			LOG_DBG("%s - channel %d: "
+				" curr %" PRId32 "mV avg %" PRId32 "mV %d.%d%%",
+				enum_to_str(i), adc_channels[i].channel_id, val_mv, avg_mv,
+				curr_result[i].val1, curr_result[i].val2);
+		}
 	}
 
 	if (CHANGE_GAS_RESULT(curr_result[O2], prev_pptt[O2])) {
-		// ble transmit
-		LOG_INF("value changed %d.%d%%", curr_result[0].val1, curr_result[0].val2);
-		k_event_post(&bt_event, GAS_VAL_CHANGE);
+		if (!isInit) {
+			LOG_INF("value changed %d.%d%%", curr_result[0].val1, curr_result[0].val2);
+			k_event_post(&bt_event, GAS_VAL_CHANGE);
+		}
 		memcpy(prev_pptt, curr_result, sizeof(curr_result));
 	}
 }
@@ -127,19 +130,19 @@ void gas_mon(void)
 	}
 
 	for (int i = 0; i < 2; i++) {
-		gas[i] = allocate_moving_average(20);
+		gas[i] = allocate_moving_average(50);
 	}
 
-	k_sleep(K_MSEC(1000));
+	k_sleep(K_MSEC(2000));
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 50; i++) {
+		measuring(true);
 		k_sleep(K_MSEC(3));
-		measuring();
 	}
 
 	while (1) {
+		measuring(false);
 		k_sleep(K_SECONDS(3));
-		measuring();
 	}
 }
 
