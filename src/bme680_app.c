@@ -5,6 +5,8 @@
  * @version v0.01
  * @date 2023-09-18
  */
+#include <math.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -22,6 +24,14 @@ const struct sensor_trigger trig = {
 
 struct bme680_data bme680 = {0};
 
+static void adjustValuePrecision(int n)
+{
+	int32_t multiplier = pow(10, n);
+	bme680.temp.val2 /= multiplier;
+	bme680.press.val2 /= multiplier;
+	bme680.humidity.val2 /= multiplier;
+}
+
 static void trigger_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
 	// sensor_sample_fetch(dev);
@@ -33,8 +43,9 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	sensor_channel_get(dev, SENSOR_CHAN_CO2, &bme680.eCO2);
 	sensor_channel_get(dev, SENSOR_CHAN_VOC, &bme680.breathVOC);
 #endif
+	adjustValuePrecision(4);
 
-	LOG_DBG("temp: %d.%06d°C; press: %d.%06dPa; humidity: %d.%06d%%", bme680.temp.val1,
+	LOG_DBG("temp: %d.%02d°C; press: %d.%02dPa; humidity: %d.%02d%%", bme680.temp.val1,
 		bme680.temp.val2, bme680.press.val1, bme680.press.val2, bme680.humidity.val1,
 		bme680.humidity.val2);
 #if defined(CONFIG_BME68X_IAQ)
