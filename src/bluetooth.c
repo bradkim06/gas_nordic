@@ -66,7 +66,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define STACKSIZE 1024
-#define PRIORITY  10
+#define PRIORITY  5
 
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
@@ -91,6 +91,7 @@ BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
 
 bool notify_gas_enabled = false;
 static bool is_connect = false;
+static uint16_t mtu_size = 27;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -140,6 +141,7 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 		uint16_t payload_mtu =
 			bt_gatt_get_mtu(conn) - 3; // 3 bytes used for Attribute headers.
 		LOG_INF("New MTU: %d bytes", payload_mtu);
+		mtu_size = payload_mtu;
 	}
 }
 
@@ -318,8 +320,15 @@ static void bt_thread(void)
 			     (uint32_t)bme680.eCO2.val1, (uint16_t)bme680.breathVOC.val1);
 #endif
 #endif
-		*(p + 1) = '\n';
-		bt_gas_notify(tx_data);
+		strcat(tx_data, "\n");
+
+		if (mtu_size < strlen(tx_data)) {
+			k_sleep(K_MSEC(10));
+		}
+
+		if (mtu_size > strlen(tx_data)) {
+			bt_gas_notify(tx_data);
+		}
 	}
 }
 

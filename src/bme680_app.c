@@ -20,7 +20,7 @@ const struct sensor_trigger trig = {
 	.type = SENSOR_TRIG_TIMER,
 };
 
-struct bme680_data bme680;
+struct bme680_data bme680 = {0};
 
 static void trigger_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
@@ -51,7 +51,7 @@ int bme680_mon(void)
 		return 0;
 	}
 
-	k_sleep(K_SECONDS(2));
+	k_sleep(K_SECONDS(1));
 
 	int ret = sensor_trigger_set(dev, &trig, trigger_handler);
 	if (ret) {
@@ -64,6 +64,6 @@ int bme680_mon(void)
 /* size of stack area used by each thread */
 #define STACKSIZE 1024
 /* scheduling priority used by each thread */
-#define PRIORITY  7
+#define PRIORITY  8
 K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_mon, NULL, NULL, NULL, PRIORITY, 0, 0);
 #endif
