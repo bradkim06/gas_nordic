@@ -10,10 +10,17 @@ zephyr_library_include_directories(${APP_ROOT}/lib/bme68x/src/bme68x)
 zephyr_library_sources(${APP_ROOT}/lib/bme68x/src/bme68x/bme68x.c)
 
 zephyr_library_compile_definitions(
-  BSEC_SAMPLE_RATE=BSEC_SAMPLE_RATE_LP
-  # BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_ULP
-  BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_LP
   BSEC_SAMPLE_PERIOD_S=3
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_BME68X_IAQ_SAMPLE_RATE_ULTRA_LOW_POWER
+  BSEC_SAMPLE_RATE=BSEC_SAMPLE_RATE_LP
+  BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_ULP
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_BME68X_IAQ_SAMPLE_RATE_LOW_POWER
+  BSEC_SAMPLE_RATE=BSEC_SAMPLE_RATE_LP
+  BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_LP
 )
 
 if (CONFIG_FP_HARDABI)
