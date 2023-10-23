@@ -24,10 +24,10 @@ void free_moving_average(moving_average_t *av_obj);
  */
 struct level_point {
 	/** Remaining life at #lvl_mV. */
-	uint16_t lvl_pptt;
+	int16_t lvl_pptt;
 
 	/** Battery voltage at #lvl_pptt remaining life. */
-	uint16_t lvl_mV;
+	int16_t lvl_mV;
 };
 
 unsigned int level_pptt(unsigned int batt_mV, const struct level_point *curve);

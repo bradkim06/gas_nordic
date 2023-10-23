@@ -2,6 +2,9 @@
 #define __APP_BME680_H__
 
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/kernel.h>
+
+extern struct k_sem temp_sem;
 
 #if defined(CONFIG_BME68X)
 struct bme680_data {

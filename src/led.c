@@ -26,9 +26,7 @@ LOG_MODULE_REGISTER(LED, CONFIG_APP_LOG_LEVEL);
 
 DECLARE_ENUM(led_dev, LED_DEVICE)
 
-#define LED_STACK_SIZE 1024
-#define LED_PRIORITY   11
-
+#define LED_TIME_MS   100
 #define LED_PWM_LEVEL 30
 
 #define LED_PWM_NODE_ID DT_COMPAT_GET_ANY_STATUS_OKAY(pwm_leds)
@@ -60,8 +58,10 @@ static void batt_status_led(void)
 		k_sleep(K_SECONDS(5));
 		enum led_dev color = (get_batt_percent().val1 >= 20) ? stablebatt_g : lowbatt_y;
 
-		led_ctrl((uint32_t)color, 250);
+		led_ctrl((uint32_t)color, LED_TIME_MS);
 	}
 }
 
+#define LED_STACK_SIZE 1024
+#define LED_PRIORITY   11
 K_THREAD_DEFINE(led_id, LED_STACK_SIZE, batt_status_led, NULL, NULL, NULL, LED_PRIORITY, 0, 0);

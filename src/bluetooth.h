@@ -17,12 +17,15 @@
 #define BT_UUID_HHS_LED BT_UUID_DECLARE_128(BT_UUID_HHS_LED_VAL)
 
 /** Product : 10sec **/
-#define TIMEOUT_SEC 60
+#define TIMEOUT_SEC 10
 
 #define BT_EVENT_LIST(X)                                                                           \
-	X(TIMEOUT, = 0)                                                                            \
-	X(GAS_NOTIFY_EN, = 0x01)                                                                   \
-	X(GAS_VAL_CHANGE, = 0x02)
+	X(TIMEOUT, = 0x01)                                                                         \
+	X(GAS_NOTIFY_EN, = 0x02)                                                                   \
+	X(GAS_VAL_CHANGE, = 0x04)                                                                  \
+	X(IAQ_VAL_THRESH, = 0x08)                                                                  \
+	X(VOC_VAL_THRESH, = 0x10)                                                                  \
+	X(CO2_VAL_THRESH, = 0x20)
 
 DECLARE_ENUM(bt_tx_event, BT_EVENT_LIST)
 

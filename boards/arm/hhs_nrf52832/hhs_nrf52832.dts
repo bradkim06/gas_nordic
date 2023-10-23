@@ -96,14 +96,13 @@
 	/* datasheet value different, ideal 90uA +-20
 	 *
 	 * 1% current 5uA -> sensor vout = (Curr * Rl) * (1 + R1 / R2) =
-	 * Max Output Voltage(25% oxygen) = (4.85*25*0.001*0.001*100)*(1+5100/100) = 630mV
+     * Max Output Voltage(25% oxygen) = (5.1*25*0.001*0.001*100)*(1+5100/100) = 663
 	 * ADC Reference VDD 1/4 = 750mV
 	 */
 	o2_mon: channel@1 {
 		reg = <1>;
-		zephyr,gain = "ADC_GAIN_1";
-		zephyr,reference = "ADC_REF_VDD_1_4";
-		zephyr,vref-mv = <750>;
+		zephyr,gain = "ADC_GAIN_1_2";
+		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
 		zephyr,input-positive = <NRF_SAADC_AIN1>; /* P0.03 */
 		zephyr,resolution = <14>;

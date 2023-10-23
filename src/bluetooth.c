@@ -70,6 +70,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
+	k_sleep(K_MSEC(500));
 	notify_gas_enabled = (value == BT_GATT_CCC_NOTIFY);
 	LOG_INF("notify cfg changed %d", notify_gas_enabled);
 	if (notify_gas_enabled) {
@@ -272,6 +273,11 @@ static int bt_gas_notify(char *sensor_value)
 	sprintf(logstr, "tx data : %d", len);
 	LOG_HEXDUMP_INF(sensor_value, strlen(sensor_value), logstr);
 
+	if (mtu_size < len) {
+		LOG_WRN("mtu size %d is small than tx len %d", mtu_size, len);
+		return -ENOMEM;
+	}
+
 	return bt_gatt_notify(NULL, &bt_hhs_svc.attrs[4], (void *)sensor_value, len);
 }
 
@@ -296,6 +302,7 @@ static void bt_thread(void)
 		LOG_INF("event : \t%s(%s)", enum_to_str(events), str);
 
 		if (!notify_gas_enabled) {
+			LOG_WRN("notify disable");
 			continue;
 		}
 
@@ -321,14 +328,7 @@ static void bt_thread(void)
 #endif
 #endif
 		strcat(tx_data, "\n");
-
-		if (mtu_size < strlen(tx_data)) {
-			k_sleep(K_MSEC(10));
-		}
-
-		if (mtu_size > strlen(tx_data)) {
-			bt_gas_notify(tx_data);
-		}
+		bt_gas_notify(tx_data);
 	}
 }
 
