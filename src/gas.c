@@ -24,6 +24,8 @@ static struct gas_sensor_value curr_result[2];
 
 DEFINE_ENUM(gas_device, DEVICE_LIST)
 
+#define O2_THRES 3
+
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
 #error "No suitable devicetree overlay specified"
 #endif
@@ -33,7 +35,7 @@ DEFINE_ENUM(gas_device, DEVICE_LIST)
 /** A discharge curve specific to the gas source. */
 static const struct level_point levels[] = {
 	// Measurement Range 25% Oxygen
-	{250, 663},
+	{250, 656},
 	// Zero current (offset) <0.6 % vol O2
 	{0, 0},
 };
@@ -99,7 +101,7 @@ static void measuring(bool isInit)
 		int32_t avg_mv = movingAvg(gas[i], calib_val_mv);
 		int gas_avg_pptt = level_pptt(avg_mv, levels);
 
-		if (abs(gas_avg_pptt - prev_o2) > 5) {
+		if (abs(gas_avg_pptt - prev_o2) > O2_THRES) {
 			o2_changed = true;
 			prev_o2 = gas_avg_pptt;
 		}
@@ -152,7 +154,7 @@ void gas_mon(void)
 
 	while (1) {
 		measuring(false);
-		k_sleep(K_MSEC(2999));
+		k_sleep(K_SECONDS(3));
 	}
 }
 
