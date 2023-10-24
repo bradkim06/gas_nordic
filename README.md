@@ -11,7 +11,7 @@ Custom board, Out of Tree
 - O2
 - Gas(optional select 1 : H2S,CO... Etc)
 
-## IAQ, Temperature, Humidity, Pressure Sensor
+## Temperature, Humidity, Pressure, IAQ, CO2, VOC Sensor
 
 - bosch bme68x sensor
 
