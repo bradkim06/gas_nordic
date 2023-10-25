@@ -2,6 +2,10 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 set_property(GLOBAL PROPERTY CSTD c11)
+
+# set(CONF_FILE release.conf)
+set(CONF_FILE debug.conf)
+
 set(BOARD_ROOT ${CMAKE_SOURCE_DIR}) 
 set(BOARD_FLASH_RUNNER jlink)
 set(APP_ROOT ${CMAKE_SOURCE_DIR}) 
