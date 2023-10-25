@@ -18,8 +18,8 @@
 #if defined(CONFIG_BME68X)
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
 
-#define IAQ_UNHEALTHY_THRES 150
-#define VOC_UNHEALTHY_THRES 100
+#define IAQ_UNHEALTHY_THRES 100
+#define VOC_UNHEALTHY_THRES 2
 #define CO2_UNHEALTHY_THRES 1000
 
 struct k_sem temp_sem;
@@ -42,6 +42,7 @@ static void adjustValuePrecision(int n)
 static void trigger_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
 	static bool is_init = true;
+	static uint32_t events = 0;
 
 	// sensor_sample_fetch(dev);
 	sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &bme680.temp);
@@ -65,20 +66,25 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 
 	LOG_DBG("iaq: %d(acc:%d); CO2: %dppm VOC: %dppm", bme680.iaq.val1, bme680.iaq.val2,
 		bme680.eCO2.val1, bme680.breathVOC.val1);
-	uint32_t events = 0;
+
+	uint32_t curr_events = 0;
+
 	if (bme680.iaq.val2 > 1 && bme680.iaq.val1 > IAQ_UNHEALTHY_THRES) {
-		events |= IAQ_VAL_THRESH;
+		curr_events |= IAQ_VAL_THRESH;
 	}
 
 	if (bme680.breathVOC.val1 > VOC_UNHEALTHY_THRES) {
-		events |= VOC_VAL_THRESH;
+		curr_events |= VOC_VAL_THRESH;
 	}
 
 	if (bme680.eCO2.val1 > CO2_UNHEALTHY_THRES) {
-		events |= CO2_VAL_THRESH;
+		curr_events |= CO2_VAL_THRESH;
 	}
 
-	k_event_post(&bt_event, events);
+	if (events != curr_events) {
+		k_event_post(&bt_event, events);
+		events = curr_events;
+	}
 #endif
 };
 

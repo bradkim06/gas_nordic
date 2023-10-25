@@ -2,7 +2,7 @@
 
 ## Board
 
-- schematic see pdf
+- schematic see `doc/*.pdf`
 
 Custom board, Out of Tree
 
@@ -14,6 +14,42 @@ Custom board, Out of Tree
 ## Temperature, Humidity, Pressure, IAQ, CO2, VOC Sensor
 
 - bosch bme68x sensor
+
+### Gas classification
+
+#### IAQ
+
+| IAQ Index  | Air Quality         | Impact (long-term exposure)                                              | Suggested action                                                                                                             |
+| ---------- | ------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 0 - 50     | Excellent           | Pure air; best for well-being                                            | No measures needed                                                                                                           |
+| 51 - 100   | Good                | No irritation or impact on well-being                                    | No measures needed                                                                                                           |
+| 101 - 150  | Lightly polluted    | Reduction of well-being possible                                         | Ventilation suggested                                                                                                        |
+| 151 - 200  | Moderately polluted | More significant irritation possible                                     | Increase ventilation with clean air                                                                                          |
+| 201 - 250° | Heavily polluted    | Exposition might lead to effects like headache depending on type of VOCs | optimize ventilation                                                                                                         |
+| 251 - 350  | Severely polluted   | More severe health issue possible if harmful VOC present                 | Contamination should be identified if level is reached even w/o presence of people; maximize ventilation & reduce attendance |
+| > 351      | Extremely polluted  | Headaches, additional neurotoxic effects possible                        | Contamination needs to be identified; avoid presence in room and maximize ventilation                                        |
+
+#### CO2
+
+|     | Effects                         | PPM  |
+| :-: | :------------------------------ | ---- |
+| ⚠️  | Dangerous on prolonged exposure | 5000 |
+| 😡  | Negative health effects         | 2000 |
+| 😩  | Ventilatian necessary           | 1200 |
+| 🙁  | Ventlation desirable            | 1000 |
+| 🙂  | Accepted level                  | 800  |
+| 😀  | Healthy indoor climate          | 600  |
+| 😆  | Healthy outside air level       | 350  |
+
+#### VOC
+
+| Level     | Hygienic Rating     | Recommendation                                                 | Exposure    | TVOC [ppm)   |
+| --------- | ------------------- | -------------------------------------------------------------- | ----------- | ------------ |
+| Unhealthy | Unhealty acceptabio | Intense ventilation necess ense ventilation necessary          | hours       | 2.2-5.5      |
+| Poor      | Major objections    | Intensifed ventilation / airing Searchfor sources              | < 1 month   | 0.66-22      |
+| Moderate  | Some obiections     | Intensified ventilation / airing recommenaco searchtor sources | < 12 months | 0.22 - 0.66  |
+| Good      | No relevant         | Ventilation / airing recommended                               | no limit    | 0.065 - 0.22 |
+| Excellent | No objections       | Target value                                                   | no limit    | 0-0.065      |
 
 ## dependency
 

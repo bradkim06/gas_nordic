@@ -13,8 +13,8 @@ struct bme680_data {
 	struct sensor_value humidity;
 #if defined(CONFIG_BME68X_IAQ)
 	struct sensor_value iaq;
-	struct sensor_value eCO2;
-	struct sensor_value breathVOC;
+	struct sensor_value eCO2;      // ppm
+	struct sensor_value breathVOC; // ppm
 #endif
 };
 
