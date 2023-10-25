@@ -1,6 +1,10 @@
 # nordic nrf52832 gas firmware with zephyr rtos
 
-## Board
+Firmware for Measuring Various Gases (O2, Harmful Gases - Optional 1 select
+[H2S, CO, CI2, NH3, etc...] , CO2, VOC, IAQ) in an Industrial Environment
+and Transmitting Data via Bluetooth Low Energy.
+
+## Hardware
 
 - schematic see `doc/*.pdf`
 
