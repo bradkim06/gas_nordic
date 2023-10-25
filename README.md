@@ -17,6 +17,16 @@ Custom board, Out of Tree
 
 ### Gas classification
 
+#### O2
+
+| Oxygen Concentration Category     | Oxygen Concentration Range | Description                                                                                                                                                 |
+| --------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| High Oxygen (High)                | Over 24%                   | Increases the risk of fire and combustion; higher risk of fire and explosion.                                                                               |
+| Normal Oxygen (Normal)            | 20.9%                      | Typical composition of air on Earth; no issues in regular environments.                                                                                     |
+| Elevated Exposure Risk (Elevated) | 19.5% - 20.9%              | May lead to breathing difficulties, especially at high altitudes or underwater; risk due to oxygen dilution.                                                |
+| Low Oxygen (Low)                  | 16% - 19.5%                | Low oxygen environment; may result in breathing difficulties, confusion, and impaired physical functions; prolonged exposure can pose serious health risks. |
+| Anoxic (Anoxic)                   | 0% - 16%                   | Oxygen-free environment; survival is impossible, and severe life-threatening conditions develop quickly.                                                    |
+
 #### IAQ
 
 | IAQ Index  | Air Quality         | Impact (long-term exposure)                                              | Suggested action                                                                                                             |
