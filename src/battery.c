@@ -49,7 +49,10 @@ static const struct level_point levels[] = {
 	 * and 3.1 V.
 	 */
 
-	{10000, 4000},
+	// dtp-102535 800mAh Batt
+	// {10000, 4000},
+	// tw-403030 300mAh Batt
+	{10000, 3900},
 	{625, 3550},
 	{0, 3100},
 };
