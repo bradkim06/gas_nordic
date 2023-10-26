@@ -64,8 +64,8 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 		bme680.humidity.val2);
 #if defined(CONFIG_BME68X_IAQ)
 
-	LOG_DBG("iaq: %d(acc:%d); CO2: %dppm VOC: %dppm", bme680.iaq.val1, bme680.iaq.val2,
-		bme680.eCO2.val1, bme680.breathVOC.val1);
+	LOG_DBG("iaq: %d(acc:%d); CO2: %dppm VOC: %d.%dppm", bme680.iaq.val1, bme680.iaq.val2,
+		bme680.eCO2.val1, bme680.breathVOC.val1, bme680.breathVOC.val2);
 
 	uint32_t curr_events = 0;
 
