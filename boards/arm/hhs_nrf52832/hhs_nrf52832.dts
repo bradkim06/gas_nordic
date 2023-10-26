@@ -32,10 +32,10 @@
 	vbatt {
 		compatible = "voltage-divider";
 		status = "okay";
-		io-channels = <&adc 0>;
+		io-channels = <&adc 3>;
 		output-ohms = <180000>;
 		full-ohms = <(1500000 + 180000)>;
-		power-gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
+		power-gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
 	};
 
 	leds {
@@ -43,11 +43,11 @@
         status = "okay";
 
 		led0: led_0 {
-			gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 			label = "mcu running status led Green";
 		};
 		led1: led_1 {
-			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
 			label = "low battery indicator led Yellow";
 		};
 	};
@@ -125,7 +125,7 @@
 	status = "okay";
 	node-1 {
 		gpio-hog;
-		gpios = <18 GPIO_ACTIVE_HIGH>;
+		gpios = <11 GPIO_ACTIVE_HIGH>;
 		output-high;
 		line-name = "bme680 sensor enable pin";
 	};
