@@ -60,7 +60,7 @@ Custom board, Out of Tree
 | Level     | Hygienic Rating     | Recommendation                                                 | Exposure    | TVOC [ppm)   |
 | --------- | ------------------- | -------------------------------------------------------------- | ----------- | ------------ |
 | Unhealthy | Unhealty acceptabio | Intense ventilation necess ense ventilation necessary          | hours       | 2.2-5.5      |
-| Poor      | Major objections    | Intensifed ventilation / airing Searchfor sources              | < 1 month   | 0.66-22      |
+| Poor      | Major objections    | Intensifed ventilation / airing Searchfor sources              | < 1 month   | 0.66-2.2     |
 | Moderate  | Some obiections     | Intensified ventilation / airing recommenaco searchtor sources | < 12 months | 0.22 - 0.66  |
 | Good      | No relevant         | Ventilation / airing recommended                               | no limit    | 0.065 - 0.22 |
 | Excellent | No objections       | Target value                                                   | no limit    | 0-0.065      |
