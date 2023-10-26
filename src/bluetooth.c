@@ -70,7 +70,6 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-	k_sleep(K_MSEC(500));
 	notify_gas_enabled = (value == BT_GATT_CCC_NOTIFY);
 	LOG_INF("notify cfg changed %d", notify_gas_enabled);
 	if (notify_gas_enabled) {
@@ -125,7 +124,7 @@ static void update_data_length(struct bt_conn *conn)
 	struct bt_conn_le_data_len_param my_data_len = {
 #define BT_GAP_DATA_LEN_40 0x28
 		.tx_max_len = BT_GAP_DATA_LEN_MAX,
-		.tx_max_time = BT_GAP_DATA_TIME_DEFAULT,
+		.tx_max_time = BT_GAP_DATA_TIME_MAX,
 	};
 	err = bt_conn_le_data_len_update(my_conn, &my_data_len);
 	if (err) {
