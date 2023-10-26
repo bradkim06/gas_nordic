@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(LED, CONFIG_APP_LOG_LEVEL);
 DECLARE_ENUM(led_dev, LED_DEVICE)
 
 #define LED_TIME_MS   100
-#define LED_PWM_LEVEL 30
+#define LED_PWM_LEVEL 10
 
 #define LED_PWM_NODE_ID DT_COMPAT_GET_ANY_STATUS_OKAY(pwm_leds)
 static const struct device *led_pwm = DEVICE_DT_GET(LED_PWM_NODE_ID);
