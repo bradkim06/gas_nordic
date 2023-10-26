@@ -154,7 +154,7 @@ void gas_mon(void)
 
 	while (1) {
 		measuring(false);
-		k_sleep(K_SECONDS(3));
+		k_sleep(K_SECONDS(10));
 	}
 }
 
