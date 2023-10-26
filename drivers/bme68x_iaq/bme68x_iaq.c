@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_LOG_LEVEL);
 
 #define DT_DRV_COMPAT bosch_bme68x
 
-#define BSEC_TOTAL_HEAT_DUR	     UINT16_C(140)
+#define BSEC_TOTAL_HEAT_DUR          UINT16_C(140)
 #define BSEC_INPUT_PRESENT(x, shift) (x.process_data & (1 << (shift - 1)))
 
 /* Temperature offset due to external heat sources. */

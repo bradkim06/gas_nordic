@@ -58,11 +58,11 @@ DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
 	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-	800,			      /* Min Advertising Interval 500ms (800*0.625ms) */
-	3200,			      /* Max Advertising Interval 2000ms (3200*0.625ms) */
-	NULL);			      /* Set to NULL for undirected advertising */
+	800,                          /* Min Advertising Interval 500ms (800*0.625ms) */
+	3200,                         /* Max Advertising Interval 2000ms (3200*0.625ms) */
+	NULL);                        /* Set to NULL for undirected advertising */
 
-#define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define STACKSIZE 1024

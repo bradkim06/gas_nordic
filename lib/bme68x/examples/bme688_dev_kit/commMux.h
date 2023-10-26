@@ -46,9 +46,9 @@
  * Datatype working as an interface descriptor
  */
 typedef struct {
-   TwoWire *wireobj;
-   SPIClass *spiobj;
-   uint8_t select;
+	TwoWire *wireobj;
+	SPIClass *spiobj;
+	uint8_t select;
 } commMux;
 
 /**

@@ -2,12 +2,12 @@
 #define __APP_VERSION_H__
 
 #define VERSION_NUM_H
-#define VERSION_MAJOR	   0
-#define VERSION_MINOR	   1
+#define VERSION_MAJOR      0
+#define VERSION_MINOR      1
 #define VERSION_PATCHLEVEL 0
 
-#define VERSION_MAJOR_INIT	(VERSION_MAJOR + '0')
-#define VERSION_MINOR_INIT	(VERSION_MINOR + '0')
+#define VERSION_MAJOR_INIT      (VERSION_MAJOR + '0')
+#define VERSION_MINOR_INIT      (VERSION_MINOR + '0')
 #define VERSION_PATCHLEVEL_INIT (VERSION_PATCHLEVEL + '0')
 
 // source file build_defs.h
@@ -35,7 +35,7 @@
 	((BUILD_MONTH_IS_OCT || BUILD_MONTH_IS_NOV || BUILD_MONTH_IS_DEC) ? '1' : '0')
 
 #define BUILD_MONTH_CH1                                                                            \
-	((BUILD_MONTH_IS_JAN)	? '1'                                                              \
+	((BUILD_MONTH_IS_JAN)   ? '1'                                                              \
 	 : (BUILD_MONTH_IS_FEB) ? '2'                                                              \
 	 : (BUILD_MONTH_IS_MAR) ? '3'                                                              \
 	 : (BUILD_MONTH_IS_APR) ? '4'                                                              \

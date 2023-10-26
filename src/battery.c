@@ -24,7 +24,7 @@ static struct batt_value batt_pptt;
 
 LOG_MODULE_REGISTER(BATTERY, CONFIG_APP_LOG_LEVEL);
 
-#define VBATT		 DT_PATH(vbatt)
+#define VBATT            DT_PATH(vbatt)
 #define BATTERY_ADC_GAIN ADC_GAIN_1
 
 /* size of stack area used by each thread */

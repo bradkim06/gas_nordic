@@ -2,7 +2,7 @@
  * Copyright (C) 2021 Bosch Sensortec GmbH
  *
  * SPDX-License-Identifier: BSD-3-Clause
- * 
+ *
  */
 
 #include "Arduino.h"
@@ -24,21 +24,18 @@ void setup(void)
 	SPI.begin();
 	Serial.begin(115200);
 
-	while (!Serial)
+	while (!Serial) {
 		delay(10);
+	}
 
 	/* Initializes the sensor based on SPI library */
 	bme.begin(PIN_CS, SPI);
 
-	if(bme.checkStatus())
-	{
-		if (bme.checkStatus() == BME68X_ERROR)
-		{
+	if (bme.checkStatus()) {
+		if (bme.checkStatus() == BME68X_ERROR) {
 			Serial.println("Sensor error:" + bme.statusString());
 			return;
-		}
-		else if (bme.checkStatus() == BME68X_WARNING)
-		{
+		} else if (bme.checkStatus() == BME68X_WARNING) {
 			Serial.println("Sensor Warning:" + bme.statusString());
 		}
 	}
@@ -47,15 +44,16 @@ void setup(void)
 	bme.setTPH();
 
 	/* Heater temperature in degree Celsius */
-	uint16_t tempProf[10] = { 100, 200, 320 };
+	uint16_t tempProf[10] = {100, 200, 320};
 	/* Heating duration in milliseconds */
-	uint16_t durProf[10] = { 150, 150, 150 };
+	uint16_t durProf[10] = {150, 150, 150};
 
 	bme.setSeqSleep(BME68X_ODR_250_MS);
 	bme.setHeaterProf(tempProf, durProf, 3);
 	bme.setOpMode(BME68X_SEQUENTIAL_MODE);
 
-	Serial.println("TimeStamp(ms), Temperature(deg C), Pressure(Pa), Humidity(%), Gas resistance(ohm), Status, Gas index");
+	Serial.println("TimeStamp(ms), Temperature(deg C), Pressure(Pa), Humidity(%), Gas "
+		       "resistance(ohm), Status, Gas index");
 }
 
 void loop(void)
@@ -65,12 +63,10 @@ void loop(void)
 
 	delay(150);
 
-	if (bme.fetchData())
-	{
-		do
-		{
+	if (bme.fetchData()) {
+		do {
 			nFieldsLeft = bme.getData(data);
-			//if (data.status == NEW_GAS_MEAS)
+			// if (data.status == NEW_GAS_MEAS)
 			{
 				Serial.print(String(millis()) + ", ");
 				Serial.print(String(data.temperature) + ", ");
@@ -79,8 +75,10 @@ void loop(void)
 				Serial.print(String(data.gas_resistance) + ", ");
 				Serial.print(String(data.status, HEX) + ", ");
 				Serial.println(data.gas_index);
-				if(data.gas_index == 2) /* Sequential mode sleeps after this measurement */
+				if (data.gas_index ==
+				    2) { /* Sequential mode sleeps after this measurement */
 					delay(250);
+				}
 			}
 		} while (nFieldsLeft);
 	}

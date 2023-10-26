@@ -1,7 +1,7 @@
 #ifndef __APP_GLOBAL_MACRO_H__
 #define __APP_GLOBAL_MACRO_H__
 
-#define str(x)	#x
+#define str(x)  #x
 #define xstr(x) str(x)
 
 // expansion macro for enum value definition

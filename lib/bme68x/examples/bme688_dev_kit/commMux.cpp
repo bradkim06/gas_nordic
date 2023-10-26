@@ -39,7 +39,7 @@
 #include "commMux.h"
 
 #define CLOCK_FREQUENCY 400000
-#define COMM_SPEED 8000000
+#define COMM_SPEED      8000000
 
 const uint8_t I2C_EXPANDER_ADDR = 0x20;
 const uint8_t I2C_EXPANDER_OUTPUT_REG_ADDR = 0x01;
@@ -74,7 +74,7 @@ void commMuxBegin(TwoWire &wireobj, SPIClass &spiobj)
 	spiobj.begin();
 }
 
-/** 
+/**
  * @brief Function to set the ship select pin of the SPI
  */
 static void setChipSelect(TwoWire *wireobj, uint8_t mask)
@@ -94,17 +94,15 @@ static void setChipSelect(TwoWire *wireobj, uint8_t mask)
  */
 int8_t commMuxWrite(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
-	commMux *comm = (commMux*) intf_ptr;
+	commMux *comm = (commMux *)intf_ptr;
 	uint32_t i;
 
-	if (comm)
-	{
+	if (comm) {
 		setChipSelect(comm->wireobj, comm->select);
 
 		comm->spiobj->beginTransaction(SPISettings(COMM_SPEED, MSBFIRST, SPI_MODE0));
 		comm->spiobj->transfer(reg_addr);
-		for (i = 0; i < length; i++)
-		{
+		for (i = 0; i < length; i++) {
 			comm->spiobj->transfer(reg_data[i]);
 		}
 		comm->spiobj->endTransaction();
@@ -122,17 +120,15 @@ int8_t commMuxWrite(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, 
  */
 int8_t commMuxRead(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
-	commMux *comm = (commMux*) intf_ptr;
+	commMux *comm = (commMux *)intf_ptr;
 	uint32_t i;
 
-	if (comm)
-	{
+	if (comm) {
 		setChipSelect(comm->wireobj, comm->select);
 
 		comm->spiobj->beginTransaction(SPISettings(COMM_SPEED, MSBFIRST, SPI_MODE0));
 		comm->spiobj->transfer(reg_addr);
-		for (i = 0; i < length; i++)
-		{
+		for (i = 0; i < length; i++) {
 			reg_data[i] = comm->spiobj->transfer(0xFF);
 		}
 		comm->spiobj->endTransaction();
@@ -150,6 +146,6 @@ int8_t commMuxRead(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *i
  */
 void commMuxDelay(uint32_t period_us, void *intf_ptr)
 {
-	(void) intf_ptr;
+	(void)intf_ptr;
 	delayMicroseconds(period_us);
 }
