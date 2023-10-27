@@ -35,7 +35,7 @@ DEFINE_ENUM(gas_device, DEVICE_LIST)
 /** A discharge curve specific to the gas source. */
 static const struct level_point levels[] = {
 	// Measurement Range 25% Oxygen
-	{250, 656},
+	{250, 662},
 	// Zero current (offset) <0.6 % vol O2
 	{0, 0},
 };
