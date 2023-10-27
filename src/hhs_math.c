@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "hhs_math.h"
 
@@ -15,8 +16,10 @@ int movingAvg(moving_average_t *av_obj, int new_element)
 		av_obj->pos = 0;
 		av_obj->is_filled = true;
 	}
+
 	// return the average
-	return av_obj->sum / (av_obj->is_filled ? av_obj->length : av_obj->pos);
+	return (int)round(
+		((double)av_obj->sum / (double)(av_obj->is_filled ? av_obj->length : av_obj->pos)));
 }
 
 moving_average_t *allocate_moving_average(const int len)
@@ -26,6 +29,8 @@ moving_average_t *allocate_moving_average(const int len)
 	av_obj->pos = 0;
 	av_obj->length = len;
 	av_obj->is_filled = false;
+	av_obj->max = INT_MIN;
+	av_obj->min = INT_MAX;
 	av_obj->buffer = malloc(len * sizeof(int));
 	memset(av_obj->buffer, 0, len * sizeof(int));
 	return av_obj;

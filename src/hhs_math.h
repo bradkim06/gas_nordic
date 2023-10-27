@@ -5,6 +5,8 @@
 
 typedef struct moving_average {
 	int32_t sum;
+	int max;
+	int min;
 	int pos;
 	int *buffer;
 	int length;

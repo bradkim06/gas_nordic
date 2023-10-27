@@ -244,7 +244,7 @@ static bool measuring(bool isInit)
 
 void battmon(void)
 {
-	batt = allocate_moving_average(5);
+	batt = allocate_moving_average(30);
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {
@@ -252,16 +252,11 @@ void battmon(void)
 		return;
 	}
 
-	k_sleep(K_SECONDS(4));
-
-	for (int i = 0; i < 10; i++) {
-		measuring(true);
-		k_sleep(K_MSEC(3));
-	}
+	k_sleep(K_SECONDS(3));
 
 	while (1) {
 		measuring(false);
-		k_sleep(K_SECONDS(60));
+		k_sleep(K_SECONDS(2));
 	}
 }
 
