@@ -20,11 +20,6 @@
 
 LOG_MODULE_REGISTER(GAS_MON, CONFIG_APP_LOG_LEVEL);
 
-static struct gas_sensor_value curr_result[2];
-
-DEFINE_ENUM(gas_device, DEVICE_LIST)
-K_SEM_DEFINE(gas_sem, 1, 1);
-
 #define O2_THRES 2
 
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
@@ -32,6 +27,10 @@ K_SEM_DEFINE(gas_sem, 1, 1);
 #endif
 
 #define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
+
+DEFINE_ENUM(gas_device, DEVICE_LIST)
+K_SEM_DEFINE(gas_sem, 1, 1);
+static struct gas_sensor_value curr_result[2];
 
 /** A discharge curve specific to the gas source. */
 static const struct level_point levels[] = {
@@ -171,8 +170,6 @@ struct gas_sensor_value get_gas_data(enum gas_device dev)
 	return copy;
 }
 
-/* size of stack area used by each thread */
 #define STACKSIZE 1024
-/* scheduling priority used by each thread */
 #define PRIORITY  8
 K_THREAD_DEFINE(gas_id, STACKSIZE, gas_mon, NULL, NULL, NULL, PRIORITY, 0, 0);

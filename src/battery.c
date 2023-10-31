@@ -20,20 +20,13 @@
 #include "hhs_math.h"
 #include "hhs_util.h"
 
-static struct batt_value batt_pptt;
-
 LOG_MODULE_REGISTER(BATTERY, CONFIG_APP_LOG_LEVEL);
-K_SEM_DEFINE(batt_sem, 1, 1);
 
 #define VBATT            DT_PATH(vbatt)
 #define BATTERY_ADC_GAIN ADC_GAIN_1
 
-/* size of stack area used by each thread */
-#define STACKSIZE 1024
-
-/* scheduling priority used by each thread */
-#define PRIORITY 9
-
+K_SEM_DEFINE(batt_sem, 1, 1);
+static struct batt_value batt_pptt;
 static moving_average_t *batt;
 
 /** A discharge curve specific to the power source. */
@@ -274,4 +267,6 @@ struct batt_value get_batt_percent(void)
 }
 
 SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+#define STACKSIZE 1024
+#define PRIORITY  9
 K_THREAD_DEFINE(battmon_id, STACKSIZE, battmon, NULL, NULL, NULL, PRIORITY, 0, 0);

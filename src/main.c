@@ -62,8 +62,6 @@ normally and no error is raised.
  */
 int main(void)
 {
-	k_event_init(&bt_event);
-
 	LOG_INF("Firmware Info : %s", fw_info);
 	LOG_INF("Board:%s SoC:%s Rom:%dkb Ram:%dkb", CONFIG_BOARD, CONFIG_SOC, CONFIG_FLASH_SIZE,
 		CONFIG_SRAM_SIZE);

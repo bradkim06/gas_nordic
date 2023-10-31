@@ -20,17 +20,16 @@
 
 LOG_MODULE_REGISTER(LED, CONFIG_APP_LOG_LEVEL);
 
-#define LED_DEVICE(X)                                                                              \
-	X(stablebatt_g, = 0)                                                                       \
-	X(lowbatt_y, )
-
-DECLARE_ENUM(led_dev, LED_DEVICE)
-
 #define LED_TIME_MS   100
 #define LED_PWM_LEVEL 10
 
 #define LED_PWM_NODE_ID DT_COMPAT_GET_ANY_STATUS_OKAY(pwm_leds)
 static const struct device *led_pwm = DEVICE_DT_GET(LED_PWM_NODE_ID);
+
+#define LED_DEVICE(X)                                                                              \
+	X(stablebatt_g, = 0)                                                                       \
+	X(lowbatt_y, )
+DECLARE_ENUM(led_dev, LED_DEVICE)
 
 static int led_ctrl(uint8_t color, uint16_t delay)
 {
@@ -62,6 +61,6 @@ static void batt_status_led(void)
 	}
 }
 
-#define LED_STACK_SIZE 1024
-#define LED_PRIORITY   11
-K_THREAD_DEFINE(led_id, LED_STACK_SIZE, batt_status_led, NULL, NULL, NULL, LED_PRIORITY, 0, 0);
+#define STACK_SIZE 1024
+#define PRIORITY   11
+K_THREAD_DEFINE(led_id, STACK_SIZE, batt_status_led, NULL, NULL, NULL, PRIORITY, 0, 0);

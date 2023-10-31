@@ -46,14 +46,12 @@ const unsigned char build_time[] = {BUILD_YEAR_CH0,
 				    BUILD_SEC_CH1,
 				    '\0'};
 
+DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
+
+struct k_event bt_event;
 struct bt_conn *my_conn = NULL;
 /* Create variable that holds callback for MTU negotiation */
 static struct bt_gatt_exchange_params exchange_params;
-
-struct k_event bt_event;
-K_EVENT_DEFINE(bt_event);
-
-DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
@@ -64,9 +62,6 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 
 #define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
-
-#define STACKSIZE 2048
-#define PRIORITY  5
 
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
@@ -262,6 +257,8 @@ int bt_setup(void)
 
 	LOG_INF("Advertising successfully started");
 
+	k_event_init(&bt_event);
+
 	return 0;
 }
 
@@ -334,4 +331,7 @@ static void bt_thread(void)
 }
 
 SYS_INIT(bt_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+
+#define STACKSIZE 2048
+#define PRIORITY  5
 K_THREAD_DEFINE(bt_thread_id, STACKSIZE, bt_thread, NULL, NULL, NULL, PRIORITY, 0, 0);

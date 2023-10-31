@@ -5,6 +5,8 @@
  * @version v0.01
  * @date 2023-09-18
  */
+
+#if defined(CONFIG_BME68X)
 #include <math.h>
 
 #include <zephyr/logging/log.h>
@@ -15,7 +17,6 @@
 #include "bluetooth.h"
 #include "hhs_math.h"
 
-#if defined(CONFIG_BME68X)
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
 K_SEM_DEFINE(bme680_sem, 1, 1);
 
@@ -90,12 +91,12 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 #endif
 };
 
-int bme680_mon(void)
+void bme680_mon(void)
 {
 	const struct device *const dev = DEVICE_DT_GET_ANY(bosch_bme68x);
 	if (!device_is_ready(dev)) {
 		LOG_ERR("device is not ready");
-		return 0;
+		return;
 	}
 
 	k_sem_init(&temp_sem, 0, 1);
@@ -104,9 +105,8 @@ int bme680_mon(void)
 	int ret = sensor_trigger_set(dev, &trig, trigger_handler);
 	if (ret) {
 		LOG_ERR("couldn't set trigger");
-		return 0;
+		return;
 	}
-	return 0;
 }
 
 struct bme680_data get_bme680_data(void)
@@ -118,9 +118,7 @@ struct bme680_data get_bme680_data(void)
 	return copy;
 }
 
-/* size of stack area used by each thread */
 #define STACKSIZE 1024
-/* scheduling priority used by each thread */
 #define PRIORITY  7
 K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_mon, NULL, NULL, NULL, PRIORITY, 0, 0);
 #endif
