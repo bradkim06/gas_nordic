@@ -1,9 +1,9 @@
 /**
- * @file bme680.c
- * @brief
- * @author bradkim02
- * @version v0.01
- * @date 2023-09-18
+ * @file src/bme680_app.c - bme680 environments sensor application
+ *
+ * @brief Code for collecting environmental sensor information through the BME680 driver.
+ *
+ * @author bradkim06@gmail.com
  */
 
 #if defined(CONFIG_BME68X)
@@ -18,21 +18,33 @@
 #include "hhs_math.h"
 
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
+/* Used for Mutual Exclusion of BME680 data. */
 K_SEM_DEFINE(bme680_sem, 1, 1);
 
+/**
+ * Various air quality warning thresholds and detailed information
+ * for each parameter can be found in the README.md.
+ */
 #define IAQ_UNHEALTHY_THRES 100
 #define VOC_UNHEALTHY_THRES 2
 #define CO2_UNHEALTHY_THRES 1000
 
+/* Semaphore for synchronization for initial gas data temperature correction. */
 struct k_sem temp_sem;
 
 const struct sensor_trigger trig = {
-	.chan = SENSOR_CHAN_ALL,
 	.type = SENSOR_TRIG_TIMER,
+	.chan = SENSOR_CHAN_ALL,
 };
 
 struct bme680_data bme680 = {0};
 
+/**
+ * @brief When receiving Zephyr sensor data, the default specified valid range for decimal data
+ * (6 digits) is adjusted arbitrarily and rounded.
+ *
+ * @param n: The number of decimal places to truncate.
+ */
 static void adjustValuePrecision(int n)
 {
 	int32_t multiplier = pow(10, n);
@@ -41,6 +53,13 @@ static void adjustValuePrecision(int n)
 	bme680.humidity.val2 /= multiplier;
 }
 
+/**
+ * @brief Callback function called at the BSEC library's sample rate
+ *
+ * Retrieves both BME680 and BSEC library measurement results. For detailed data, please refer to
+ * the structure comments or README.md. Additionally, if IAQ, CO2, or VOC data exceeds a threshold,
+ * a BLE event is triggered once.
+ */
 static void trigger_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
 	static bool is_init = true;
@@ -91,7 +110,15 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 #endif
 };
 
-void bme680_mon(void)
+/**
+ * @brief The BME680 thread function runs only once and performs two tasks:
+ *
+ * 1.Initializes the Bosch BME68x device and registers the trigger handler.
+ * 2.Initializes the temperature semaphore so that when temperature data is available,
+ * the gas sensorcan start operating
+ * (the gas sensor's results are calibrated based on temperature)
+ */
+void bme680_thread_fn(void)
 {
 	const struct device *const dev = DEVICE_DT_GET_ANY(bosch_bme68x);
 	if (!device_is_ready(dev)) {
@@ -120,5 +147,5 @@ struct bme680_data get_bme680_data(void)
 
 #define STACKSIZE 1024
 #define PRIORITY  7
-K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_mon, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
 #endif

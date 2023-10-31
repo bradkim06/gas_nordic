@@ -1,9 +1,11 @@
 /**
- * @file battery.c
- * @brief
- * @author bradkim06
- * @version v0.01
- * @date 2023-09-18
+ * @file src/battery.c - Battery monitoring and management application code
+ *
+ * @brief This program provides functionality for battery monitoring and management.
+ * It reads the battery voltage using an ADC and calculates battery levels and status.
+ * It maintains a moving average for battery voltage and checks for low battery warnings.
+ *
+ * @author bradkim06@gmail.com
  */
 #include <math.h>
 #include <stdio.h>
@@ -22,12 +24,17 @@
 
 LOG_MODULE_REGISTER(BATTERY, CONFIG_APP_LOG_LEVEL);
 
-#define VBATT            DT_PATH(vbatt)
-#define BATTERY_ADC_GAIN ADC_GAIN_1
+/* Devicetree Acess */
+#define VBATT DT_PATH(vbatt)
 
+/* Used for Mutual Exclusion of battery data. */
 K_SEM_DEFINE(batt_sem, 1, 1);
+
 static struct batt_value batt_pptt;
+/* battery percent moving average filter */
 static moving_average_t *batt;
+
+static bool battery_ok;
 
 /** A discharge curve specific to the power source. */
 static const struct level_point levels[] = {
@@ -87,6 +94,15 @@ static struct divider_data divider_data = {
 	.adc = DEVICE_DT_GET(DT_IO_CHANNELS_CTLR(VBATT)),
 };
 
+/**
+ * @brief Setup the divider functionality.
+ *
+ * This function configures the divider based on the provided settings and hardware components.
+ * It initializes the ADC sequence, sets up GPIO control for power management, and configures the
+ * ADC channel. The function returns error codes if there are any issues during setup.
+ *
+ * @return 0 on success, or a negative error code on failure.
+ */
 static int divider_setup(void)
 {
 	const struct divider_config *cfg = &divider_config;
@@ -123,6 +139,7 @@ static int divider_setup(void)
 	};
 
 #ifdef CONFIG_ADC_NRFX_SAADC
+#define BATTERY_ADC_GAIN ADC_GAIN_1
 	*accp = (struct adc_channel_cfg){
 		.gain = BATTERY_ADC_GAIN,
 		.reference = ADC_REF_INTERNAL,
@@ -146,8 +163,14 @@ static int divider_setup(void)
 	return rc;
 }
 
-static bool battery_ok;
-
+/**
+ * @brief Setup the battery management.
+ *
+ * This function sets up the battery management by calling the "divider_setup" function.
+ * It also checks if the battery setup was successful and updates the "battery_ok" flag accordingly.
+ *
+ * @return 0 on success, or a negative error code on failure.
+ */
 static int battery_setup(void)
 {
 	int rc = divider_setup();
@@ -215,12 +238,20 @@ static int battery_sample(void)
 	return (rc < 0) ? 0 : rc;
 }
 
-static bool measuring(bool isInit)
+/**
+ * @brief Measure battery status and update battery level information.
+ *
+ * This function measures the battery status, calculates the battery level in pptt, and updates the
+ * battery level information. It also checks if the battery level is below a low battery threshold
+ * and logs a warning if necessary.
+ *
+ * @return True if the battery level is below the low battery threshold, false otherwise.
+ */
+static bool measuring(void)
 {
 	/* Burn battery so you can see that this works over time */
 	int curr_batt_mV = battery_sample();
 	int batt_mV = movingAvg(batt, curr_batt_mV);
-
 	unsigned int pptt = level_pptt(batt_mV, levels);
 
 	k_sem_take(&batt_sem, K_FOREVER);
@@ -229,19 +260,28 @@ static bool measuring(bool isInit)
 	k_sem_give(&batt_sem);
 
 	bool low_batt_status = (pptt < LOW_BATT_THRESHOLD) ? true : false;
-	if (!isInit) {
-		char logStr[100] = {0};
-		sprintf(logStr, "curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
-		CODE_IF_ELSE(low_batt_status, LOG_INF("low batt warnning %s", logStr),
-			     LOG_DBG("stable batt %s", logStr));
-	}
+
+#define MAX_LOG_CASE "low batt warnning curr : 99999mV avg : 99999mV; 10000pptt, "
+	char logStr[sizeof(MAX_LOG_CASE)];
+	sprintf(logStr, "curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
+	CODE_IF_ELSE(low_batt_status, LOG_INF("low batt warnning %s", logStr),
+		     LOG_DBG("stable batt %s", logStr));
 
 	return low_batt_status;
 }
 
-void battmon(void)
+/**
+ * @brief Battery measurement thread function.
+ *
+ * This function is the entry point for the battery measurement thread. It initializes the
+ * battery measurement and then periodically calls the "measuring" function to measure
+ * battery status. The battery status is maintained with a moving average, and low battery
+ * warnings are logged as needed.
+ */
+static void batt_thread_fn(void)
 {
-	batt = allocate_moving_average(30);
+#define FILTER_SIZE 30
+	batt = allocate_moving_average(FILTER_SIZE);
 	int rc = battery_measure_enable(true);
 
 	if (rc != 0) {
@@ -249,11 +289,13 @@ void battmon(void)
 		return;
 	}
 
-	k_sleep(K_SECONDS(3));
+#define INITIAL_DELAY_SEC 3
+	k_sleep(K_SECONDS(INITIAL_DELAY_SEC));
 
 	while (1) {
-		measuring(false);
-		k_sleep(K_SECONDS(2));
+		measuring();
+#define THREAD_PERIOD_SEC 2
+		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
 	}
 }
 
@@ -269,4 +311,4 @@ struct batt_value get_batt_percent(void)
 SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 #define STACKSIZE 1024
 #define PRIORITY  9
-K_THREAD_DEFINE(battmon_id, STACKSIZE, battmon, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(battmon_id, STACKSIZE, batt_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);

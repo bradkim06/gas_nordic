@@ -2,8 +2,8 @@
 #define __APP_VERSION_H__
 
 #define VERSION_NUM_H
-#define VERSION_MAJOR      0
-#define VERSION_MINOR      1
+#define VERSION_MAJOR      1
+#define VERSION_MINOR      0
 #define VERSION_PATCHLEVEL 0
 
 #define VERSION_MAJOR_INIT      (VERSION_MAJOR + '0')

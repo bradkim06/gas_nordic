@@ -19,18 +19,23 @@
 /** Product : 10sec **/
 #define TIMEOUT_SEC 60
 
+/* Define a list of Bluetooth events with their corresponding values. */
 #define BT_EVENT_LIST(X)                                                                           \
+	/* event wait timeout(TIMEOUT_SEC) */                                                      \
 	X(TIMEOUT, = 0x01)                                                                         \
-	X(GAS_NOTIFY_EN, = 0x02)                                                                   \
+	/* event ble notify enabled */                                                             \
+	X(BLE_NOTIFY_EN, = 0x02)                                                                   \
+	/* event gas sensor value exceeding the threshold(O2_THRES) */                             \
 	X(GAS_VAL_CHANGE, = 0x04)                                                                  \
+	/* event iaq value exceeding the threshold(IAQ_VAL_THRESH) */                              \
 	X(IAQ_VAL_THRESH, = 0x08)                                                                  \
+	/* event voc value exceeding the threshold(VOC_VAL_THRESH) */                              \
 	X(VOC_VAL_THRESH, = 0x10)                                                                  \
+	/* event co2 value exceeding the threshold(CO2_VAL_THRESH) */                              \
 	X(CO2_VAL_THRESH, = 0x20)
-
 DECLARE_ENUM(bt_tx_event, BT_EVENT_LIST)
 
 extern struct k_event bt_event;
-extern bool notify_gas_enabled;
 
 int bt_setup(void);
 

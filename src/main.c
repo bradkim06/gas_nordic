@@ -1,11 +1,11 @@
 /**
- * @file main.c
- * @brief
- * @author bradkim06
- * @version 0.01
- * @date 2023-09-12
+ * @file src/main.c - The starting point of the user application
+ *
+ * @brief The operation of the main() function, which is the first function called after kernel
+ * initialization
+ *
+ * @author bradkim06@gmail.com
  */
-
 #include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>

@@ -1,9 +1,9 @@
 /**
- * @file gas.c
- * @brief
- * @author bradkim06
- * @version v0.01
- * @date 2023-09-18
+ * @file src/gas.c - electrochemical gas sensor adc application code
+ *
+ * @brief Program for Reading electrochemical Gas Sensor ADC Information Using Nordic's SAADC.
+ *
+ * @author bradkim06@gmail.com
  */
 #include <math.h>
 #include <stdlib.h>
@@ -20,38 +20,46 @@
 
 LOG_MODULE_REGISTER(GAS_MON, CONFIG_APP_LOG_LEVEL);
 
-#define O2_THRES 2
-
-#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
-#error "No suitable devicetree overlay specified"
-#endif
-
-#define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
-
 DEFINE_ENUM(gas_device, DEVICE_LIST)
+/* Used for Mutual Exclusion of gas sensor data. */
 K_SEM_DEFINE(gas_sem, 1, 1);
+/* The current value of the gas sensor */
 static struct gas_sensor_value curr_result[2];
 
-/** A discharge curve specific to the gas source. */
+/* A discharge curve specific to the gas source. */
 static const struct level_point levels[] = {
-	// Measurement Range 25% Oxygen
+	// Measurement Range Max 25% Oxygen
 	{250, 662},
 	// Zero current (offset) <0.6 % vol O2
 	{0, 0},
 };
 
-/** A discharge curve specific to the gas source. */
+/* A discharge curve specific to the gas temperature coefficeint. */
 static const struct level_point coeff_levels[] = {
-	// Output Temperature Coefficeint Oxygen
+	/* Output Temperature Coefficeint Oxygen Sensor */
 	{10500, 5000}, {10400, 4000}, {10000, 2000}, {9600, 0}, {9000, -2000},
 };
+
+/* pwm_led Devicetree access */
+#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
+#error "No suitable devicetree overlay specified"
+#endif
+#define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
 
 /* Data of ADC io-channels specified in devicetree. */
 static const struct adc_dt_spec adc_channels[] = {
 	DT_FOREACH_PROP_ELEM(DT_PATH(zephyr_user), io_channels, DT_SPEC_AND_COMMA)};
+/* Gas sensor data moving average filter */
 static moving_average_t *gas[2];
 
-static void measuring(bool isInit)
+/**
+ * @brief Function to perform gas sensor measurements.
+ *
+ * This function reads gas sensor values using the ADC interface, applies temperature
+ * compensation, and calculates moving averages. It also checks for any changes in
+ * gas sensor values and posts an event accordingly.
+ */
+static void measuring(void)
 {
 	uint16_t buf;
 	struct adc_sequence sequence = {
@@ -102,6 +110,8 @@ static void measuring(bool isInit)
 		int32_t avg_mv = movingAvg(gas[i], calib_val_mv);
 		int gas_avg_pptt = level_pptt(avg_mv, levels);
 
+/* Gas sensor threshold for triggering BLE notify events on change */
+#define O2_THRES 2
 		if (abs(gas_avg_pptt - prev_o2) > O2_THRES) {
 			o2_changed = true;
 			prev_o2 = gas_avg_pptt;
@@ -112,23 +122,27 @@ static void measuring(bool isInit)
 		curr_result[i].val2 = gas_avg_pptt % 10;
 		k_sem_give(&gas_sem);
 
-		if (!isInit) {
-			LOG_DBG("%s - channel %d: "
-				" curr %" PRId32 "mV avg %" PRId32 "mV %d.%d%%",
-				enum_to_str(i), adc_channels[i].channel_id, calib_val_mv, avg_mv,
-				curr_result[i].val1, curr_result[i].val2);
-		}
+		LOG_DBG("%s - channel %d: "
+			" curr %" PRId32 "mV avg %" PRId32 "mV %d.%d%%",
+			enum_to_str(i), adc_channels[i].channel_id, calib_val_mv, avg_mv,
+			curr_result[i].val1, curr_result[i].val2);
 	}
 
 	if (o2_changed) {
-		if (!isInit) {
-			LOG_INF("value changed %d.%d%%", curr_result[0].val1, curr_result[0].val2);
-			k_event_post(&bt_event, GAS_VAL_CHANGE);
-		}
+		LOG_INF("value changed %d.%d%%", curr_result[0].val1, curr_result[0].val2);
+		k_event_post(&bt_event, GAS_VAL_CHANGE);
 	}
 }
 
-void gas_mon(void)
+/**
+ * @brief Gas sensor thread function.
+ *
+ * This function configures ADC channels, sets up moving averages, and performs gas sensor
+ * measurements. It reads and processes gas sensor data based on temperature compensation and checks
+ * for changes.
+ */
+#define FILTER_SIZE 30
+static void gas_thread_fn(void)
 {
 	/* Configure channels individually prior to sampling. */
 	for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
@@ -145,7 +159,7 @@ void gas_mon(void)
 	}
 
 	for (int i = 0; i < 2; i++) {
-		gas[i] = allocate_moving_average(30);
+		gas[i] = allocate_moving_average(FILTER_SIZE);
 	}
 
 	if (k_sem_take(&temp_sem, K_SECONDS(10)) != 0) {
@@ -155,9 +169,10 @@ void gas_mon(void)
 		LOG_INF("temperature sensing ok");
 	}
 
+#define THREAD_PERIOD_SEC 2
 	while (1) {
-		measuring(false);
-		k_sleep(K_SECONDS(2));
+		measuring();
+		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
 	}
 }
 
@@ -172,4 +187,4 @@ struct gas_sensor_value get_gas_data(enum gas_device dev)
 
 #define STACKSIZE 1024
 #define PRIORITY  8
-K_THREAD_DEFINE(gas_id, STACKSIZE, gas_mon, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(gas_id, STACKSIZE, gas_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
