@@ -24,7 +24,7 @@ static struct gas_sensor_value curr_result[2];
 
 DEFINE_ENUM(gas_device, DEVICE_LIST)
 
-#define O2_THRES 3
+#define O2_THRES 2
 
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
 #error "No suitable devicetree overlay specified"

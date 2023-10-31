@@ -18,7 +18,6 @@ struct bme_sample_result {
 	double temperature;
 	double humidity;
 	double pressure;
-#if defined(CONFIG_BME68X_IAQ)
 	// Indoor-air-quality (IAQ)
 	/* arr[0] : iaq value, arr[1] : iaq accuracy */
 	uint16_t air_quality[2];
@@ -26,7 +25,6 @@ struct bme_sample_result {
 	double eCO2;
 	// Conversion into breath-VOC equivalents in ppm concentration
 	double breathVOC;
-#endif
 };
 
 struct bme68x_iaq_config {

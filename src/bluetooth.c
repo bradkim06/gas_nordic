@@ -321,7 +321,7 @@ static void bt_thread(void)
 #if defined(CONFIG_BME68X)
 		p += sprintf(p, ";%u;%u;%u", (uint8_t)bme680.temp.val1, (uint32_t)bme680.press.val1,
 			     (uint8_t)bme680.humidity.val1);
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 		p += sprintf(p, ";%u.%u;%u;%u", (uint8_t)bme680.iaq.val1, (uint8_t)bme680.iaq.val2,
 			     (uint32_t)bme680.eCO2.val1, (uint16_t)bme680.breathVOC.val1);
 #endif

@@ -12,7 +12,7 @@ config BME68X
 	help
 	  Enable driver for BME68X I2C- or SPI- based temperature, pressure, humidity and gas sensor.
 
-config BME68X_IAQ
+config BME68X_IAQ_EN
 	bool "measuring Gas & Bosch IAQ"
 	depends on SETTINGS && !SETTINGS_NONE
 	depends on BME68X

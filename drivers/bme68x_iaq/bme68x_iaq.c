@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_LOG_LEVEL);
 /* Temperature offset due to external heat sources. */
 static const float temp_offset = (CONFIG_BME68X_IAQ_TEMPERATURE_OFFSET / (float)100);
 
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 #define BSEC_N_OUTPUTS 6
 #else
 #define BSEC_N_OUTPUTS 3
@@ -50,7 +50,7 @@ static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[BSEC_N_O
 		.sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
 		.sample_rate = BSEC_SAMPLE_RATE,
 	},
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 	{
 		.sensor_id = BSEC_OUTPUT_IAQ,
 		.sample_rate = BSEC_SAMPLE_RATE_IAQ,
@@ -165,7 +165,7 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 			data->latest.humidity = (double)outputs[i].signal;
 			LOG_DBG("Hum: %.2f %%", data->latest.humidity);
 			break;
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 		case BSEC_OUTPUT_IAQ:
 			data->latest.air_quality[0] = (uint16_t)outputs[i].signal;
 			data->latest.air_quality[1] = outputs[i].accuracy;
@@ -269,7 +269,7 @@ static int apply_sensor_settings(const struct device *dev, bsec_bme_settings_t s
 	struct bme68x_heatr_conf heater_config = {0};
 	struct bme68x_iaq_data *data = dev->data;
 
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 	heater_config.enable = BME68X_ENABLE;
 #else
 	heater_config.enable = BME68X_DISABLE;
@@ -515,7 +515,7 @@ static int bme68x_channel_get(const struct device *dev, enum sensor_channel chan
 	} else if (chan == SENSOR_CHAN_PRESS) {
 		sensor_value_from_double(val, data->latest.pressure);
 	}
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 	else if (chan == SENSOR_CHAN_IAQ) {
 		val->val1 = data->latest.air_quality[0];
 		val->val2 = data->latest.air_quality[1];

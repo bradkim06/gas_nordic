@@ -48,7 +48,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &bme680.temp);
 	sensor_channel_get(dev, SENSOR_CHAN_PRESS, &bme680.press);
 	sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &bme680.humidity);
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 	sensor_channel_get(dev, SENSOR_CHAN_IAQ, &bme680.iaq);
 	sensor_channel_get(dev, SENSOR_CHAN_CO2, &bme680.eCO2);
 	sensor_channel_get(dev, SENSOR_CHAN_VOC, &bme680.breathVOC);
@@ -62,7 +62,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	LOG_DBG("temp: %d.%02d°C; press: %d.%02dPa; humidity: %d.%02d%%", bme680.temp.val1,
 		bme680.temp.val2, bme680.press.val1, bme680.press.val2, bme680.humidity.val1,
 		bme680.humidity.val2);
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 
 	LOG_DBG("iaq: %d(acc:%d); CO2: %dppm VOC: %d.%dppm", bme680.iaq.val1, bme680.iaq.val2,
 		bme680.eCO2.val1, bme680.breathVOC.val1, bme680.breathVOC.val2);

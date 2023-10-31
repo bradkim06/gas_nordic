@@ -11,7 +11,7 @@ struct bme680_data {
 	struct sensor_value temp;
 	struct sensor_value press;
 	struct sensor_value humidity;
-#if defined(CONFIG_BME68X_IAQ)
+#if defined(CONFIG_BME68X_IAQ_EN)
 	struct sensor_value iaq;
 	struct sensor_value eCO2;      // ppm
 	struct sensor_value breathVOC; // ppm
