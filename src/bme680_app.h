@@ -18,7 +18,7 @@ struct bme680_data {
 #endif
 };
 
-extern struct bme680_data bme680;
+struct bme680_data get_bme680_data(void);
 
 #endif
 #endif

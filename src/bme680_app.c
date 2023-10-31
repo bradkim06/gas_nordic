@@ -17,6 +17,7 @@
 
 #if defined(CONFIG_BME68X)
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
+K_SEM_DEFINE(bme680_sem, 1, 1);
 
 #define IAQ_UNHEALTHY_THRES 100
 #define VOC_UNHEALTHY_THRES 2
@@ -44,7 +45,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	static bool is_init = true;
 	static uint32_t events = 0;
 
-	// sensor_sample_fetch(dev);
+	k_sem_take(&bme680_sem, K_FOREVER);
 	sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &bme680.temp);
 	sensor_channel_get(dev, SENSOR_CHAN_PRESS, &bme680.press);
 	sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &bme680.humidity);
@@ -54,6 +55,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	sensor_channel_get(dev, SENSOR_CHAN_VOC, &bme680.breathVOC);
 #endif
 	adjustValuePrecision(4);
+	k_sem_give(&bme680_sem);
 	if (is_init) {
 		is_init = false;
 		k_sem_give(&temp_sem);
@@ -105,6 +107,15 @@ int bme680_mon(void)
 		return 0;
 	}
 	return 0;
+}
+
+struct bme680_data get_bme680_data(void)
+{
+	k_sem_take(&bme680_sem, K_FOREVER);
+	struct bme680_data copy = bme680;
+	k_sem_give(&bme680_sem);
+
+	return copy;
 }
 
 /* size of stack area used by each thread */

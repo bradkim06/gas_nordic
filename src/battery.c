@@ -23,6 +23,7 @@
 static struct batt_value batt_pptt;
 
 LOG_MODULE_REGISTER(BATTERY, CONFIG_APP_LOG_LEVEL);
+K_SEM_DEFINE(batt_sem, 1, 1);
 
 #define VBATT            DT_PATH(vbatt)
 #define BATTERY_ADC_GAIN ADC_GAIN_1
@@ -228,8 +229,11 @@ static bool measuring(bool isInit)
 	int batt_mV = movingAvg(batt, curr_batt_mV);
 
 	unsigned int pptt = level_pptt(batt_mV, levels);
+
+	k_sem_take(&batt_sem, K_FOREVER);
 	batt_pptt.val1 = pptt / 100;
 	batt_pptt.val2 = (pptt % 100) / 10;
+	k_sem_give(&batt_sem);
 
 	bool low_batt_status = (pptt < LOW_BATT_THRESHOLD) ? true : false;
 	if (!isInit) {
@@ -262,7 +266,11 @@ void battmon(void)
 
 struct batt_value get_batt_percent(void)
 {
-	return batt_pptt;
+	k_sem_take(&batt_sem, K_FOREVER);
+	struct batt_value copy = batt_pptt;
+	k_sem_give(&batt_sem);
+
+	return copy;
 }
 
 SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

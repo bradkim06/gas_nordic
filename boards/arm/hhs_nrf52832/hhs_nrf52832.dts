@@ -93,7 +93,7 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	/* datasheet value different, ideal 90uA +-20
+	/* datasheet value different, ideal 90uA +-20 (at 20.9% o2)
 	 *
 	 * 1% current 5uA -> sensor vout = (Curr * Rl) * (1 + R1 / R2) =
      * Max Output Voltage(25% oxygen) = (5.093*25*0.001*0.001*100)*(1+5100/100) = 662

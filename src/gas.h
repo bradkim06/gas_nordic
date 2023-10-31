@@ -16,6 +16,6 @@ struct gas_sensor_value {
 	unsigned int val2;
 };
 
-struct gas_sensor_value get_gas_value(enum gas_device dev);
+struct gas_sensor_value get_gas_data(enum gas_device dev);
 
 #endif

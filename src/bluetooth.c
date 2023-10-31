@@ -65,7 +65,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 #define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
-#define STACKSIZE 1024
+#define STACKSIZE 2048
 #define PRIORITY  5
 
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
@@ -305,12 +305,14 @@ static void bt_thread(void)
 			continue;
 		}
 
-		struct gas_sensor_value o2 = get_gas_value(O2);
-		struct gas_sensor_value gas = get_gas_value(GAS);
+		struct gas_sensor_value o2 = get_gas_data(O2);
+		struct gas_sensor_value gas = get_gas_data(GAS);
 		struct batt_value batt = get_batt_percent();
+		struct bme680_data env = get_bme680_data();
+
 		time_t rawtime = (k_uptime_get() / 1000 + epoch);
-		char timestamp[20];
-		strftime(timestamp, 20, "%m-%dT%X", gmtime(&rawtime));
+		char timestamp[sizeof("01-01T00:00:00")];
+		strftime(timestamp, sizeof(timestamp), "%m-%dT%X", gmtime(&rawtime));
 
 		char tx_data[100];
 		char *p = tx_data;
@@ -319,11 +321,11 @@ static void bt_thread(void)
 			     (uint8_t)batt.val2);
 
 #if defined(CONFIG_BME68X)
-		p += sprintf(p, ";%u;%u;%u", (uint8_t)bme680.temp.val1, (uint32_t)bme680.press.val1,
-			     (uint8_t)bme680.humidity.val1);
+		p += sprintf(p, ";%u;%u;%u", (uint8_t)env.temp.val1, (uint32_t)env.press.val1,
+			     (uint8_t)env.humidity.val1);
 #if defined(CONFIG_BME68X_IAQ_EN)
-		p += sprintf(p, ";%u.%u;%u;%u", (uint8_t)bme680.iaq.val1, (uint8_t)bme680.iaq.val2,
-			     (uint32_t)bme680.eCO2.val1, (uint16_t)bme680.breathVOC.val1);
+		p += sprintf(p, ";%u.%u;%u;%u", (uint8_t)env.iaq.val1, (uint8_t)env.iaq.val2,
+			     (uint32_t)env.eCO2.val1, (uint16_t)env.breathVOC.val1);
 #endif
 #endif
 		strcat(tx_data, "\n");

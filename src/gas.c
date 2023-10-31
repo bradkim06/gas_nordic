@@ -23,6 +23,7 @@ LOG_MODULE_REGISTER(GAS_MON, CONFIG_APP_LOG_LEVEL);
 static struct gas_sensor_value curr_result[2];
 
 DEFINE_ENUM(gas_device, DEVICE_LIST)
+K_SEM_DEFINE(gas_sem, 1, 1);
 
 #define O2_THRES 2
 
@@ -92,9 +93,10 @@ static void measuring(bool isInit)
 			continue;
 		}
 
+		struct bme680_data env = get_bme680_data();
 		double temp_coeff =
-			(10000.f / (double)level_pptt(bme680.temp.val1 * 100 + bme680.temp.val2,
-						      coeff_levels));
+			(10000.f /
+			 (double)level_pptt(env.temp.val1 * 100 + env.temp.val2, coeff_levels));
 		int32_t calib_val_mv = (int32_t)round(val_mv * temp_coeff);
 		LOG_DBG("temp coeff : %f raw : %d calib : %d", temp_coeff, val_mv, calib_val_mv);
 
@@ -106,8 +108,10 @@ static void measuring(bool isInit)
 			prev_o2 = gas_avg_pptt;
 		}
 
+		k_sem_take(&gas_sem, K_FOREVER);
 		curr_result[i].val1 = gas_avg_pptt / 10;
 		curr_result[i].val2 = gas_avg_pptt % 10;
+		k_sem_give(&gas_sem);
 
 		if (!isInit) {
 			LOG_DBG("%s - channel %d: "
@@ -158,9 +162,13 @@ void gas_mon(void)
 	}
 }
 
-struct gas_sensor_value get_gas_value(enum gas_device dev)
+struct gas_sensor_value get_gas_data(enum gas_device dev)
 {
-	return curr_result[dev];
+	k_sem_take(&gas_sem, K_FOREVER);
+	struct gas_sensor_value copy = curr_result[dev];
+	k_sem_give(&gas_sem);
+
+	return copy;
 }
 
 /* size of stack area used by each thread */
