@@ -34,16 +34,21 @@
 #include "hhs_util.h"
 #include "bme680_app.h"
 
+/* Registers the HHS_BT module with the specified log level. */
 LOG_MODULE_REGISTER(HHS_BT, CONFIG_APP_LOG_LEVEL);
 
+/* Defines an enumeration for the bt_tx_event with the list of BT_EVENT_LIST values. */
 DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
 
 /* Structure for generating a BLE notify event (kernel API). */
 struct k_event bt_event;
-/* representing a connection to a remote device (kernel API). */
+
+/* Representing a connection to a remote device (kernel API). */
 struct bt_conn *my_conn = NULL;
-/* Flag for transmitting only when notify is enabled */
+
+/* Flag for transmitting only when notify is enabled. */
 static bool notify_gas_enabled = false;
+
 /* Variable for not transmitting if the MTU size is not negotiated. */
 static uint16_t mtu_size = 27;
 
@@ -53,13 +58,19 @@ static uint16_t mtu_size = 27;
  * This function is invoked when the CCC descriptor of the Gas Sensor characteristic is modified
  * on the client side. It updates the notify_gas_enabled flag and posts a BLE_NOTIFY_EN event
  * if notifications are enabled.
+ *
  * @param attr The BT GATT attribute that has been changed.
  * @param value The new value of the CCC descriptor.
  */
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
+	/* Update the notify_gas_enabled flag */
 	notify_gas_enabled = (value == BT_GATT_CCC_NOTIFY);
+
+	/* Log the change in the CCC descriptor */
 	LOG_INF("notify cfg changed %d", notify_gas_enabled);
+
+	/* If notifications are enabled, post a BLE_NOTIFY_EN event */
 	if (notify_gas_enabled) {
 		k_event_post(&bt_event, BLE_NOTIFY_EN);
 	}
@@ -69,7 +80,6 @@ static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_
 BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
 		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_LED, BT_GATT_CHRC_WRITE,
 					      BT_GATT_PERM_WRITE, NULL, NULL, NULL),
-		       /* Create and add the MYSENSOR characteristic and its CCCD  */
 		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_GAS, BT_GATT_CHRC_NOTIFY,
 					      BT_GATT_PERM_NONE, NULL, NULL, NULL),
 		       BT_GATT_CCC(mylbsbc_ccc_gas_cfg_changed,
@@ -86,16 +96,18 @@ BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
  * including flags, device name, and other information.
  */
 static const struct bt_data ad[] = {
+	/* Set the flags for the advertisement data */
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	/* Set the device name for the advertisement data */
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
-/**
- * Bluetooth service data structure.
- *
- * This structure defines the Bluetooth service data format, including the service UUID.
+/*
+ * This is a static constant structure that contains the Bluetooth data.
+ * It is used to define the Bluetooth data bytes and the UUID value.
  */
 static const struct bt_data sd[] = {
+	// Defines the Bluetooth data bytes and the UUID value.
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_HHS_VAL),
 };
 
@@ -111,27 +123,44 @@ static const struct bt_data sd[] = {
 static void update_phy(struct bt_conn *conn)
 {
 	int err;
+
+	/* Set the preferred physical layer options */
 	const struct bt_conn_le_phy_param preferred_phy = {
 		.options = BT_CONN_LE_PHY_OPT_NONE,
 		.pref_rx_phy = BT_GAP_LE_PHY_2M,
 		.pref_tx_phy = BT_GAP_LE_PHY_2M,
 	};
+
+	/* Update the physical layer of the connection */
 	err = bt_conn_le_phy_update(conn, &preferred_phy);
+
+	/* Check for errors and log if necessary */
 	if (err) {
 		LOG_ERR("bt_conn_le_phy_update() returned %d", err);
+		return;
 	}
 }
 
-/* Define the function to update the connection's data length */
+/*
+ * Function: update_data_length
+ * Description: This function updates the data length of the given connection.
+ * Parameters:
+ * 		conn - pointer to the connection to be updated
+ * Return: None
+ */
 static void update_data_length(struct bt_conn *conn)
 {
 	int err;
+	/* Define the data length parameters */
 	struct bt_conn_le_data_len_param my_data_len = {
-#define BT_GAP_DATA_LEN_40 0x28
 		.tx_max_len = BT_GAP_DATA_LEN_MAX,
 		.tx_max_time = BT_GAP_DATA_TIME_MAX,
 	};
+
+	/* Update the data length of the connection */
 	err = bt_conn_le_data_len_update(my_conn, &my_data_len);
+
+	/* Check for errors */
 	if (err) {
 		LOG_ERR("data_len_update failed (err %d)", err);
 	}
@@ -141,7 +170,10 @@ static void update_data_length(struct bt_conn *conn)
 static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 			  struct bt_gatt_exchange_params *params)
 {
+	// Log the result of the MTU exchange
 	LOG_INF("MTU exchange %s", att_err == 0 ? "successful" : "failed");
+
+	// If the exchange was successful, update the MTU size
 	if (!att_err) {
 		uint16_t payload_mtu =
 			bt_gatt_get_mtu(conn) - 3; // 3 bytes used for Attribute headers.
@@ -151,7 +183,7 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 }
 
 /**
- * Update the Maximum Transmission Unit (MTU) for the Bluetooth connection.
+ * @brief Update the Maximum Transmission Unit (MTU) for the Bluetooth connection.
  *
  * This function initiates an MTU exchange with a Bluetooth connection. It sets up the callback
  * function for handling MTU negotiation. If the exchange fails, it logs an error message.
@@ -160,13 +192,18 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
  */
 static void update_mtu(struct bt_conn *conn)
 {
-	int err;
 	/* Create variable that holds callback for MTU negotiation */
 	static struct bt_gatt_exchange_params exchange_params;
+
+	/* Set the callback function for handling MTU negotiation */
 	exchange_params.func = exchange_func;
 
-	err = bt_gatt_exchange_mtu(conn, &exchange_params);
+	/* Initiate MTU exchange with the given Bluetooth connection */
+	int err = bt_gatt_exchange_mtu(conn, &exchange_params);
+
+	/* Check if the exchange was successful */
 	if (err) {
+		/* Log an error message if the exchange failed */
 		LOG_ERR("bt_gatt_exchange_mtu failed (err %d)", err);
 	}
 }
@@ -184,32 +221,44 @@ static void update_mtu(struct bt_conn *conn)
  */
 static void on_connected(struct bt_conn *conn, uint8_t err)
 {
+	// Check if connection was successful
 	if (err) {
 		LOG_ERR("Connection failed (err %u)", err);
 		return;
 	}
 
+	// Log successful connection
 	LOG_INF("Connected");
+
+	// Store connection in global variable
 	my_conn = bt_conn_ref(conn);
 
-	/* Declare a structure to store the connection parameters */
+	// Declare a structure to store the connection parameters
 	struct bt_conn_info info;
+
+	// Retrieve connection parameters
 	err = bt_conn_get_info(conn, &info);
+
+	// Check if retrieval was successful
 	if (err) {
 		LOG_ERR("bt_conn_get_info() returned %d", err);
 		return;
 	}
 
-	/* Add the connection parameters to your log */
-	double connection_interval = info.le.interval * 1.25; // in ms
-	uint16_t supervision_timeout = info.le.timeout * 10;  // in ms
+	// Calculate connection interval in milliseconds
+	double connection_interval = info.le.interval * 1.25;
+
+	// Calculate supervision timeout in milliseconds
+	uint16_t supervision_timeout = info.le.timeout * 10;
+
+	// Log connection parameters
 	LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms",
 		connection_interval, info.le.latency, supervision_timeout);
 
-	/* Update the PHY mode */
+	// Update the PHY mode
 	update_phy(my_conn);
 
-	/* Update the data length and MTU */
+	// Update the data length and MTU
 	update_data_length(my_conn);
 	update_mtu(my_conn);
 }
@@ -366,15 +415,19 @@ static int bt_gas_notify(char *sensor_value)
  *
  * @note The function sends notifications only if a client is subscribed.
  */
+/* Function to handle Bluetooth thread operations */
 static void bt_thread_fn(void)
 {
+	/* Define initial delay in seconds */
 #define INITIAL_DELAY 2
+	/* Sleep for initial delay */
 	k_sleep(K_SECONDS(INITIAL_DELAY));
 
 	/* Convert the firmware build time to the time_t format for adding it to the current kernel
 	 * time (k_uptime_get()). */
 	struct tm tm;
 	time_t epoch = 0;
+	/* Build time in string format */
 	const unsigned char build_time[] = {BUILD_YEAR_CH0,
 					    BUILD_YEAR_CH1,
 					    BUILD_YEAR_CH2,
@@ -395,41 +448,53 @@ static void bt_thread_fn(void)
 					    BUILD_SEC_CH0,
 					    BUILD_SEC_CH1,
 					    '\0'};
+	/* Convert build time string to time_t format */
 	if (strptime(build_time, "%Y-%m-%dT%X", &tm) != NULL) {
 		epoch = mktime(&tm);
 	}
 
+	/* Loop for sending notifications */
 	while (1) {
-		/* Send notification, the function sends notifications only if a client is
-		 * subscribed */
+		/* Wait for events from the Bluetooth event queue */
 		uint32_t events =
 			k_event_wait(&bt_event, bt_tx_event_sum, true, K_SECONDS(TIMEOUT_SEC));
 		char str[20];
+		/* Check if timeout event occurred */
 		CODE_IF_ELSE((events == TIMEOUT), sprintf(str, "%s second", xstr(TIMEOUT_SEC)),
 			     sprintf(str, "type 0x%02X", events));
+		/* Log event information */
 		LOG_INF("event : \t%s(%s)", enum_to_str(events), str);
 
+		/* Check if gas notification is enabled */
 		if (!notify_gas_enabled) {
 			LOG_WRN("notify disable");
 			continue;
 		}
 
+		/* Get gas sensor values */
 		struct gas_sensor_value o2 = get_gas_data(O2);
 		struct gas_sensor_value gas = get_gas_data(GAS);
+		/* Get battery percentage */
 		struct batt_value batt = get_batt_percent();
+		/* Get BME680 sensor data */
 		struct bme680_data env = get_bme680_data();
 
+		/* Get current time in time_t format */
 		time_t rawtime = (k_uptime_get() / 1000 + epoch);
+		/* Convert time to string format */
 		char timestamp[sizeof("01-01T00:00:00")];
 		strftime(timestamp, sizeof(timestamp), "%m-%dT%X", gmtime(&rawtime));
 
+		/* Create string for notification data */
 		char tx_data[100];
 		char *p = tx_data;
+		/* Add gas sensor values to string */
 		p += sprintf(p, "[%s] %u.%u;%u;%u.%u", timestamp, (uint8_t)o2.val1,
 			     (uint8_t)o2.val2, (uint16_t)gas.val1, (uint8_t)batt.val1,
 			     (uint8_t)batt.val2);
 
 #if defined(CONFIG_BME68X)
+		/* Add BME680 sensor data to string */
 		p += sprintf(p, ";%u;%u;%u", (uint8_t)env.temp.val1, (uint32_t)env.press.val1,
 			     (uint8_t)env.humidity.val1);
 #if defined(CONFIG_BME68X_IAQ_EN)
@@ -437,7 +502,9 @@ static void bt_thread_fn(void)
 			     (uint32_t)env.eCO2.val1, (uint16_t)env.breathVOC.val1);
 #endif
 #endif
+		/* Add newline character to string */
 		strcat(tx_data, "\n");
+		/* Send gas notification */
 		bt_gas_notify(tx_data);
 	}
 }

@@ -3,7 +3,12 @@
  *
  * @brief Program for Reading electrochemical Gas Sensor ADC Information Using Nordic's SAADC.
  *
- * @author bradkim06@gmail.com
+ * This file contains the code for reading gas sensor values using the ADC interface, applying
+ * temperature compensation, and calculating moving averages. It also checks for any changes in
+ * gas sensor values and posts an event accordingly.
+ *
+ * @author
+ * bradkim06@gmail.com
  */
 #include <math.h>
 #include <stdlib.h>
@@ -18,15 +23,19 @@
 #include "hhs_util.h"
 #include "bme680_app.h"
 
+/* Module registration for Gas Monitor with the specified log level. */
 LOG_MODULE_REGISTER(GAS_MON, CONFIG_APP_LOG_LEVEL);
 
+/* Enumeration of gas devices from the DEVICE_LIST. */
 DEFINE_ENUM(gas_device, DEVICE_LIST)
-/* Used for Mutual Exclusion of gas sensor data. */
+
+/* Semaphore used for mutual exclusion of gas sensor data. */
 K_SEM_DEFINE(gas_sem, 1, 1);
-/* The current value of the gas sensor */
+
+/* Current value of the gas sensor. */
 static struct gas_sensor_value curr_result[2];
 
-/* A discharge curve specific to the gas source. */
+/* Discharge curve specific to the gas source. */
 static const struct level_point levels[] = {
 	// Measurement Range Max 25% Oxygen
 	{250, 662},
@@ -34,13 +43,13 @@ static const struct level_point levels[] = {
 	{0, 0},
 };
 
-/* A discharge curve specific to the gas temperature coefficeint. */
+/* Discharge curve specific to the gas temperature coefficient. */
 static const struct level_point coeff_levels[] = {
-	/* Output Temperature Coefficeint Oxygen Sensor */
+	/* Output Temperature Coefficient Oxygen Sensor */
 	{10500, 5000}, {10400, 4000}, {10000, 2000}, {9600, 0}, {9000, -2000},
 };
 
-/* pwm_led Devicetree access */
+/* Access to the adc device tree. */
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
 #error "No suitable devicetree overlay specified"
 #endif
@@ -49,7 +58,7 @@ static const struct level_point coeff_levels[] = {
 /* Data of ADC io-channels specified in devicetree. */
 static const struct adc_dt_spec adc_channels[] = {
 	DT_FOREACH_PROP_ELEM(DT_PATH(zephyr_user), io_channels, DT_SPEC_AND_COMMA)};
-/* Gas sensor data moving average filter */
+/* Moving average filter for gas sensor data. */
 static moving_average_t *gas[2];
 
 /**
@@ -58,6 +67,19 @@ static moving_average_t *gas[2];
  * This function reads gas sensor values using the ADC interface, applies temperature
  * compensation, and calculates moving averages. It also checks for any changes in
  * gas sensor values and posts an event accordingly.
+ *
+ * @details
+ * This function reads gas sensor values using the ADC interface, applies temperature
+ * compensation, and calculates moving averages. It also checks for any changes in
+ * gas sensor values and posts an event accordingly. The function reads the gas sensor
+ * values using the ADC interface and applies temperature compensation to the values.
+ * It then calculates moving averages of the gas sensor values and checks for any changes
+ * in the values. If there is a change in the values, the function posts an event to
+ * notify the change.
+ *
+ * @param[in] None
+ *
+ * @retval None
  */
 static void measuring(void)
 {
@@ -144,7 +166,7 @@ static void measuring(void)
 #define FILTER_SIZE 30
 static void gas_thread_fn(void)
 {
-	/* Configure channels individually prior to sampling. */
+	/* Configure channels individually before sampling. */
 	for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
 		if (!device_is_ready(adc_channels[i].dev)) {
 			LOG_ERR("ADC controller device %s not ready", adc_channels[i].dev->name);
@@ -158,20 +180,25 @@ static void gas_thread_fn(void)
 		}
 	}
 
+	/* Allocate memory for moving averages. */
 	for (int i = 0; i < 2; i++) {
 		gas[i] = allocate_moving_average(FILTER_SIZE);
 	}
 
+	/* Wait for temperature data to become available. */
 	if (k_sem_take(&temp_sem, K_SECONDS(10)) != 0) {
 		LOG_WRN("Temperature Input data not available!");
 	} else {
-		/* fetch available data */
+		/* Fetch available data. */
 		LOG_INF("temperature sensing ok");
 	}
 
 #define THREAD_PERIOD_SEC 2
 	while (1) {
+		/* Perform gas sensor measurements. */
 		measuring();
+
+		/* Wait for the specified period of time. */
 		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
 	}
 }
