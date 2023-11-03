@@ -4,18 +4,6 @@
 
 #include "hhs_math.h"
 
-/**
- * @brief Calculate and return the moving average.
- *
- * This function calculates the moving average of a series of numbers.
- * It subtracts the oldest number from the previous sum, adds the new number,
- * and updates the position in the buffer array. If the position exceeds the length of the array,
- * it resets the position and sets the is_filled flag to true.
- *
- * @param av_obj Pointer to the moving_average_t object.
- * @param new_element The new number to be added to the moving average calculation.
- * @return The calculated moving average as an integer.
- */
 int calculate_moving_average(moving_average_t *av_obj, int new_element)
 {
 	/* Subtract the oldest number from the previous sum, add the new number */
@@ -36,15 +24,6 @@ int calculate_moving_average(moving_average_t *av_obj, int new_element)
 		 (double)(av_obj->is_filled ? av_obj->buffer_length : av_obj->current_position)));
 }
 
-/**
- * @brief Allocates and initializes a moving_average_t object.
- *
- * This function allocates memory for a moving_average_t object and its buffer.
- * It also initializes the members of the object.
- *
- * @param len The length of the buffer to be allocated.
- * @return A pointer to the allocated moving_average_t object.
- */
 moving_average_t *allocate_moving_average(const int buffer_length)
 {
 	/* Allocate memory for the moving_average_t object */
@@ -74,15 +53,6 @@ moving_average_t *allocate_moving_average(const int buffer_length)
 	return moving_average_obj;
 }
 
-/**
- * @brief Frees the memory allocated for a moving_average_t object.
- *
- * This function frees the memory allocated for the buffer of the moving_average_t object
- * and the object itself. It also sets the pointer to the object to NULL to prevent
- * dangling pointers.
- *
- * @param avg_obj Pointer to the moving_average_t object to be freed.
- */
 void free_moving_average(moving_average_t **avg_obj)
 {
 	if (avg_obj == NULL || *avg_obj == NULL) {
@@ -96,26 +66,29 @@ void free_moving_average(moving_average_t **avg_obj)
 	*avg_obj = NULL;
 }
 
-unsigned int level_pptt(unsigned int batt_mV, const struct level_point *curve)
+unsigned int calculate_level_pptt(unsigned int voltage_mV, const struct level_point *curvePoints)
 {
-	const struct level_point *pb = curve;
+	const struct level_point *currentPoint = curvePoints;
 
-	if (batt_mV >= pb->lvl_mV) {
-		/* Measured voltage above highest point, cap at maximum. */
-		return pb->lvl_pptt;
-	}
-	/* Go down to the last point at or below the measured voltage. */
-	while ((pb->lvl_pptt > 0) && (batt_mV < pb->lvl_mV)) {
-		++pb;
-	}
-	if (batt_mV < pb->lvl_mV) {
-		/* Below lowest point, cap at minimum */
-		return pb->lvl_pptt;
+	/* If the measured voltage is above the highest point, cap at maximum. */
+	if (voltage_mV >= currentPoint->lvl_mV) {
+		return currentPoint->lvl_pptt;
 	}
 
-	/* Linear interpolation between below and above points. */
-	const struct level_point *pa = pb - 1;
+	/* Iterate to the last point at or below the measured voltage. */
+	while ((currentPoint->lvl_pptt > 0) && (voltage_mV < currentPoint->lvl_mV)) {
+		++currentPoint;
+	}
 
-	return pb->lvl_pptt +
-	       ((pa->lvl_pptt - pb->lvl_pptt) * (batt_mV - pb->lvl_mV) / (pa->lvl_mV - pb->lvl_mV));
+	/* If the measured voltage is below the lowest point, cap at minimum. */
+	if (voltage_mV < currentPoint->lvl_mV) {
+		return currentPoint->lvl_pptt;
+	}
+
+	/* Perform linear interpolation between the points below and above the measured voltage. */
+	const struct level_point *previousPoint = currentPoint - 1;
+
+	return currentPoint->lvl_pptt + ((previousPoint->lvl_pptt - currentPoint->lvl_pptt) *
+					 (voltage_mV - currentPoint->lvl_mV) /
+					 (previousPoint->lvl_mV - currentPoint->lvl_mV));
 }

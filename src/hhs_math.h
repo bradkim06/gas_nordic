@@ -17,28 +17,38 @@ typedef struct moving_average {
 } moving_average_t;
 
 /**
- * @brief Moving Average Filter Function
+ * @brief Calculate and return the moving average.
  *
- * @param av_obj: The moving average filter structure with the addition of new data.
- * @param new_element: new data
+ * This function calculates the moving average of a series of numbers.
+ * It subtracts the oldest number from the previous sum, adds the new number,
+ * and updates the position in the buffer array. If the position exceeds the length of the array,
+ * it resets the position and sets the is_filled flag to true.
  *
- * @return average data value
+ * @param av_obj Pointer to the moving_average_t object.
+ * @param new_element The new number to be added to the moving average calculation.
+ * @return The calculated moving average as an integer.
  */
 int calculate_moving_average(moving_average_t *av_obj, int new_element);
 
 /**
- * @brief Dynamic allocation of moving average filter structures
+ * @brief Allocates and initializes a moving_average_t object.
  *
- * @param len: number of moving average filters
+ * This function allocates memory for a moving_average_t object and its buffer.
+ * It also initializes the members of the object.
  *
- * @return The allocated moving average filter structure.
+ * @param len The length of the buffer to be allocated.
+ * @return A pointer to the allocated moving_average_t object.
  */
-moving_average_t *allocate_moving_average(const int len);
+moving_average_t *allocate_moving_average(const int buffer_length);
 
 /**
- * @brief Release the dynamically allocated moving average filter structure
+ * @brief Frees the memory allocated for a moving_average_t object.
  *
- * @param av_obj: The moving average filter structure to be released
+ * This function frees the memory allocated for the buffer of the moving_average_t object
+ * and the object itself. It also sets the pointer to the object to NULL to prevent
+ * dangling pointers.
+ *
+ * @param avg_obj Pointer to the moving_average_t object to be freed.
  */
 void free_moving_average(moving_average_t **av_obj);
 
@@ -56,14 +66,15 @@ struct level_point {
 	int16_t lvl_mV;
 };
 
-/** Calculate the estimated pptt level based on a measured voltage.
+/**
+ * @brief Calculate the estimated pptt level based on a measured voltage.
  *
- * @param mV: a measured adc voltage level.
+ * This function takes a measured ADC voltage level and a curve for the type of level_point as
+ * input. It then calculates and returns the estimated curved pptt.
  *
- * @param curve: the curve for the type of level_point
+ * @param voltage_mV The measured ADC voltage level in millivolts.
+ * @param curvePoints Pointer to the curve for the type of level_point.
  *
- * @return the estimated curved pptt
+ * @return The estimated curved pptt as an unsigned integer.
  */
-unsigned int level_pptt(unsigned int mV, const struct level_point *curve);
-
-#endif
+unsigned int calculate_level_pptt(unsigned int voltage_mV, const struct level_point *curvePoints);
