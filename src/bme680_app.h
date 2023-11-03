@@ -1,38 +1,61 @@
+/**
+ * @file src/bme680_data.h
+ * @brief This file contains the structure for BME680 sensor data.
+ *
+ * The BME680 sensor measures temperature, pressure, humidity, IAQ, eCO2, and breathVOC.
+ * The average current consumption is 3.7 µA at 1 Hz for humidity, pressure, and temperature,
+ * and 0.09‒12 mA for p/h/T/gas depending on the operation mode.
+ */
 #ifndef __APP_BME680_H__
 #define __APP_BME680_H__
 
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/kernel.h>
 
-extern struct k_sem temp_sem;
+extern struct k_sem temperature_semaphore;
 
-/* average current consumption
- * 3.7 µA at 1 Hz humidity, pressure and temperature
- * 0.09‒12 mA for p/h/T/gas depending on operation mode
- */
 #if defined(CONFIG_BME68X)
+/**
+ * @struct bme680_data
+ * @brief A structure to hold the BME680 sensor data.
+ *
+ * This structure holds the sensor data for temperature, pressure, humidity, IAQ, eCO2, and
+ * breathVOC.
+ */
 struct bme680_data {
-	/* The unit of temperature data is Celsius,
-	 * and the range is from -40 to 85. */
+	/**
+	 * @brief Temperature data in Celsius, ranging from -40 to 85.
+	 */
 	struct sensor_value temp;
-	/* The unit of atmospheric pressure is hPa,
-	 * and the range is from 300 to 1100. (Sensitivity Err ±0.25%)*/
+
+	/**
+	 * @brief Atmospheric pressure data in hPa, ranging from 300 to 1100. Sensitivity error is
+	 * ±0.25%.
+	 */
 	struct sensor_value press;
-	/* The unit of humidity is percentage,
-	 * and the range is from 0 to 100%. (Accuracy tolerance ±3%)*/
+
+	/**
+	 * @brief Humidity data in percentage, ranging from 0 to 100%. Accuracy tolerance is ±3%.
+	 */
 	struct sensor_value humidity;
+
 #if defined(CONFIG_BME68X_IAQ_EN)
-	/* The unit of iaq is IAQ Index ,
-	 * and the range is from 0 to 500 (Sensor-to-sensor deviation ±15%).
-	 * See detail README.md */
+	/**
+	 * @brief IAQ Index data, ranging from 0 to 500. Sensor-to-sensor deviation is ±15%.
+	 * For more details, see README.md.
+	 */
 	struct sensor_value iaq;
-	/* The unit of co2 is ppm,
-	 * and the range is from 0 to infinity.
-	 * See detail README.md */
+
+	/**
+	 * @brief eCO2 data in ppm, ranging from 0 to infinity.
+	 * For more details, see README.md.
+	 */
 	struct sensor_value eCO2;
-	/* The unit of voc is ppm,
-	 * and the range is from 0 to 1000.
-	 * See detail README.md */
+
+	/**
+	 * @brief Breath VOC data in ppm, ranging from 0 to 1000.
+	 * For more details, see README.md.
+	 */
 	struct sensor_value breathVOC;
 #endif
 };

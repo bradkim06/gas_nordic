@@ -28,11 +28,9 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_APP_LOG_LEVEL);
 #define VBATT DT_PATH(vbatt)
 
 /* Used for Mutual Exclusion of battery data. */
-K_SEM_DEFINE(batt_sem, 1, 1);
+K_SEM_DEFINE(batt_data_sem, 1, 1);
 
-static struct batt_value batt_pptt;
-/* battery percent moving average filter */
-static moving_average_t *batt;
+static struct batt_value batt_percent;
 
 static bool battery_ok;
 
@@ -62,14 +60,24 @@ struct io_channel_config {
 	uint8_t channel;
 };
 
+/**
+ * @struct divider_config
+ * @brief This structure is used for configuring the divider.
+ */
 struct divider_config {
+	/**< IO channel configuration */
 	struct io_channel_config io_channel;
+	/**< GPIO specification for power battery enable*/
 	struct gpio_dt_spec power_gpios;
-	/* output_ohm is used as a flag value: if it is nonzero then
+	/**
+	 * @brief Output resistance in ohms.
+	 *
+	 * This is used as a flag value: if it is nonzero then
 	 * the battery is measured through a voltage divider;
 	 * otherwise it is assumed to be directly connected to Vdd.
 	 */
 	uint32_t output_ohm;
+	/**< Full resistance in ohms */
 	uint32_t full_ohm;
 };
 
@@ -247,63 +255,93 @@ static int battery_sample(void)
  *
  * @return True if the battery level is below the low battery threshold, false otherwise.
  */
-static bool measuring(void)
+static bool measure_battery_status(moving_average_t *battery_status)
 {
-	/* Burn battery so you can see that this works over time */
-	int curr_batt_mV = battery_sample();
-	int batt_mV = movingAvg(batt, curr_batt_mV);
-	unsigned int pptt = level_pptt(batt_mV, levels);
+	// Get current battery voltage
+	int current_battery_mV = battery_sample();
+	// Calculate moving average
+	int average_battery_mV = calculate_moving_average(battery_status, current_battery_mV);
+	// Calculate power-to-time-to-charge ratio
+	unsigned int pptt = level_pptt(average_battery_mV, levels);
 
-	k_sem_take(&batt_sem, K_FOREVER);
-	batt_pptt.val1 = pptt / 100;
-	batt_pptt.val2 = (pptt % 100) / 10;
-	k_sem_give(&batt_sem);
+	// Take the battery semaphore to ensure exclusive access to the global battery pptt value
+	k_sem_take(&batt_data_sem, K_FOREVER);
+	batt_percent.val1 = pptt / 100;        // Update the first digit of the pptt value
+	batt_percent.val2 = (pptt % 100) / 10; // Update the second digit of the pptt value
+	k_sem_give(&batt_data_sem);            // Release the battery semaphore
 
-	bool low_batt_status = (pptt < LOW_BATT_THRESHOLD) ? true : false;
+	// Check if the pptt is below the low battery threshold and set the low battery status
+	// accordingly
+	bool is_low_battery = (pptt < LOW_BATT_THRESHOLD) ? true : false;
 
-#define MAX_LOG_CASE "low batt warnning curr : 99999mV avg : 99999mV; 10000pptt, "
-	char logStr[sizeof(MAX_LOG_CASE)];
-	sprintf(logStr, "curr : %dmV avg : %d mV; %u pptt, ", curr_batt_mV, batt_mV, pptt);
-	CODE_IF_ELSE(low_batt_status, LOG_INF("low batt warnning %s", logStr),
-		     LOG_DBG("stable batt %s", logStr));
+	// Define a string for logging purposes
+#define MAX_LOG_CASE "low batt warning curr : -2147483648mV avg : -2147483648mV; -2147483648pptt, "
+	char log_message[sizeof(MAX_LOG_CASE)];
+	// Format the string with the current battery voltage, moving average, and pptt values
+	sprintf(log_message, "curr : %dmV avg : %d mV; %u pptt, ", current_battery_mV,
+		average_battery_mV, pptt);
+	// Log the appropriate message based on the low battery status
+	CODE_IF_ELSE(is_low_battery, LOG_INF("low batt warning %s", log_message),
+		     LOG_DBG("stable batt %s", log_message));
 
-	return low_batt_status;
+	return is_low_battery; // Return the low battery status
 }
 
 /**
  * @brief Battery measurement thread function.
  *
  * This function is the entry point for the battery measurement thread. It initializes the
- * battery measurement and then periodically calls the "measuring" function to measure
+ * battery measurement and then periodically calls the "measure_battery_status" function to measure
  * battery status. The battery status is maintained with a moving average, and low battery
  * warnings are logged as needed.
  */
-static void batt_thread_fn(void)
+static void battery_measurement_thread(void)
 {
+/* Define filter size for moving average */
 #define FILTER_SIZE 30
-	batt = allocate_moving_average(FILTER_SIZE);
-	int rc = battery_measure_enable(true);
 
-	if (rc != 0) {
-		LOG_ERR("Failed initialize battery measurement: %d", rc);
+	/* Allocate memory for moving average */
+	/* battery percent moving average filter */
+	moving_average_t *battery_status = allocate_moving_average(FILTER_SIZE);
+	if (battery_status == NULL) {
 		return;
 	}
 
+	/* Enable battery measurement */
+	int measurement_status = battery_measure_enable(true);
+
+	/* Check for errors */
+	if (measurement_status != 0) {
+		/* Log error and return */
+		LOG_ERR("Failed to initialize battery measurement: %d", measurement_status);
+		free_moving_average(battery_status);
+		return;
+	}
+
+/* Define initial delay for thread in seconds */
 #define INITIAL_DELAY_SEC 3
+
+	/* Sleep for initial delay */
 	k_sleep(K_SECONDS(INITIAL_DELAY_SEC));
 
+	/* Loop for continuous measurement */
 	while (1) {
-		measuring();
+		/* Call function for measuring battery */
+		measure_battery_status(battery_status);
+
+/* Define thread period in seconds */
 #define THREAD_PERIOD_SEC 2
+
+		/* Sleep for thread period */
 		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
 	}
 }
 
-struct batt_value get_batt_percent(void)
+struct batt_value get_battery_percent(void)
 {
-	k_sem_take(&batt_sem, K_FOREVER);
-	struct batt_value copy = batt_pptt;
-	k_sem_give(&batt_sem);
+	k_sem_take(&batt_data_sem, K_FOREVER);
+	struct batt_value copy = batt_percent;
+	k_sem_give(&batt_data_sem);
 
 	return copy;
 }
@@ -311,4 +349,5 @@ struct batt_value get_batt_percent(void)
 SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 #define STACKSIZE 1024
 #define PRIORITY  9
-K_THREAD_DEFINE(battmon_id, STACKSIZE, batt_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(battmon_id, STACKSIZE, battery_measurement_thread, NULL, NULL, NULL, PRIORITY, 0,
+		0);

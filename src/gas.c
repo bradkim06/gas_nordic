@@ -56,10 +56,8 @@ static const struct level_point coeff_levels[] = {
 #define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
 
 /* Data of ADC io-channels specified in devicetree. */
-static const struct adc_dt_spec adc_channels[] = {
+static const struct adc_dt_spec gas_adc_channels[] = {
 	DT_FOREACH_PROP_ELEM(DT_PATH(zephyr_user), io_channels, DT_SPEC_AND_COMMA)};
-/* Moving average filter for gas sensor data. */
-static moving_average_t *gas[2];
 
 /**
  * @brief Function to perform gas sensor measurements.
@@ -81,7 +79,7 @@ static moving_average_t *gas[2];
  *
  * @retval None
  */
-static void measuring(void)
+static void perform_gas_measurement(moving_average_t *gas_moving_avg[])
 {
 	uint16_t buf;
 	struct adc_sequence sequence = {
@@ -97,9 +95,9 @@ static void measuring(void)
 	for (size_t i = 0U; i < 1; i++) {
 		int32_t val_mv;
 
-		(void)adc_sequence_init_dt(&adc_channels[i], &sequence);
+		(void)adc_sequence_init_dt(&gas_adc_channels[i], &sequence);
 
-		int err = adc_read(adc_channels[i].dev, &sequence);
+		int err = adc_read(gas_adc_channels[i].dev, &sequence);
 		if (err < 0) {
 			LOG_WRN("Could not read (%d)", err);
 			continue;
@@ -110,12 +108,12 @@ static void measuring(void)
 		 * in the ADC sample buffer should be a signed 2's
 		 * complement value.
 		 */
-		if (adc_channels[i].channel_cfg.differential) {
+		if (gas_adc_channels[i].channel_cfg.differential) {
 			val_mv = (int32_t)((int16_t)buf);
 		} else {
 			val_mv = (buf < 0) ? 0 : (int32_t)buf;
 		}
-		err = adc_raw_to_millivolts_dt(&adc_channels[i], &val_mv);
+		err = adc_raw_to_millivolts_dt(&gas_adc_channels[i], &val_mv);
 		/* conversion to mV may not be supported, skip if not */
 		if (err < 0) {
 			LOG_WRN(" (value in mV not available)");
@@ -129,7 +127,7 @@ static void measuring(void)
 		int32_t calib_val_mv = (int32_t)round(val_mv * temp_coeff);
 		LOG_DBG("temp coeff : %f raw : %d calib : %d", temp_coeff, val_mv, calib_val_mv);
 
-		int32_t avg_mv = movingAvg(gas[i], calib_val_mv);
+		int32_t avg_mv = calculate_moving_average(gas_moving_avg[i], calib_val_mv);
 		int gas_avg_pptt = level_pptt(avg_mv, levels);
 
 /* Gas sensor threshold for triggering BLE notify events on change */
@@ -146,7 +144,7 @@ static void measuring(void)
 
 		LOG_DBG("%s - channel %d: "
 			" curr %" PRId32 "mV avg %" PRId32 "mV %d.%d%%",
-			enum_to_str(i), adc_channels[i].channel_id, calib_val_mv, avg_mv,
+			enum_to_str(i), gas_adc_channels[i].channel_id, calib_val_mv, avg_mv,
 			curr_result[i].val1, curr_result[i].val2);
 	}
 
@@ -163,55 +161,69 @@ static void measuring(void)
  * measurements. It reads and processes gas sensor data based on temperature compensation and checks
  * for changes.
  */
-#define FILTER_SIZE 30
-static void gas_thread_fn(void)
+#define GAS_MEASUREMENT_INTERVAL_SEC 2
+#define GAS_AVERAGE_FILTER_SIZE      30
+static void gas_measurement_thread(void)
 {
 	/* Configure channels individually before sampling. */
-	for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
-		if (!device_is_ready(adc_channels[i].dev)) {
-			LOG_ERR("ADC controller device %s not ready", adc_channels[i].dev->name);
+	for (size_t idx = 0U; idx < ARRAY_SIZE(gas_adc_channels); idx++) {
+		if (!device_is_ready(gas_adc_channels[idx].dev)) {
+			LOG_ERR("ADC controller device %s not ready",
+				gas_adc_channels[idx].dev->name);
 			return;
 		}
 
-		int err = adc_channel_setup_dt(&adc_channels[i]);
-		if (err < 0) {
-			LOG_ERR("Could not setup channel #%d (%d)", i, err);
+		int setupError = adc_channel_setup_dt(&gas_adc_channels[idx]);
+		if (setupError < 0) {
+			LOG_ERR("Could not setup channel #%d (%d)", idx, setupError);
 			return;
 		}
 	}
 
+	/* Moving average filter for gas sensor data. */
+	moving_average_t *gas_moving_avg[2];
+
 	/* Allocate memory for moving averages. */
-	for (int i = 0; i < 2; i++) {
-		gas[i] = allocate_moving_average(FILTER_SIZE);
+	for (int idx = 0; idx < 2; idx++) {
+		gas_moving_avg[idx] = allocate_moving_average(GAS_AVERAGE_FILTER_SIZE);
+		if (gas_moving_avg[idx] == NULL) {
+			return;
+		}
 	}
 
 	/* Wait for temperature data to become available. */
-	if (k_sem_take(&temp_sem, K_SECONDS(10)) != 0) {
+	if (k_sem_take(&temperature_semaphore, K_SECONDS(10)) != 0) {
 		LOG_WRN("Temperature Input data not available!");
+		// TODO Temperature sensor error case
 	} else {
 		/* Fetch available data. */
-		LOG_INF("temperature sensing ok");
+		LOG_INF("Gas temperature sensing ok");
 	}
 
-#define THREAD_PERIOD_SEC 2
 	while (1) {
 		/* Perform gas sensor measurements. */
-		measuring();
+		perform_gas_measurement(gas_moving_avg);
 
 		/* Wait for the specified period of time. */
-		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
+		k_sleep(K_SECONDS(GAS_MEASUREMENT_INTERVAL_SEC));
 	}
 }
 
-struct gas_sensor_value get_gas_data(enum gas_device dev)
+struct gas_sensor_value get_gas_data(enum gas_device gas_dev)
 {
+	/* Take semaphore to ensure exclusive access to 'curr_result' */
 	k_sem_take(&gas_sem, K_FOREVER);
-	struct gas_sensor_value copy = curr_result[dev];
+
+	/* Make a copy of the current gas sensor data */
+	struct gas_sensor_value gas_sensor_copy = curr_result[gas_dev];
+
+	/* Release semaphore */
 	k_sem_give(&gas_sem);
 
-	return copy;
+	/* Return the copied data */
+	return gas_sensor_copy;
 }
 
 #define STACKSIZE 1024
 #define PRIORITY  8
-K_THREAD_DEFINE(gas_id, STACKSIZE, gas_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(gas_id, STACKSIZE, gas_measurement_thread, NULL, NULL, NULL, PRIORITY, 0, 0);

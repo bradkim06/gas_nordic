@@ -18,6 +18,6 @@ struct batt_value {
  *
  * @return A copy of the battery percentage value.
  */
-struct batt_value get_batt_percent(void);
+struct batt_value get_battery_percent(void);
 
 #endif

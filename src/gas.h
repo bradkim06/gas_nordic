@@ -18,14 +18,14 @@ struct gas_sensor_value {
 };
 
 /**
- * @brief Get gas sensor data for the specified device.
+ * @brief Get the gas sensor data.
  *
- * This function retrieves gas sensor data by taking a semaphore to ensure mutual exclusion,
- * makes a copy of the data, and then releases the semaphore.
+ * This function takes a semaphore to ensure exclusive access to 'curr_result',
+ * makes a copy of the current gas sensor data, then releases the semaphore.
  *
- * @param dev The gas sensor device for which to retrieve data.
- * @return A copy of the gas sensor data for the specified device.
+ * @param gas_dev The gas device to get data from.
+ * @return The copied gas sensor data.
  */
-struct gas_sensor_value get_gas_data(enum gas_device dev);
+struct gas_sensor_value get_gas_data(enum gas_device gas_dev);
 
 #endif

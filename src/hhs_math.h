@@ -7,11 +7,11 @@ typedef struct moving_average {
 	/* sum of all buffer data */
 	int32_t sum;
 	/* current buffer position */
-	int pos;
+	int current_position;
 	/* Data storage array */
 	int *buffer;
 	/* Data Buffer Size */
-	int length;
+	int buffer_length;
 	/* Becomes true if the buffer is filled at least once */
 	bool is_filled;
 } moving_average_t;
@@ -24,7 +24,7 @@ typedef struct moving_average {
  *
  * @return average data value
  */
-int movingAvg(moving_average_t *av_obj, int new_element);
+int calculate_moving_average(moving_average_t *av_obj, int new_element);
 
 /**
  * @brief Dynamic allocation of moving average filter structures

@@ -475,7 +475,7 @@ static void bt_thread_fn(void)
 		struct gas_sensor_value o2 = get_gas_data(O2);
 		struct gas_sensor_value gas = get_gas_data(GAS);
 		/* Get battery percentage */
-		struct batt_value batt = get_batt_percent();
+		struct batt_value batt = get_battery_percent();
 		/* Get BME680 sensor data */
 		struct bme680_data env = get_bme680_data();
 

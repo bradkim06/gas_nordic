@@ -5,8 +5,6 @@
  *
  * @author bradkim06@gmail.com
  */
-
-#if defined(CONFIG_BME68X)
 #include <math.h>
 
 #include <zephyr/logging/log.h>
@@ -20,9 +18,10 @@
 /* Register the BME680 module with the specified log level. */
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
 
-/* Define a semaphore for mutual exclusion of BME680 data. */
-K_SEM_DEFINE(bme680_sem, 1, 1);
+/* Define a semaphore for synchronization during initial gas data temperature correction. */
+struct k_sem temperature_semaphore;
 
+#if defined(CONFIG_BME68X)
 /**
  * Define various air quality warning thresholds and provide detailed information
  * for each parameter in the README.md.
@@ -31,11 +30,11 @@ K_SEM_DEFINE(bme680_sem, 1, 1);
 #define VOC_UNHEALTHY_THRES 2
 #define CO2_UNHEALTHY_THRES 1000
 
-/* Define a semaphore for synchronization during initial gas data temperature correction. */
-struct k_sem temp_sem;
+/* Define a semaphore for mutual exclusion of BME680 data. */
+K_SEM_DEFINE(bme680_sem, 1, 1);
 
 /* Define a sensor trigger for timer-based sampling of all channels. */
-const struct sensor_trigger trig = {
+const struct sensor_trigger trigger = {
 	.type = SENSOR_TRIG_TIMER,
 	.chan = SENSOR_CHAN_ALL,
 };
@@ -44,21 +43,36 @@ const struct sensor_trigger trig = {
 struct bme680_data bme680 = {0};
 
 /**
- * @brief This function adjusts the precision of sensor data received from the Zephyr sensor.
+ * @brief Truncates the number of decimal places in the sensor data received from the Zephyr sensor.
  * The default valid range for decimal data is 6 digits, but this can be adjusted by specifying
  * the number of decimal places to truncate.
  *
- * @param n: The number of decimal places to truncate.
+ * @param sensor_data: The sensor data to truncate.
+ * @param num_decimal_places: The number of decimal places to truncate.
+ * @return The truncated sensor data.
  */
-static void adjustValuePrecision(int n)
+static int32_t truncate_sensor_data_decimal_places(int32_t sensor_data, int num_decimal_places)
 {
-	// Calculate the multiplier based on the specified number of decimal places.
-	int32_t multiplier = pow(10, n);
+	// Check for invalid input.
+	if (sensor_data <= 0 || num_decimal_places < 0) {
+		return 0;
+	}
 
-	// Divide the sensor data values by the multiplier to truncate the decimal places.
-	bme680.temp.val2 /= multiplier;
-	bme680.press.val2 /= multiplier;
-	bme680.humidity.val2 /= multiplier;
+	// Calculate the number of digits in the sensor data.
+	const int num_digits = (int)(floor(log10(sensor_data))) + 1;
+
+	// Check if the number of decimal places to truncate is greater than the number of digits in
+	// the sensor data.
+	if (num_decimal_places > num_digits) {
+		return sensor_data;
+	}
+
+	// Calculate the factor to divide the sensor data by to truncate the number of decimal
+	// places.
+	int truncation_factor = (int)(pow(10, num_digits - num_decimal_places));
+
+	// Truncate the number of decimal places in the sensor data.
+	return sensor_data / truncation_factor;
 }
 
 /**
@@ -86,23 +100,24 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	sensor_channel_get(dev, SENSOR_CHAN_PRESS, &bme680.press);
 	sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &bme680.humidity);
 
-	// If IAQ is enabled, retrieve IAQ, CO2, and VOC data from the BSEC library
+// If IAQ is enabled, retrieve IAQ, CO2, and VOC data from the BSEC library
 #if defined(CONFIG_BME68X_IAQ_EN)
 	sensor_channel_get(dev, SENSOR_CHAN_IAQ, &bme680.iaq);
 	sensor_channel_get(dev, SENSOR_CHAN_CO2, &bme680.eCO2);
 	sensor_channel_get(dev, SENSOR_CHAN_VOC, &bme680.breathVOC);
 #endif
 
-	// Adjust the precision of the retrieved data to 4 decimal places
-	adjustValuePrecision(4);
+	truncate_sensor_data_decimal_places(bme680.temp.val2, 2);
+	truncate_sensor_data_decimal_places(bme680.press.val2, 2);
+	truncate_sensor_data_decimal_places(bme680.humidity.val2, 2);
 
 	// Release the BME680 semaphore
 	k_sem_give(&bme680_sem);
 
 	// If this is the first time the function is called, release the temperature semaphore
-	if (is_init) {
+	if (is_init && bme680.temp.val1 > 0) {
 		is_init = false;
-		k_sem_give(&temp_sem);
+		k_sem_give(&temperature_semaphore);
 	}
 
 	// Print the retrieved data to the debug log
@@ -110,7 +125,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 		bme680.temp.val2, bme680.press.val1, bme680.press.val2, bme680.humidity.val1,
 		bme680.humidity.val2);
 
-	// If IAQ is enabled, print IAQ, CO2, and VOC data to the debug log
+// If IAQ is enabled, print IAQ, CO2, and VOC data to the debug log
 #if defined(CONFIG_BME68X_IAQ_EN)
 	LOG_DBG("iaq: %d(acc:%d); CO2: %dppm VOC: %d.%dppm", bme680.iaq.val1, bme680.iaq.val2,
 		bme680.eCO2.val1, bme680.breathVOC.val1, bme680.breathVOC.val2);
@@ -142,48 +157,25 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 		k_event_post(&bt_event, events);
 		events = curr_events;
 	}
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 };
 
 /**
- * @brief The BME680 thread function runs only once and performs two tasks:
+ * @brief Function to get BME680 sensor data.
  *
- * 1.Initializes the Bosch BME68x device and registers the trigger handler.
- * 2.Initializes the temperature semaphore so that when temperature data is available,
- * the gas sensorcan start operating
- * (the gas sensor's results are calibrated based on temperature)
+ * This function ensures exclusive access to the sensor data by taking a semaphore,
+ * creates a copy of the sensor data, and then releases the semaphore.
+ *
+ * @return A copy of the BME680 sensor data.
  */
-void bme680_thread_fn(void)
-{
-	// Get the device structure for the Bosch BME68x sensor
-	const struct device *const dev = DEVICE_DT_GET_ANY(bosch_bme68x);
-
-	// Check if the device is ready
-	if (!device_is_ready(dev)) {
-		LOG_ERR("device is not ready");
-		return;
-	}
-
-	// Initialize the temperature semaphore with initial value of 0 and maximum value of 1
-	k_sem_init(&temp_sem, 0, 1);
-
-	// Sleep for 1 second to allow the device to initialize
-	k_sleep(K_SECONDS(1));
-
-	// Set the trigger for the device and register the trigger handler
-	int ret = sensor_trigger_set(dev, &trig, trigger_handler);
-	if (ret) {
-		LOG_ERR("couldn't set trigger");
-		return;
-	}
-}
-
 struct bme680_data get_bme680_data(void)
 {
 	/* Take the semaphore to ensure exclusive access to the sensor data */
 	k_sem_take(&bme680_sem, K_FOREVER);
+
 	/* Create a copy of the sensor data */
 	struct bme680_data copy = bme680;
+
 	/* Release the semaphore to allow other processes to access the sensor data */
 	k_sem_give(&bme680_sem);
 
@@ -191,7 +183,41 @@ struct bme680_data get_bme680_data(void)
 	return copy;
 }
 
+#endif // CONFIG_BME68X
+
+/**
+ * @brief The BME680 thread function runs only once and performs two tasks:
+ *
+ * 1.Initializes the Bosch BME68x device and registers the trigger handler.
+ * 2.Initializes the temperature semaphore so that when temperature data is available,
+ * the gas sensor can start operating
+ * (the gas sensor's results are calibrated based on temperature)
+ */
+static void bme680_thread_fn(void)
+{
+	// Get the device structure for the Bosch BME68x sensor
+	const struct device *const bme68x_device = DEVICE_DT_GET_ANY(bosch_bme68x);
+
+	// Check if the device is ready
+	if (!device_is_ready(bme68x_device)) {
+		LOG_ERR("BME68x device is not ready");
+		return;
+	}
+
+	// Initialize the temperature semaphore with initial value of 0 and maximum value of 1
+	k_sem_init(&temperature_semaphore, 0, 1);
+
+	// Sleep for 1 second to allow the device to initialize
+	k_sleep(K_SECONDS(1));
+
+	// Set the trigger for the device and register the trigger handler
+	int trigger_set_status = sensor_trigger_set(bme68x_device, &trigger, trigger_handler);
+	if (trigger_set_status) {
+		LOG_ERR("Failed to set trigger for BME68x device");
+		return;
+	}
+}
+
 #define STACKSIZE 1024
 #define PRIORITY  7
 K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
-#endif
