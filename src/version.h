@@ -64,30 +64,32 @@
 #define BUILD_SEC_CH0 (__TIME__[6])
 #define BUILD_SEC_CH1 (__TIME__[7])
 
-const unsigned char fw_info[] = {
-	VERSION_MAJOR_INIT, '.', VERSION_MINOR_INIT, '.', VERSION_PATCHLEVEL_INIT, 'v',
-};
+#define FIRMWARE_INFO()                                                                            \
+	const unsigned char firmware_info[] = {                                                    \
+		VERSION_MAJOR_INIT, '.', VERSION_MINOR_INIT, '.', VERSION_PATCHLEVEL_INIT, 'v',    \
+	}
 
-/* Build time in string format */
-const unsigned char build_time[] = {BUILD_YEAR_CH0,
-				    BUILD_YEAR_CH1,
-				    BUILD_YEAR_CH2,
-				    BUILD_YEAR_CH3,
-				    '-',
-				    BUILD_MONTH_CH0,
-				    BUILD_MONTH_CH1,
-				    '-',
-				    BUILD_DAY_CH0,
-				    BUILD_DAY_CH1,
-				    'T',
-				    BUILD_HOUR_CH0,
-				    BUILD_HOUR_CH1,
-				    ':',
-				    BUILD_MIN_CH0,
-				    BUILD_MIN_CH1,
-				    ':',
-				    BUILD_SEC_CH0,
-				    BUILD_SEC_CH1,
-				    '\0'};
+#define FIRMWARE_BUILD_TIME()                                                                      \
+	/* Build time in string format */                                                          \
+	const unsigned char firmware_build_time[] = {BUILD_YEAR_CH0,                               \
+						     BUILD_YEAR_CH1,                               \
+						     BUILD_YEAR_CH2,                               \
+						     BUILD_YEAR_CH3,                               \
+						     '-',                                          \
+						     BUILD_MONTH_CH0,                              \
+						     BUILD_MONTH_CH1,                              \
+						     '-',                                          \
+						     BUILD_DAY_CH0,                                \
+						     BUILD_DAY_CH1,                                \
+						     'T',                                          \
+						     BUILD_HOUR_CH0,                               \
+						     BUILD_HOUR_CH1,                               \
+						     ':',                                          \
+						     BUILD_MIN_CH0,                                \
+						     BUILD_MIN_CH1,                                \
+						     ':',                                          \
+						     BUILD_SEC_CH0,                                \
+						     BUILD_SEC_CH1,                                \
+						     '\0'}
 
 #endif

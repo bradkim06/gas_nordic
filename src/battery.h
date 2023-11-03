@@ -3,7 +3,7 @@
 
 #define LOW_BATT_THRESHOLD 2000
 
-struct batt_value {
+struct battery_value {
 	/** Integer part of the value. Range 0~100*/
 	unsigned int val1;
 	/** Fractional part of the value. Range 0~99 */
@@ -18,6 +18,6 @@ struct batt_value {
  *
  * @return A copy of the battery percentage value.
  */
-struct batt_value get_battery_percent(void);
+struct battery_value get_battery_percent(void);
 
 #endif

@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(BATTERY, CONFIG_APP_LOG_LEVEL);
 /* Used for Mutual Exclusion of battery data. */
 K_SEM_DEFINE(batt_data_sem, 1, 1);
 
-static struct batt_value batt_percent;
+static struct battery_value batt_percent;
 
 static bool battery_ok;
 
@@ -337,10 +337,10 @@ static void battery_measurement_thread(void)
 	}
 }
 
-struct batt_value get_battery_percent(void)
+struct battery_value get_battery_percent(void)
 {
 	k_sem_take(&batt_data_sem, K_FOREVER);
-	struct batt_value copy = batt_percent;
+	struct battery_value copy = batt_percent;
 	k_sem_give(&batt_data_sem);
 
 	return copy;

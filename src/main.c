@@ -14,6 +14,7 @@
 #include "version.h"
 
 LOG_MODULE_REGISTER(MAIN, CONFIG_APP_LOG_LEVEL);
+FIRMWARE_INFO();
 
 /**
  * @brief This thread performs kernel initialization, then calls the application’s main() function
@@ -32,7 +33,7 @@ normally and no error is raised.
  */
 int main(void)
 {
-	LOG_INF("Firmware Info : %s", fw_info);
+	LOG_INF("Firmware Info : %s", firmware_info);
 	LOG_INF("Board:%s SoC:%s Rom:%dkb Ram:%dkb", CONFIG_BOARD, CONFIG_SOC, CONFIG_FLASH_SIZE,
 		CONFIG_SRAM_SIZE);
 

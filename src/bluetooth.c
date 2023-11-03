@@ -36,6 +36,7 @@
 
 /* Registers the HHS_BT module with the specified log level. */
 LOG_MODULE_REGISTER(HHS_BT, CONFIG_APP_LOG_LEVEL);
+FIRMWARE_BUILD_TIME();
 
 /* Defines an enumeration for the bt_tx_event with the list of BT_EVENT_LIST values. */
 DEFINE_ENUM(bt_tx_event, BT_EVENT_LIST)
@@ -47,7 +48,7 @@ struct k_event bt_event;
 struct bt_conn *my_conn = NULL;
 
 /* Flag for transmitting only when notify is enabled. */
-static bool notify_gas_enabled = false;
+static bool bt_notify_enable = false;
 
 /* Variable for not transmitting if the MTU size is not negotiated. */
 static uint16_t mtu_size = 27;
@@ -65,13 +66,13 @@ static uint16_t mtu_size = 27;
 static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
 	/* Update the notify_gas_enabled flag */
-	notify_gas_enabled = (value == BT_GATT_CCC_NOTIFY);
+	bt_notify_enable = (value == BT_GATT_CCC_NOTIFY);
 
 	/* Log the change in the CCC descriptor */
-	LOG_INF("notify cfg changed %d", notify_gas_enabled);
+	LOG_INF("notify cfg changed %d", bt_notify_enable);
 
 	/* If notifications are enabled, post a BLE_NOTIFY_EN event */
-	if (notify_gas_enabled) {
+	if (bt_notify_enable) {
 		k_event_post(&bt_event, BLE_NOTIFY_EN);
 	}
 }
@@ -404,7 +405,7 @@ static int bt_gas_notify(char *sensor_value)
 }
 
 /**
- * Bluetooth thread function.
+ * @brief Bluetooth thread function.
  *
  * This function is the entry point for the Bluetooth thread. It initializes the Bluetooth stack,
  * starts advertising, and handles Bluetooth notifications. It also converts the firmware build time
@@ -415,8 +416,7 @@ static int bt_gas_notify(char *sensor_value)
  *
  * @note The function sends notifications only if a client is subscribed.
  */
-/* Function to handle Bluetooth thread operations */
-static void bt_thread_fn(void)
+static void bluetooth_thread(void)
 {
 	/* Define initial delay in seconds */
 #define INITIAL_DELAY 2
@@ -425,66 +425,71 @@ static void bt_thread_fn(void)
 
 	/* Convert the firmware build time to the time_t format for adding it to the current kernel
 	 * time (k_uptime_get()). */
-	struct tm tm;
-	time_t epoch = 0;
+	struct tm build_time_tm;
+	time_t epoch_time = 0;
 	/* Convert build time string to time_t format */
-	if (strptime(build_time, "%Y-%m-%dT%X", &tm) != NULL) {
-		epoch = mktime(&tm);
+	if (strptime(firmware_build_time, "%Y-%m-%dT%X", &build_time_tm) != NULL) {
+		epoch_time = mktime(&build_time_tm);
 	}
 
 	/* Loop for sending notifications */
 	while (1) {
 		/* Wait for events from the Bluetooth event queue */
-		uint32_t events =
+		uint32_t bluetooth_events =
 			k_event_wait(&bt_event, bt_tx_event_sum, true, K_SECONDS(TIMEOUT_SEC));
-		char str[20];
+		char event_info_str[20];
 		/* Check if timeout event occurred */
-		CODE_IF_ELSE((events == TIMEOUT), sprintf(str, "%s second", xstr(TIMEOUT_SEC)),
-			     sprintf(str, "type 0x%02X", events));
+		CODE_IF_ELSE((bluetooth_events == TIMEOUT),
+			     sprintf(event_info_str, "%s second", xstr(TIMEOUT_SEC)),
+			     sprintf(event_info_str, "type 0x%02X", bluetooth_events));
 		/* Log event information */
-		LOG_INF("event : \t%s(%s)", enum_to_str(events), str);
+		LOG_INF("event : \t%s(%s)", enum_to_str(bluetooth_events), event_info_str);
 
 		/* Check if gas notification is enabled */
-		if (!notify_gas_enabled) {
+		if (!bt_notify_enable) {
 			LOG_WRN("notify disable");
 			continue;
 		}
 
 		/* Get gas sensor values */
-		struct gas_sensor_value o2 = get_gas_data(O2);
+		struct gas_sensor_value oxygen = get_gas_data(O2);
 		struct gas_sensor_value gas = get_gas_data(GAS);
 		/* Get battery percentage */
-		struct batt_value batt = get_battery_percent();
+		struct battery_value battery = get_battery_percent();
 		/* Get BME680 sensor data */
-		struct bme680_data env = get_bme680_data();
+		struct bme680_data environment = get_bme680_data();
 
 		/* Get current time in time_t format */
-		time_t rawtime = (k_uptime_get() / 1000 + epoch);
+		time_t current_time = (k_uptime_get() / 1000 + epoch_time);
 		/* Convert time to string format */
 		char timestamp[sizeof("01-01T00:00:00")];
-		strftime(timestamp, sizeof(timestamp), "%m-%dT%X", gmtime(&rawtime));
+		strftime(timestamp, sizeof(timestamp), "%m-%dT%X", gmtime(&current_time));
 
 		/* Create string for notification data */
-		char tx_data[100];
-		char *p = tx_data;
+		char notify_data[100];
+		char *data_pointer = notify_data;
 		/* Add gas sensor values to string */
-		p += sprintf(p, "[%s] %u.%u;%u;%u.%u", timestamp, (uint8_t)o2.val1,
-			     (uint8_t)o2.val2, (uint16_t)gas.val1, (uint8_t)batt.val1,
-			     (uint8_t)batt.val2);
+		data_pointer +=
+			sprintf(data_pointer, "[%s] %u.%u;%u;%u.%u", timestamp,
+				(uint8_t)oxygen.val1, (uint8_t)oxygen.val2, (uint16_t)gas.val1,
+				(uint8_t)battery.val1, (uint8_t)battery.val2);
 
 #if defined(CONFIG_BME68X)
 		/* Add BME680 sensor data to string */
-		p += sprintf(p, ";%u;%u;%u", (uint8_t)env.temp.val1, (uint32_t)env.press.val1,
-			     (uint8_t)env.humidity.val1);
+		data_pointer += sprintf(data_pointer, ";%u;%u;%u", (uint8_t)environment.temp.val1,
+					(uint32_t)environment.press.val1,
+					(uint8_t)environment.humidity.val1);
 #if defined(CONFIG_BME68X_IAQ_EN)
-		p += sprintf(p, ";%u.%u;%u;%u", (uint8_t)env.iaq.val1, (uint8_t)env.iaq.val2,
-			     (uint32_t)env.eCO2.val1, (uint16_t)env.breathVOC.val1);
+		data_pointer +=
+			sprintf(data_pointer, ";%u.%u;%u;%u", (uint8_t)environment.iaq.val1,
+				(uint8_t)environment.iaq.val2, (uint32_t)environment.eCO2.val1,
+				(uint16_t)environment.breathVOC.val1);
 #endif
 #endif
 		/* Add newline character to string */
-		strcat(tx_data, "\n");
+		strcat(notify_data, "\n");
 		/* Send gas notification */
-		bt_gas_notify(tx_data);
+		bt_gas_notify(notify_data);
 	}
 }
 
@@ -492,4 +497,4 @@ SYS_INIT(bt_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 #define STACKSIZE 2048
 #define PRIORITY  5
-K_THREAD_DEFINE(bt_thread_id, STACKSIZE, bt_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(bt_thread_id, STACKSIZE, bluetooth_thread, NULL, NULL, NULL, PRIORITY, 0, 0);
