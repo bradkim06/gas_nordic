@@ -122,13 +122,13 @@ static void perform_gas_measurement(moving_average_t *gas_moving_avg[])
 
 		struct bme680_data env = get_bme680_data();
 		double temp_coeff =
-			(10000.f /
-			 (double)level_pptt(env.temp.val1 * 100 + env.temp.val2, coeff_levels));
+			(10000.f / (double)calculate_level_pptt(env.temp.val1 * 100 + env.temp.val2,
+								coeff_levels));
 		int32_t calib_val_mv = (int32_t)round(val_mv * temp_coeff);
 		LOG_DBG("temp coeff : %f raw : %d calib : %d", temp_coeff, val_mv, calib_val_mv);
 
 		int32_t avg_mv = calculate_moving_average(gas_moving_avg[i], calib_val_mv);
-		int gas_avg_pptt = level_pptt(avg_mv, levels);
+		int gas_avg_pptt = calculate_level_pptt(avg_mv, levels);
 
 /* Gas sensor threshold for triggering BLE notify events on change */
 #define O2_THRES 2

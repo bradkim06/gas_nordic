@@ -262,7 +262,7 @@ static bool measure_battery_status(moving_average_t *battery_status)
 	// Calculate moving average
 	int average_battery_mV = calculate_moving_average(battery_status, current_battery_mV);
 	// Calculate power-to-time-to-charge ratio
-	unsigned int pptt = level_pptt(average_battery_mV, levels);
+	unsigned int pptt = calculate_level_pptt(average_battery_mV, levels);
 
 	// Take the battery semaphore to ensure exclusive access to the global battery pptt value
 	k_sem_take(&batt_data_sem, K_FOREVER);
@@ -314,7 +314,7 @@ static void battery_measurement_thread(void)
 	if (measurement_status != 0) {
 		/* Log error and return */
 		LOG_ERR("Failed to initialize battery measurement: %d", measurement_status);
-		free_moving_average(battery_status);
+		free_moving_average(&battery_status);
 		return;
 	}
 
