@@ -74,11 +74,26 @@ moving_average_t *allocate_moving_average(const int buffer_length)
 	return moving_average_obj;
 }
 
-void free_moving_average(moving_average_t *av_obj)
+/**
+ * @brief Frees the memory allocated for a moving_average_t object.
+ *
+ * This function frees the memory allocated for the buffer of the moving_average_t object
+ * and the object itself. It also sets the pointer to the object to NULL to prevent
+ * dangling pointers.
+ *
+ * @param avg_obj Pointer to the moving_average_t object to be freed.
+ */
+void free_moving_average(moving_average_t **avg_obj)
 {
-	free(av_obj->buffer);
-	av_obj->buffer = NULL;
-	free(av_obj);
+	if (avg_obj == NULL || *avg_obj == NULL) {
+		return;
+	}
+
+	free((*avg_obj)->buffer);
+	(*avg_obj)->buffer = NULL;
+
+	free(*avg_obj);
+	*avg_obj = NULL;
 }
 
 unsigned int level_pptt(unsigned int batt_mV, const struct level_point *curve)

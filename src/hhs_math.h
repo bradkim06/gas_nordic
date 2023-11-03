@@ -40,7 +40,7 @@ moving_average_t *allocate_moving_average(const int len);
  *
  * @param av_obj: The moving average filter structure to be released
  */
-void free_moving_average(moving_average_t *av_obj);
+void free_moving_average(moving_average_t **av_obj);
 
 /** A dataset for converting ADC mV data to pptt
  *
