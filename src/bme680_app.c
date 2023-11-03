@@ -51,20 +51,24 @@ struct bme680_data bme680 = {0};
  * @param num_decimal_places: The number of decimal places to truncate.
  * @return The truncated sensor data.
  */
-static int32_t truncate_sensor_data_decimal_places(int32_t sensor_data, int num_decimal_places)
+static void truncate_sensor_data_decimal_places(int32_t *sensor_data, int num_decimal_places)
 {
 	// Check for invalid input.
-	if (sensor_data <= 0 || num_decimal_places < 0) {
-		return 0;
+	if (*sensor_data <= 0 || num_decimal_places < 0) {
+		LOG_ERR("invalid input parameter, sensord_data : %d num_decimal_places : %d",
+			*sensor_data, num_decimal_places);
+		*sensor_data = 0;
+		return;
 	}
 
 	// Calculate the number of digits in the sensor data.
-	const int num_digits = (int)(floor(log10(sensor_data))) + 1;
+	const int num_digits = (int)(floor(log10(*sensor_data))) + 1;
 
 	// Check if the number of decimal places to truncate is greater than the number of digits in
 	// the sensor data.
 	if (num_decimal_places > num_digits) {
-		return sensor_data;
+		LOG_ERR("invalid input num_decimal_places, %d", num_decimal_places);
+		return;
 	}
 
 	// Calculate the factor to divide the sensor data by to truncate the number of decimal
@@ -72,7 +76,7 @@ static int32_t truncate_sensor_data_decimal_places(int32_t sensor_data, int num_
 	int truncation_factor = (int)(pow(10, num_digits - num_decimal_places));
 
 	// Truncate the number of decimal places in the sensor data.
-	return sensor_data / truncation_factor;
+	*sensor_data /= truncation_factor;
 }
 
 /**
@@ -107,9 +111,9 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	sensor_channel_get(dev, SENSOR_CHAN_VOC, &bme680.breathVOC);
 #endif
 
-	truncate_sensor_data_decimal_places(bme680.temp.val2, 2);
-	truncate_sensor_data_decimal_places(bme680.press.val2, 2);
-	truncate_sensor_data_decimal_places(bme680.humidity.val2, 2);
+	truncate_sensor_data_decimal_places(&bme680.temp.val2, 2);
+	truncate_sensor_data_decimal_places(&bme680.press.val2, 2);
+	truncate_sensor_data_decimal_places(&bme680.humidity.val2, 2);
 
 	// Release the BME680 semaphore
 	k_sem_give(&bme680_sem);
