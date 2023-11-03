@@ -10,6 +10,32 @@
 	X(GAS, )
 DECLARE_ENUM(gas_device, DEVICE_LIST)
 
+#define GAS_LEVEL_POINT_STRUCT()                                                                   \
+	/* Discharge curve specific to the gas source. */                                          \
+	static const struct level_point measurement_range[2][2] = {                                \
+		/* O2 */                                                                           \
+		{                                                                                  \
+			/*  Measurement Range Max 25% Oxygen */                                    \
+			{250, 662}, /*  Zero current (offset) <0.6 % vol O2 */                     \
+			{0, 0},                                                                    \
+		}, /*  TODO Gas */                                                                 \
+		{},                                                                                \
+	}
+
+#define GAS_COEFFICIENT_STRUCT()                                                                   \
+	/* curve specific to the gas temperature coefficient. */                                   \
+	static const struct level_point coeff_levels[2][5] = {                                     \
+		/* Output Temperature Coefficient Oxygen Sensor */                                 \
+		{                                                                                  \
+			{10500, 5000},                                                             \
+			{10400, 4000},                                                             \
+			{10000, 2000},                                                             \
+			{9600, 0},                                                                 \
+			{9000, -2000},                                                             \
+		}, /* TODO Output Temperature Coefficient Gas Sensor */                            \
+		{},                                                                                \
+	}
+
 struct gas_sensor_value {
 	/** Integer part of the value. */
 	unsigned int val1;

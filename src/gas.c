@@ -32,126 +32,188 @@ DEFINE_ENUM(gas_device, DEVICE_LIST)
 /* Semaphore used for mutual exclusion of gas sensor data. */
 K_SEM_DEFINE(gas_sem, 1, 1);
 
+GAS_LEVEL_POINT_STRUCT();
+GAS_COEFFICIENT_STRUCT();
 /* Current value of the gas sensor. */
-static struct gas_sensor_value curr_result[2];
-
-/* Discharge curve specific to the gas source. */
-static const struct level_point levels[] = {
-	// Measurement Range Max 25% Oxygen
-	{250, 662},
-	// Zero current (offset) <0.6 % vol O2
-	{0, 0},
-};
-
-/* Discharge curve specific to the gas temperature coefficient. */
-static const struct level_point coeff_levels[] = {
-	/* Output Temperature Coefficient Oxygen Sensor */
-	{10500, 5000}, {10400, 4000}, {10000, 2000}, {9600, 0}, {9000, -2000},
-};
-
-/* Access to the adc device tree. */
-#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
-#error "No suitable devicetree overlay specified"
-#endif
-#define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
-
-/* Data of ADC io-channels specified in devicetree. */
-static const struct adc_dt_spec gas_adc_channels[] = {
-	DT_FOREACH_PROP_ELEM(DT_PATH(zephyr_user), io_channels, DT_SPEC_AND_COMMA)};
+static struct gas_sensor_value gas_data[2];
 
 /**
- * @brief Function to perform gas sensor measurements.
+ * @brief Converts ADC raw data to millivolts.
  *
- * This function reads gas sensor values using the ADC interface, applies temperature
- * compensation, and calculates moving averages. It also checks for any changes in
- * gas sensor values and posts an event accordingly.
+ * This function takes the raw ADC data and converts it to millivolts based on the ADC channel
+ * configuration. If the ADC channel is configured as differential, the raw data is directly
+ * converted to millivolts. If the ADC channel is not differential, the raw data is checked to be
+ * non-negative before conversion. The converted value is then passed to adc_raw_to_millivolts_dt()
+ * for further conversion based on device tree specifications. If adc_raw_to_millivolts_dt() returns
+ * an error, a warning is logged and the error code is returned.
  *
- * @details
- * This function reads gas sensor values using the ADC interface, applies temperature
- * compensation, and calculates moving averages. It also checks for any changes in
- * gas sensor values and posts an event accordingly. The function reads the gas sensor
- * values using the ADC interface and applies temperature compensation to the values.
- * It then calculates moving averages of the gas sensor values and checks for any changes
- * in the values. If there is a change in the values, the function posts an event to
- * notify the change.
+ * @param adc_channel Pointer to the ADC channel configuration structure.
+ * @param raw_adc_data Raw ADC data to be converted.
  *
- * @param[in] None
- *
- * @retval None
+ * @return Converted value in millivolts if successful, error code otherwise.
  */
-static void perform_gas_measurement(moving_average_t *gas_moving_avg[])
+static int32_t convert_adc_to_mv(const struct adc_dt_spec *adc_channel, uint16_t raw_adc_data)
 {
-	uint16_t buf;
-	struct adc_sequence sequence = {
-		.buffer = &buf,
-		/* buffer size in bytes, not number of samples */
-		.buffer_size = sizeof(buf),
-	};
+	int32_t millivolts;
+	if (adc_channel->channel_cfg.differential) {
+		millivolts = (int32_t)((int16_t)raw_adc_data);
+	} else {
+		millivolts = (raw_adc_data < 0) ? 0 : (int32_t)raw_adc_data;
+	}
 
-	static int prev_o2 = 0;
-	bool o2_changed = false;
+	int err = adc_raw_to_millivolts_dt(adc_channel, &millivolts);
+	if (err < 0) {
+		LOG_WRN("Value in millivolts not available");
+		return err;
+	}
+	return millivolts;
+}
 
-	// for (size_t i = 0U; i < ARRAY_SIZE(adc_channels) - 1; i++) {
-	for (size_t i = 0U; i < 1; i++) {
-		int32_t val_mv;
+/**
+ * @brief Calculate calibrated millivolts for a given gas type.
+ *
+ * This function calculates the calibrated millivolts for a given gas type.
+ * It uses the temperature coefficient based on the gas type to calibrate the millivolts.
+ *
+ * @param raw_mv The raw millivolts value.
+ * @param gas_type The type of gas device (O2 or GAS).
+ *
+ * @return The calibrated millivolts value.
+ */
+static int32_t calculate_calibrated_mv(int32_t raw_mv, enum gas_device gas_type)
+{
+	struct bme680_data env_data = get_bme680_data();
+	double temp_coeff;
 
-		(void)adc_sequence_init_dt(&gas_adc_channels[i], &sequence);
+	temp_coeff = (10000.f /
+		      (double)calculate_level_pptt(env_data.temp.val1 * 100 + env_data.temp.val2,
+						   coeff_levels[gas_type]));
 
-		int err = adc_read(gas_adc_channels[i].dev, &sequence);
-		if (err < 0) {
-			LOG_WRN("Could not read (%d)", err);
-			continue;
-		}
+	int32_t calibrated_mv = (int32_t)round(raw_mv * temp_coeff);
+	LOG_DBG("Temperature coefficient : %f, Raw millivolts : %d, Calibrated millivolts : %d",
+		temp_coeff, raw_mv, calibrated_mv);
+	return calibrated_mv;
+}
 
-		/*
-		 * If using differential mode, the 16 bit value
-		 * in the ADC sample buffer should be a signed 2's
-		 * complement value.
-		 */
-		if (gas_adc_channels[i].channel_cfg.differential) {
-			val_mv = (int32_t)((int16_t)buf);
-		} else {
-			val_mv = (buf < 0) ? 0 : (int32_t)buf;
-		}
-		err = adc_raw_to_millivolts_dt(&gas_adc_channels[i], &val_mv);
-		/* conversion to mV may not be supported, skip if not */
-		if (err < 0) {
-			LOG_WRN(" (value in mV not available)");
-			continue;
-		}
+/**
+ * @brief Update gas data based on the average millivolt and gas device type.
+ *
+ * This function calculates the current gas level based on the average millivolt,
+ * compares it with the previous value, and updates the gas data if the difference
+ * exceeds a certain threshold. It also ensures thread safety when updating the gas data.
+ *
+ * @param avg_mv The average millivolt.
+ * @param type The type of the gas device.
+ *
+ * @return True if the gas data is updated; false otherwise.
+ */
+static bool update_gas_data(int32_t avg_mv, enum gas_device type)
+{
 
-		struct bme680_data env = get_bme680_data();
-		double temp_coeff =
-			(10000.f / (double)calculate_level_pptt(env.temp.val1 * 100 + env.temp.val2,
-								coeff_levels));
-		int32_t calib_val_mv = (int32_t)round(val_mv * temp_coeff);
-		LOG_DBG("temp coeff : %f raw : %d calib : %d", temp_coeff, val_mv, calib_val_mv);
+	bool is_data_updated = false;
+	int current_gas_level = calculate_level_pptt(avg_mv, measurement_range[O2]);
 
-		int32_t avg_mv = calculate_moving_average(gas_moving_avg[i], calib_val_mv);
-		int gas_avg_pptt = calculate_level_pptt(avg_mv, levels);
+	switch (type) {
+	case O2: {
+		static int previous_o2_level = 0;
 
-/* Gas sensor threshold for triggering BLE notify events on change */
-#define O2_THRES 2
-		if (abs(gas_avg_pptt - prev_o2) > O2_THRES) {
-			o2_changed = true;
-			prev_o2 = gas_avg_pptt;
+#define O2_THRESHOLD 2
+		if (abs(current_gas_level - previous_o2_level) > O2_THRESHOLD) {
+			is_data_updated = true;
+			previous_o2_level = current_gas_level;
 		}
 
 		k_sem_take(&gas_sem, K_FOREVER);
-		curr_result[i].val1 = gas_avg_pptt / 10;
-		curr_result[i].val2 = gas_avg_pptt % 10;
+		gas_data[O2].val1 = current_gas_level / 10;
+		gas_data[O2].val2 = current_gas_level % 10;
 		k_sem_give(&gas_sem);
-
-		LOG_DBG("%s - channel %d: "
-			" curr %" PRId32 "mV avg %" PRId32 "mV %d.%d%%",
-			enum_to_str(i), gas_adc_channels[i].channel_id, calib_val_mv, avg_mv,
-			curr_result[i].val1, curr_result[i].val2);
+	} break;
+	case GAS: {
+		// TODO: Handle the case for GAS type.
+	} break;
+	default:
+		// TODO: Handle the case for other types.
+		break;
 	}
 
-	if (o2_changed) {
-		LOG_INF("value changed %d.%d%%", curr_result[0].val1, curr_result[0].val2);
+	return is_data_updated;
+}
+
+/**
+ * @brief Perform ADC measurement and update gas data
+ *
+ * This function performs an ADC measurement on the specified channel, calculates the moving
+ * average, updates the gas data and logs the information.
+ *
+ * @param adc_channel Pointer to the ADC channel specification.
+ * @param gas_moving_avg Pointer to the moving average data structure.
+ * @param type The type of the gas device.
+ */
+static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
+				    moving_average_t *gas_moving_avg,
+				    enum gas_device gas_device_type)
+{
+	uint16_t adc_buffer = 0;
+	struct adc_sequence adc_sequence = {
+		.buffer = &adc_buffer,
+		.buffer_size = sizeof(adc_buffer),
+	};
+
+	(void)adc_sequence_init_dt(adc_channel_spec, &adc_sequence);
+
+	int error = adc_read(adc_channel_spec->dev, &adc_sequence);
+	if (error < 0) {
+		LOG_WRN("Could not perform ADC read (%d)", error);
+		return;
+	}
+
+	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer);
+	if (adc_value_mv < 0) {
+		LOG_ERR("Negative ADC values are not allowed");
+		return;
+	}
+
+	int32_t calibrated_adc_value_mv = calculate_calibrated_mv(adc_value_mv, gas_device_type);
+	int32_t average_mv = calculate_moving_average(gas_moving_avg, calibrated_adc_value_mv);
+
+	if (update_gas_data(average_mv, gas_device_type)) {
+		LOG_INF("O2 value changed %d.%d%%", gas_data[gas_device_type].val1,
+			gas_data[gas_device_type].val2);
 		k_event_post(&bt_event, GAS_VAL_CHANGE);
 	}
+
+	LOG_DBG("%s - channel %d: "
+		" current %" PRId32 "mV average %" PRId32 "mV %d.%d%%",
+		enum_to_str(gas_device_type), adc_channel_spec->channel_id, calibrated_adc_value_mv,
+		average_mv, gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
+}
+
+/**
+ * @brief Setup gas ADC
+ *
+ * This function configures individual channels before sampling.
+ *
+ * @param adc_channel ADC channel data structure
+ *
+ * @return 0 on success, negative error code otherwise
+ */
+static int setup_gas_adc(struct adc_dt_spec adc_channel)
+{
+	/* Check if the device is ready */
+	if (!device_is_ready(adc_channel.dev)) {
+		LOG_ERR("ADC controller device %s not ready", adc_channel.dev->name);
+		return -ENODEV;
+	}
+
+	/* Setup the ADC channel */
+	int setup_error = adc_channel_setup_dt(&adc_channel);
+	if (setup_error < 0) {
+		LOG_ERR("Could not setup channel #%d (%d)", adc_channel.channel_id, setup_error);
+		return -EIO;
+	}
+
+	/* Return 0 on success */
+	return 0;
 }
 
 /**
@@ -165,19 +227,20 @@ static void perform_gas_measurement(moving_average_t *gas_moving_avg[])
 #define GAS_AVERAGE_FILTER_SIZE      30
 static void gas_measurement_thread(void)
 {
-	/* Configure channels individually before sampling. */
-	for (size_t idx = 0U; idx < ARRAY_SIZE(gas_adc_channels); idx++) {
-		if (!device_is_ready(gas_adc_channels[idx].dev)) {
-			LOG_ERR("ADC controller device %s not ready",
-				gas_adc_channels[idx].dev->name);
-			return;
-		}
+/* Access to the adc device tree. */
+#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
+#error "No suitable devicetree overlay specified"
+#endif
+	/* Data of ADC io-channels specified in devicetree. */
+	const struct adc_dt_spec gas_adc_channels[] = {
+		// o2
+		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 0),
+		// gas
+		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 1),
+	};
 
-		int setupError = adc_channel_setup_dt(&gas_adc_channels[idx]);
-		if (setupError < 0) {
-			LOG_ERR("Could not setup channel #%d (%d)", idx, setupError);
-			return;
-		}
+	for (size_t idx = 0U; idx < 1; idx++) {
+		setup_gas_adc(gas_adc_channels[idx]);
 	}
 
 	/* Moving average filter for gas sensor data. */
@@ -202,7 +265,7 @@ static void gas_measurement_thread(void)
 
 	while (1) {
 		/* Perform gas sensor measurements. */
-		perform_gas_measurement(gas_moving_avg);
+		perform_adc_measurement(&gas_adc_channels[O2], gas_moving_avg[O2], O2);
 
 		/* Wait for the specified period of time. */
 		k_sleep(K_SECONDS(GAS_MEASUREMENT_INTERVAL_SEC));
@@ -215,7 +278,7 @@ struct gas_sensor_value get_gas_data(enum gas_device gas_dev)
 	k_sem_take(&gas_sem, K_FOREVER);
 
 	/* Make a copy of the current gas sensor data */
-	struct gas_sensor_value gas_sensor_copy = curr_result[gas_dev];
+	struct gas_sensor_value gas_sensor_copy = gas_data[gas_dev];
 
 	/* Release semaphore */
 	k_sem_give(&gas_sem);
