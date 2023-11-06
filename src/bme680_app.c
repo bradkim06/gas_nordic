@@ -11,8 +11,10 @@
 
 #include <drivers/bme68x_iaq.h>
 
-#include "bluetooth.h"
 #include "bme680_app.h"
+#if defined(CONFIG_BME68X_IAQ_EN)
+#include "bluetooth.h"
+#endif
 
 /* Register the BME680 module with the specified log level. */
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
@@ -197,7 +199,7 @@ struct bme680_data get_bme680_data(void)
  * the gas sensor can start operating
  * (the gas sensor's results are calibrated based on temperature)
  */
-static void bme680_thread_fn(void)
+static void bme680_thread_function(void)
 {
 	// Get the device structure for the Bosch BME68x sensor
 	const struct device *const bme68x_device = DEVICE_DT_GET_ANY(bosch_bme68x);
@@ -224,4 +226,4 @@ static void bme680_thread_fn(void)
 
 #define STACKSIZE 1024
 #define PRIORITY  7
-K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_thread_function, NULL, NULL, NULL, PRIORITY, 0, 0);
