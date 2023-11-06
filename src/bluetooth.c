@@ -380,28 +380,29 @@ int bt_setup(void)
 }
 
 /**
- * Send gas sensor data via Bluetooth notification.
+ * @brief Send gas sensor data via Bluetooth notification.
  *
- * This function sends gas sensor data using Bluetooth notification. It first logs the
- * length of the data and the data itself as a hex dump. If the MTU size is smaller than
- * the data length, it logs a warning and returns an error.
+ * This function sends gas sensor data using Bluetooth notification. It first
+ * logs the length of the data and the data itself as a hex dump. If the MTU
+ * size is smaller than the data length, it logs a warning and returns an error.
  *
- * @param sensor_value The gas sensor data to send.
+ * @param p_gas_sensor_data Pointer to the gas sensor data to send.
  * @return 0 on success, or a negative error code on failure.
  */
-static int bt_gas_notify(char *sensor_value)
+static int bt_gas_notify(char *p_gas_sensor_data)
 {
-	char logstr[20];
-	size_t len = strlen(sensor_value);
-	sprintf(logstr, "tx data : %d", len);
-	LOG_HEXDUMP_INF(sensor_value, strlen(sensor_value), logstr);
+	char log_string[sizeof("notify data of length: 999")];
+	uint8_t data_length = strlen(p_gas_sensor_data);
+	sprintf(log_string, "notify data of length: %d", data_length);
+	LOG_HEXDUMP_INF(p_gas_sensor_data, data_length, log_string);
 
-	if (mtu_size < len) {
-		LOG_WRN("mtu size %d is small than tx len %d", mtu_size, len);
+	if (mtu_size < data_length) {
+		LOG_WRN("MTU size %d is smaller than data length %d", mtu_size, data_length);
 		return -ENOMEM;
 	}
 
-	return bt_gatt_notify(NULL, &bt_hhs_svc.attrs[4], (void *)sensor_value, len);
+	return bt_gatt_notify(NULL, &bt_hhs_svc.attrs[4], (void *)p_gas_sensor_data,
+			      (size_t)data_length);
 }
 
 /**

@@ -11,6 +11,7 @@
 
 #include <drivers/bme68x_iaq.h>
 
+#include "bluetooth.h"
 #include "bme680_app.h"
 
 /* Register the BME680 module with the specified log level. */
@@ -53,7 +54,8 @@ static void truncate_sensor_data_decimal_places(int32_t *sensor_data, int num_de
 {
 	// Check for invalid input.
 	if (*sensor_data <= 0 || num_decimal_places < 0) {
-		LOG_ERR("invalid input parameter, sensord_data : %d num_decimal_places : %d",
+		// It is possible case
+		LOG_WRN("invalid input parameter, sensord_data : %d num_decimal_places : %d",
 			*sensor_data, num_decimal_places);
 		*sensor_data = 0;
 		return;
