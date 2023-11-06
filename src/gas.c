@@ -54,12 +54,9 @@ static struct gas_sensor_value gas_data[2];
  */
 static int32_t convert_adc_to_mv(const struct adc_dt_spec *adc_channel, uint16_t raw_adc_data)
 {
-	int32_t millivolts;
-	if (adc_channel->channel_cfg.differential) {
-		millivolts = (int32_t)((int16_t)raw_adc_data);
-	} else {
-		millivolts = (raw_adc_data < 0) ? 0 : (int32_t)raw_adc_data;
-	}
+	int32_t millivolts = (adc_channel->channel_cfg.differential)
+				     ? (int32_t)((int16_t)raw_adc_data)
+				     : (int32_t)raw_adc_data;
 
 	int err = adc_raw_to_millivolts_dt(adc_channel, &millivolts);
 	if (err < 0) {
