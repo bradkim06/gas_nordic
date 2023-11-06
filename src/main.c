@@ -6,11 +6,9 @@
  *
  * @author bradkim06@gmail.com
  */
-#include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include "bluetooth.h"
 #include "version.h"
 
 LOG_MODULE_REGISTER(MAIN, CONFIG_APP_LOG_LEVEL);

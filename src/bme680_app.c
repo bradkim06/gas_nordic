@@ -12,8 +12,6 @@
 #include <drivers/bme68x_iaq.h>
 
 #include "bme680_app.h"
-#include "bluetooth.h"
-#include "hhs_math.h"
 
 /* Register the BME680 module with the specified log level. */
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
@@ -94,7 +92,6 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 {
 	// Initialize static variables
 	static bool is_init = true;
-	static uint32_t events = 0;
 
 	// Take the BME680 semaphore to ensure exclusive access to the sensor
 	k_sem_take(&bme680_sem, K_FOREVER);
@@ -157,6 +154,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 
 	// If the current events are different from the previous events, post a BLE event and update
 	// the events variable
+	static uint32_t events = 0;
 	if (events != curr_events) {
 		k_event_post(&bt_event, events);
 		events = curr_events;

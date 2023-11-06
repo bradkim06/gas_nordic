@@ -7,7 +7,6 @@
  *
  * @author bradkim06@gmail.com
  */
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 

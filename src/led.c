@@ -14,7 +14,6 @@
 
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
-#include <errno.h>
 #include <zephyr/drivers/led.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/kernel.h>
