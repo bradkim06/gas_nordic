@@ -20,4 +20,4 @@ struct battery_value {
  */
 struct battery_value get_battery_percent(void);
 
-#endif
+#endif // __APP_BATTERY_H__

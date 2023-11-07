@@ -227,7 +227,7 @@ static void gas_measurement_thread(void)
 /* Access to the adc device tree. */
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
 #error "No suitable devicetree overlay specified"
-#endif
+#endif // DT Node assert
 	/* Data of ADC io-channels specified in devicetree. */
 	const struct adc_dt_spec gas_adc_channels[] = {
 		// o2

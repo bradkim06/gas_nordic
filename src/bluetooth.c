@@ -485,8 +485,8 @@ static void bluetooth_thread(void)
 			sprintf(data_pointer, ";%u.%u;%u;%u", (uint8_t)environment.iaq.val1,
 				(uint8_t)environment.iaq.val2, (uint32_t)environment.eCO2.val1,
 				(uint16_t)environment.breathVOC.val1);
-#endif
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
+#endif // CONFIG_BME68X
 		/* Add newline character to string */
 		strcat(notify_data, "\n");
 		/* Send gas notification */

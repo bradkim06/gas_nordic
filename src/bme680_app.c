@@ -14,7 +14,7 @@
 #include "bme680_app.h"
 #if defined(CONFIG_BME68X_IAQ_EN)
 #include "bluetooth.h"
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 
 /* Register the BME680 module with the specified log level. */
 LOG_MODULE_REGISTER(bme680, CONFIG_APP_LOG_LEVEL);
@@ -110,7 +110,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	sensor_channel_get(dev, SENSOR_CHAN_IAQ, &bme680.iaq);
 	sensor_channel_get(dev, SENSOR_CHAN_CO2, &bme680.eCO2);
 	sensor_channel_get(dev, SENSOR_CHAN_VOC, &bme680.breathVOC);
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 
 	truncate_sensor_data_decimal_places(&bme680.temp.val2, 2);
 	truncate_sensor_data_decimal_places(&bme680.press.val2, 2);

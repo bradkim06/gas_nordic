@@ -15,12 +15,12 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
 
 #define SENSOR_CHAN_IAQ (SENSOR_CHAN_PRIV_START + 1)
 
 #ifdef __cplusplus
 }
-#endif
+#endif // __cplusplus
 
 #endif /* _BME68X_NCS_H_ */

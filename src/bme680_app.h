@@ -57,7 +57,7 @@ struct bme680_data {
 	 * For more details, see README.md.
 	 */
 	struct sensor_value breathVOC;
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 };
 
 /**
@@ -67,5 +67,5 @@ struct bme680_data {
  */
 struct bme680_data get_bme680_data(void);
 
-#endif
-#endif
+#endif // CONFIG_BME68X
+#endif // __APP_BME680_H__

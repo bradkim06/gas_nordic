@@ -31,7 +31,7 @@ static const float temp_offset = (CONFIG_BME68X_IAQ_TEMPERATURE_OFFSET / (float)
 #define BSEC_N_OUTPUTS 6
 #else
 #define BSEC_N_OUTPUTS 3
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 
 /* Define which sensor values to request.
  * The order is not important, but output_ready needs to be updated if different types
@@ -63,7 +63,7 @@ static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[BSEC_N_O
 		.sensor_id = BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
 		.sample_rate = BSEC_SAMPLE_RATE_IAQ,
 	},
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 };
 
 /* Definitions used to store and retrieve BSEC state from the settings API */
@@ -180,7 +180,7 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 			data->latest.breathVOC = (double)outputs[i].signal;
 			LOG_DBG("VOC %.2f", data->latest.breathVOC);
 			break;
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 		default:
 			LOG_WRN("unknown bsec output id: %d", outputs[i].sensor_id);
 			break;
@@ -273,7 +273,7 @@ static int apply_sensor_settings(const struct device *dev, bsec_bme_settings_t s
 	heater_config.enable = BME68X_ENABLE;
 #else
 	heater_config.enable = BME68X_DISABLE;
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 	heater_config.heatr_temp = sensor_settings.heater_temperature;
 	heater_config.heatr_dur = sensor_settings.heater_duration;
 	heater_config.heatr_temp_prof = sensor_settings.heater_temperature_profile;
@@ -524,7 +524,7 @@ static int bme68x_channel_get(const struct device *dev, enum sensor_channel chan
 	} else if (chan == SENSOR_CHAN_VOC) {
 		sensor_value_from_double(val, data->latest.breathVOC);
 	}
-#endif
+#endif // CONFIG_BME68X_IAQ_EN
 	else {
 		LOG_ERR("Unsupported sensor channel");
 		result = -ENOTSUP;

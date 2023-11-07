@@ -45,4 +45,4 @@
 	} else if (enable == 0) {                                                                  \
 		code2;                                                                             \
 	}
-#endif
+#endif // __APP_GLOBAL_MACRO_H__

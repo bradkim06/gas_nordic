@@ -54,4 +54,4 @@ struct gas_sensor_value {
  */
 struct gas_sensor_value get_gas_data(enum gas_device gas_dev);
 
-#endif
+#endif // __APP_GAS_H__

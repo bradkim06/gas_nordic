@@ -92,4 +92,4 @@
 						     BUILD_SEC_CH1,                                \
 						     '\0'}
 
-#endif
+#endif // __APP_VERSION_H__

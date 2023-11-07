@@ -39,4 +39,4 @@ extern struct k_event bt_event;
 
 int bt_setup(void);
 
-#endif
+#endif // __APP_BT_H__
