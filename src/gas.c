@@ -99,27 +99,27 @@ static int32_t calculate_calibrated_mv(int32_t raw_mv, enum gas_device gas_type)
  * compares it with the previous value, and updates the gas data if the difference
  * exceeds a certain threshold. It also ensures thread safety when updating the gas data.
  *
- * @param avg_mv The average millivolt.
- * @param type The type of the gas device.
+ * @param avg_millivolt The average millivolt.
+ * @param device_type The type of the gas device.
  *
  * @return True if the gas data is updated; false otherwise.
  */
-static bool update_gas_data(int32_t avg_mv, enum gas_device type)
+static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 {
+	bool is_gas_data_updated = false;
+	int current_gas_level = calculate_level_pptt(avg_millivolt, measurement_range[O2]);
 
-	bool is_data_updated = false;
-	int current_gas_level = calculate_level_pptt(avg_mv, measurement_range[O2]);
-
-	switch (type) {
+	switch (device_type) {
 	case O2: {
 		static int previous_o2_level = 0;
+		const int O2_THRESHOLD = 2;
 
-#define O2_THRESHOLD 2
 		if (abs(current_gas_level - previous_o2_level) > O2_THRESHOLD) {
-			is_data_updated = true;
+			is_gas_data_updated = true;
 			previous_o2_level = current_gas_level;
 		}
 
+		// Ensure thread safety when updating the gas data
 		k_sem_take(&gas_sem, K_FOREVER);
 		gas_data[O2].val1 = current_gas_level / 10;
 		gas_data[O2].val2 = current_gas_level % 10;
@@ -133,7 +133,7 @@ static bool update_gas_data(int32_t avg_mv, enum gas_device type)
 		break;
 	}
 
-	return is_data_updated;
+	return is_gas_data_updated;
 }
 
 /**
