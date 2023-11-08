@@ -285,5 +285,5 @@ struct gas_sensor_value get_gas_data(enum gas_device gas_dev)
 }
 
 #define STACKSIZE 1024
-#define PRIORITY  8
+#define PRIORITY  2
 K_THREAD_DEFINE(gas_id, STACKSIZE, gas_measurement_thread, NULL, NULL, NULL, PRIORITY, 0, 0);

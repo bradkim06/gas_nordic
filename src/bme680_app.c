@@ -225,5 +225,5 @@ static void bme680_thread_function(void)
 }
 
 #define STACKSIZE 1024
-#define PRIORITY  7
+#define PRIORITY  1
 K_THREAD_DEFINE(bme680_id, STACKSIZE, bme680_thread_function, NULL, NULL, NULL, PRIORITY, 0, 0);

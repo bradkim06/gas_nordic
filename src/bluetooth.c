@@ -497,5 +497,5 @@ static void bluetooth_thread(void)
 SYS_INIT(bt_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 #define STACKSIZE 2048
-#define PRIORITY  5
+#define PRIORITY  0
 K_THREAD_DEFINE(bt_thread_id, STACKSIZE, bluetooth_thread, NULL, NULL, NULL, PRIORITY, 0, 0);
