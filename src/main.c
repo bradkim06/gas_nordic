@@ -33,7 +33,6 @@ normally and no error is raised.
  */
 int main(void)
 {
-
 	LOG_INF("Firmware Info : %s", firmware_info);
 	LOG_INF("Board:%s SoC:%s Rom:%dkb Ram:%dkb", CONFIG_BOARD, CONFIG_SOC, CONFIG_FLASH_SIZE,
 		CONFIG_SRAM_SIZE);
@@ -42,43 +41,36 @@ int main(void)
 }
 
 #if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_wdt)
-/* Nordic supports a callback, but it has 61.2 us to complete before
- * the reset occurs, which is too short for this sample to do anything
- * useful.  Explicitly disallow use of the callback.
- */
-#define WDT_ALLOW_CALLBACK 0
-#endif
-
-#ifndef WDT_MAX_WINDOW
+/* Maximum and minimum window for watchdog timer(ms) */
 #define WDT_MAX_WINDOW 5000U
-#endif
-
-#ifndef WDT_MIN_WINDOW
 #define WDT_MIN_WINDOW 0U
+
+/* Interval for feeding the watchdog timer(ms) */
+#define WDT_FEED_INTERVAL 1000U
+
+/* Option for watchdog timer */
+#define WDT_OPER_MODE WDT_OPT_PAUSE_HALTED_BY_DBG
 #endif
 
-#ifndef WDG_FEED_INTERVAL
-#define WDG_FEED_INTERVAL 1000U
-#endif
-
-#ifndef WDT_OPT
-#define WDT_OPT WDT_OPT_PAUSE_HALTED_BY_DBG
-#endif
-
-static void watchdog_thread(void)
+/**
+ * @brief Watchdog thread function.
+ *
+ * This function sets up the watchdog timer and continuously feeds it.
+ */
+static void watchdog_thread_fn(void)
 {
-	int err;
-	int wdt_channel_id;
-	const struct device *const wdt = DEVICE_DT_GET(DT_ALIAS(watchdog0));
+	int setup_error_status;  // More descriptive variable name
+	int watchdog_channel_id; // More descriptive variable name
+	const struct device *const watchdog_device =
+		DEVICE_DT_GET(DT_ALIAS(watchdog0)); // More descriptive variable name
 
-	printk("Watchdog sample application\n");
-
-	if (!device_is_ready(wdt)) {
-		printk("%s: device not ready.\n", wdt->name);
+	// Check if the device is ready before proceeding
+	if (!device_is_ready(watchdog_device)) {
+		LOG_ERR("%s: device not ready.\n", watchdog_device->name);
 		return;
 	}
 
-	struct wdt_timeout_cfg wdt_config = {
+	struct wdt_timeout_cfg watchdog_configuration = {
 		/* Reset SoC when watchdog timer expires. */
 		.flags = WDT_FLAG_RESET_SOC,
 
@@ -87,30 +79,28 @@ static void watchdog_thread(void)
 		.window.max = WDT_MAX_WINDOW,
 	};
 
-	wdt_channel_id = wdt_install_timeout(wdt, &wdt_config);
-	if (wdt_channel_id == -ENOTSUP) {
-		/* IWDG driver for STM32 doesn't support callback */
-		printk("Callback support rejected, continuing anyway\n");
-		wdt_config.callback = NULL;
-		wdt_channel_id = wdt_install_timeout(wdt, &wdt_config);
-	}
-	if (wdt_channel_id < 0) {
-		printk("Watchdog install error\n");
+	// Install timeout for the watchdog
+	watchdog_channel_id = wdt_install_timeout(watchdog_device, &watchdog_configuration);
+	if (watchdog_channel_id < 0) {
+		LOG_ERR("Error installing watchdog timeout\n");
 		return;
 	}
 
-	err = wdt_setup(wdt, WDT_OPT);
-	if (err < 0) {
-		printk("Watchdog setup error\n");
+	// Set up the watchdog
+	setup_error_status = wdt_setup(watchdog_device, WDT_OPER_MODE);
+	if (setup_error_status < 0) {
+		printk("Error setting up watchdog\n");
 		return;
 	}
 
+	// Feed the watchdog
 	while (1) {
-		wdt_feed(wdt, wdt_channel_id);
-		k_sleep(K_MSEC(WDG_FEED_INTERVAL));
+		wdt_feed(watchdog_device, watchdog_channel_id);
+		k_sleep(K_MSEC(WDT_FEED_INTERVAL));
 	}
 }
 
 #define STACKSIZE 1024
 #define PRIORITY  14
-K_THREAD_DEFINE(watchdog_thread_id, STACKSIZE, watchdog_thread, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(watchdog_thread_id, STACKSIZE, watchdog_thread_fn, NULL, NULL, NULL, PRIORITY, 0,
+		0);
