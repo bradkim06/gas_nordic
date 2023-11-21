@@ -51,7 +51,7 @@ static const struct level_point levels[] = {
 	// {10000, 4000},
 	// tw-403030 300mAh Batt
 	{10000, 3900},
-	{625, 3550},
+	{625, 3300},
 	{0, 3000},
 };
 
@@ -277,8 +277,8 @@ static bool measure_battery_status(moving_average_t *battery_status)
 #define MAX_LOG_CASE "low batt warning curr : -2147483648mV avg : -2147483648mV; -2147483648pptt, "
 	char log_message[sizeof(MAX_LOG_CASE)];
 	// Format the string with the current battery voltage, moving average, and pptt values
-	sprintf(log_message, "curr : %dmV avg : %d mV; %u pptt, ", current_battery_mV,
-		average_battery_mV, pptt);
+	snprintf(log_message, sizeof(MAX_LOG_CASE), "curr : %dmV avg : %d mV; %u pptt, ",
+		 current_battery_mV, average_battery_mV, pptt);
 	// Log the appropriate message based on the low battery status
 	CODE_IF_ELSE(is_low_battery, LOG_INF("low batt warning %s", log_message),
 		     LOG_DBG("stable batt %s", log_message));
@@ -297,7 +297,7 @@ static bool measure_battery_status(moving_average_t *battery_status)
 static void battery_measurement_thread(void)
 {
 /* Define filter size for moving average */
-#define FILTER_SIZE 30
+#define FILTER_SIZE 10
 
 	/* Allocate memory for moving average */
 	/* battery percent moving average filter */
@@ -329,7 +329,7 @@ static void battery_measurement_thread(void)
 		measure_battery_status(battery_status);
 
 /* Define thread period in seconds */
-#define THREAD_PERIOD_SEC 2
+#define THREAD_PERIOD_SEC 5
 
 		/* Sleep for thread period */
 		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));

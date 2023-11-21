@@ -221,7 +221,7 @@ static int setup_gas_adc(struct adc_dt_spec adc_channel)
  * for changes.
  */
 #define GAS_MEASUREMENT_INTERVAL_SEC 2
-#define GAS_AVERAGE_FILTER_SIZE      30
+#define GAS_AVERAGE_FILTER_SIZE      10
 static void gas_measurement_thread(void)
 {
 /* Access to the adc device tree. */
