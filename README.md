@@ -1,7 +1,7 @@
 # nordic nrf52832 gas firmware with zephyr rtos
 
 Firmware for Measuring Various Gases (O2, Harmful Gases - Optional 1 select
-[H2S, CO, CI2, NH3, etc...] , CO2, VOC, IAQ) in an Industrial Environment
+\[H2S, CO, CI2, NH3, etc...\] , CO2, VOC, IAQ) in an Industrial Environment
 and Transmitting Data via Bluetooth Low Energy.
 
 ## Hardware
@@ -57,11 +57,11 @@ Custom board, Out of Tree
 
 #### VOC
 
-| Level     | Hygienic Rating     | Recommendation                                                 | Exposure    | TVOC [ppm)   |
+| Level     | Hygienic Rating     | Recommendation                                                 | Exposure    | TVOC \[ppm\]   |
 | --------- | ------------------- | -------------------------------------------------------------- | ----------- | ------------ |
 | Unhealthy | Unhealty acceptabio | Intense ventilation necess ense ventilation necessary          | hours       | 2.2-5.5      |
-| Poor      | Major objections    | Intensifed ventilation / airing Searchfor sources              | < 1 month   | 0.66-2.2     |
-| Moderate  | Some obiections     | Intensified ventilation / airing recommenaco searchtor sources | < 12 months | 0.22 - 0.66  |
+| Poor      | Major objections    | Intensifed ventilation / airing Searchfor sources              | \< 1 month   | 0.66-2.2     |
+| Moderate  | Some obiections     | Intensified ventilation / airing recommenaco searchtor sources | \< 12 months | 0.22 - 0.66  |
 | Good      | No relevant         | Ventilation / airing recommended                               | no limit    | 0.065 - 0.22 |
 | Excellent | No objections       | Target value                                                   | no limit    | 0-0.065      |
 
