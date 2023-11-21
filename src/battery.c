@@ -23,7 +23,7 @@
 
 LOG_MODULE_REGISTER(BATTERY, CONFIG_APP_LOG_LEVEL);
 
-/* Devicetree Acess */
+/* Devicetree Access */
 #define VBATT DT_PATH(vbatt)
 
 /* Used for Mutual Exclusion of battery data. */

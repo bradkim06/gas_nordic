@@ -12,11 +12,11 @@
 #include <zephyr/settings/settings.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/logging/log.h>
 
 #include "bme68x_iaq.h"
 #include "bsec_datatypes.h"
 
-#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_LOG_LEVEL);
 
 #define DT_DRV_COMPAT bosch_bme68x

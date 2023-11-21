@@ -126,10 +126,10 @@ static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 		k_sem_give(&gas_sem);
 	} break;
 	case GAS: {
-		// TODO: Handle the case for GAS type.
+		// TODO(bradkim06): Handle the case for GAS type.
 	} break;
 	default:
-		// TODO: Handle the case for other types.
+		// TODO(bradkim06): Handle the case for other types.
 		break;
 	}
 
@@ -254,7 +254,7 @@ static void gas_measurement_thread(void)
 	/* Wait for temperature data to become available. */
 	if (k_sem_take(&temperature_semaphore, K_SECONDS(10)) != 0) {
 		LOG_WRN("Temperature Input data not available!");
-		// TODO Temperature sensor error case
+		// TODO(bradkim06): Temperature sensor error case
 	} else {
 		/* Fetch available data. */
 		LOG_INF("Gas temperature sensing ok");

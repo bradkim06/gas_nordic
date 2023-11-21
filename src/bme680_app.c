@@ -50,7 +50,6 @@ struct bme680_data bme680 = {0};
  *
  * @param sensor_data: The sensor data to truncate.
  * @param num_decimal_places: The number of decimal places to truncate.
- * @return The truncated sensor data.
  */
 static void truncate_sensor_data_decimal_places(int32_t *sensor_data, int num_decimal_places)
 {
