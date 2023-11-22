@@ -18,7 +18,7 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 			/*  Measurement Range Max 25% Oxygen */                                    \
 			{250, 662}, /*  Zero current (offset) <0.6 % vol O2 */                     \
 			{0, 0},                                                                    \
-		}, /*  TODO Gas */                                                                 \
+		}, /* TODO: Gas */                                                                 \
 		{},                                                                                \
 	}
 
@@ -32,7 +32,7 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 			{10000, 2000},                                                             \
 			{9600, 0},                                                                 \
 			{9000, -2000},                                                             \
-		}, /* TODO Output Temperature Coefficient Gas Sensor */                            \
+		}, /* TODO: Output Temperature Coefficient Gas Sensor */                           \
 		{},                                                                                \
 	}
 
