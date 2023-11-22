@@ -41,7 +41,7 @@ int main(void)
 }
 
 #if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_wdt)
-/* Maximum and minimum window for watchdog timer(ms) */
+/* Maximum and minimum window for watchdog timer in milliseconds */
 #define WDT_MAX_WINDOW 5000U
 #define WDT_MIN_WINDOW 0U
 
