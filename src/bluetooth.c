@@ -22,7 +22,6 @@
 #include <zephyr/bluetooth/gap.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/addr.h>
-#include <zephyr/bluetooth/conn.h>
 #include <zephyr/drivers/sensor.h>
 
 #include <zephyr/init.h>
@@ -84,7 +83,7 @@ BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
 		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_GAS, BT_GATT_CHRC_NOTIFY,
 					      BT_GATT_PERM_NONE, NULL, NULL, NULL),
 		       BT_GATT_CCC(mylbsbc_ccc_gas_cfg_changed,
-				   BT_GATT_PERM_READ | BT_GATT_PERM_WRITE), );
+				   BT_GATT_PERM_READ | BT_GATT_PERM_WRITE));
 
 /* ble advertising name */
 #define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
