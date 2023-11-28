@@ -390,9 +390,11 @@ int bt_setup(void)
  */
 static int bt_gas_notify(char *p_gas_sensor_data)
 {
-	char log_string[sizeof("notify data of length: 999")];
+	char log_string[sizeof("notify data of length: 999") + 1];
 	uint8_t data_length = strlen(p_gas_sensor_data);
-	sprintf(log_string, "notify data of length: %d", data_length);
+
+	snprintf(log_string, sizeof("notify data of length: 999") + 1, "notify data of length: %d",
+		 data_length);
 	LOG_HEXDUMP_INF(p_gas_sensor_data, data_length, log_string);
 
 	if (mtu_size < data_length) {
@@ -431,17 +433,15 @@ static void bluetooth_thread(void)
 	if (strptime(firmware_build_time, "%Y-%m-%dT%X", &build_time_tm) != NULL) {
 		epoch_time = mktime(&build_time_tm);
 	}
+	char event_info_str[sizeof("type 0xff\n")];
 
 	/* Loop for sending notifications */
 	while (1) {
 		/* Wait for events from the Bluetooth event queue */
 		uint32_t bluetooth_events =
 			k_event_wait(&bt_event, bt_tx_event_sum, true, K_SECONDS(TIMEOUT_SEC));
-		char event_info_str[20];
 		/* Check if timeout event occurred */
-		CODE_IF_ELSE((bluetooth_events == TIMEOUT),
-			     sprintf(event_info_str, "%s second", xstr(TIMEOUT_SEC)),
-			     sprintf(event_info_str, "type 0x%02X", bluetooth_events));
+		snprintf(event_info_str, sizeof(event_info_str), "type 0x%02X", bluetooth_events);
 		/* Log event information */
 		LOG_INF("event : \t%s(%s)", enum_to_str(bluetooth_events), event_info_str);
 
@@ -466,30 +466,33 @@ static void bluetooth_thread(void)
 		strftime(timestamp, sizeof(timestamp), "%m-%dT%X", gmtime(&current_time));
 
 		/* Create string for notification data */
-		char notify_data[100];
-		char *data_pointer = notify_data;
-		/* Add gas sensor values to string */
-		data_pointer +=
-			sprintf(data_pointer, "[%s] %u.%u;%u;%u.%u", timestamp,
-				(uint8_t)oxygen.val1, (uint8_t)oxygen.val2, (uint16_t)gas.val1,
-				(uint8_t)battery.val1, (uint8_t)battery.val2);
+#if !defined(CONFIG_BME68X_IAQ_EN)
+		const char *message_format = "[%s] %u.%u;%u;%u.%u;%u;%u;%u\n";
+		const int message_len =
+			snprintf(NULL, 0, message_format, timestamp, oxygen.val1, oxygen.val2,
+				 gas.val1, battery.val1, battery.val2, environment.temp.val1,
+				 environment.press.val1, environment.humidity.val1);
+		char *notify_data = malloc(message_len + 1);
+		snprintf(notify_data, message_len + 1, message_format, timestamp, oxygen.val1,
+			 oxygen.val2, gas.val1, battery.val1, battery.val2, environment.temp.val1,
+			 environment.press.val1, environment.humidity.val1);
+#else
+		const char *message_format = "[%s] %u.%u;%u;%u.%u;%u;%u;%u;%u.%u;%u;%u\n";
+		const int message_len = snprintf(
+			NULL, 0, message_format, timestamp, oxygen.val1, oxygen.val2, gas.val1,
+			battery.val1, battery.val2, environment.temp.val1, environment.press.val1,
+			environment.humidity.val1, environment.iaq.val1, environment.iaq.val2,
+			environment.eCO2.val1, environment.breathVOC.val1);
+		char *notify_data = malloc(message_len + 1);
+		snprintf(notify_data, message_len + 1, message_format, timestamp, oxygen.val1,
+			 oxygen.val2, gas.val1, battery.val1, battery.val2, environment.temp.val1,
+			 environment.press.val1, environment.humidity.val1, environment.iaq.val1,
+			 environment.iaq.val2, environment.eCO2.val1, environment.breathVOC.val1);
+#endif // !CONFIG_BME68X_IAQ_EN
 
-#if defined(CONFIG_BME68X)
-		/* Add BME680 sensor data to string */
-		data_pointer += sprintf(data_pointer, ";%u;%u;%u", (uint8_t)environment.temp.val1,
-					(uint32_t)environment.press.val1,
-					(uint8_t)environment.humidity.val1);
-#if defined(CONFIG_BME68X_IAQ_EN)
-		data_pointer +=
-			sprintf(data_pointer, ";%u.%u;%u;%u", (uint8_t)environment.iaq.val1,
-				(uint8_t)environment.iaq.val2, (uint32_t)environment.eCO2.val1,
-				(uint16_t)environment.breathVOC.val1);
-#endif // CONFIG_BME68X_IAQ_EN
-#endif // CONFIG_BME68X
-		/* Add newline character to string */
-		strcat(notify_data, "\n");
 		/* Send gas notification */
 		bt_gas_notify(notify_data);
+		free(notify_data);
 	}
 }
 
