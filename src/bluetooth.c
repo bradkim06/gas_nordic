@@ -421,7 +421,7 @@ static int bt_gas_notify(char *p_gas_sensor_data)
 static void bluetooth_thread(void)
 {
 	/* Define initial delay in seconds */
-#define INITIAL_DELAY 2
+	const uint8_t INITIAL_DELAY = 2;
 	/* Sleep for initial delay */
 	k_sleep(K_SECONDS(INITIAL_DELAY));
 

@@ -213,6 +213,10 @@ static int setup_gas_adc(struct adc_dt_spec adc_channel)
 	return 0;
 }
 
+/* Access to the adc device tree. */
+#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
+#error "No suitable devicetree overlay specified"
+#endif // DT Node assert
 /**
  * @brief Gas sensor thread function.
  *
@@ -220,14 +224,10 @@ static int setup_gas_adc(struct adc_dt_spec adc_channel)
  * measurements. It reads and processes gas sensor data based on temperature compensation and checks
  * for changes.
  */
-#define GAS_MEASUREMENT_INTERVAL_SEC 2
-#define GAS_AVERAGE_FILTER_SIZE      10
 static void gas_measurement_thread(void)
 {
-/* Access to the adc device tree. */
-#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
-#error "No suitable devicetree overlay specified"
-#endif // DT Node assert
+	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 2;
+	const uint8_t GAS_AVERAGE_FILTER_SIZE = 10;
 	/* Data of ADC io-channels specified in devicetree. */
 	const struct adc_dt_spec gas_adc_channels[] = {
 		// o2
