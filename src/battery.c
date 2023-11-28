@@ -273,12 +273,18 @@ static bool measure_battery_status(moving_average_t *battery_status)
 	// accordingly
 	bool is_low_battery = (pptt < LOW_BATT_THRESHOLD) ? true : false;
 
-	// Define a string for logging purposes
-#define MAX_LOG_CASE "low batt warning curr : -2147483648mV avg : -2147483648mV; -2147483648pptt, "
-	char log_message[sizeof(MAX_LOG_CASE)];
-	// Format the string with the current battery voltage, moving average, and pptt values
-	snprintf(log_message, sizeof(MAX_LOG_CASE), "curr : %dmV avg : %d mV; %u pptt, ",
-		 current_battery_mV, average_battery_mV, pptt);
+	// length of the log message
+	const char *log_format = "curr : %dmV avg : %d mV; %u pptt, ";
+	const int log_len =
+		snprintf(NULL, 0, log_format, current_battery_mV, average_battery_mV, pptt);
+
+	// Allocate memory for log_message. The allocated memory size is log_len + 1.
+	char *log_message = malloc(log_len + 1);
+
+	// Use snprintf to compose the formatted log message into log_message.
+	snprintf(log_message, log_len + 1, log_format, current_battery_mV, average_battery_mV,
+		 pptt);
+
 	// Log the appropriate message based on the low battery status
 	CODE_IF_ELSE(is_low_battery, LOG_INF("low batt warning %s", log_message),
 		     LOG_DBG("stable batt %s", log_message));
