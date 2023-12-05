@@ -288,6 +288,7 @@ static bool measure_battery_status(moving_average_t *battery_status)
 	// Log the appropriate message based on the low battery status
 	CODE_IF_ELSE(is_low_battery, LOG_INF("low batt warning %s", log_message),
 		     LOG_DBG("stable batt %s", log_message));
+	free(log_message);
 
 	return is_low_battery; // Return the low battery status
 }
