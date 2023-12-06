@@ -118,32 +118,26 @@ static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 			is_gas_data_updated = true;
 			previous_o2_level = current_level;
 		}
-
-		// Ensure thread safety when updating the gas data
-		k_sem_take(&gas_sem, K_FOREVER);
-		gas_data[O2].val1 = current_level / 10;
-		gas_data[O2].val2 = current_level % 10;
-		k_sem_give(&gas_sem);
 	} break;
 	case GAS: {
 		static int previous_gas_level = 0;
-		const int GAS_THRESHOLD = 1;
+		const int GAS_THRESHOLD = 2;
 
 		if (abs(current_level - previous_gas_level) > GAS_THRESHOLD) {
 			is_gas_data_updated = true;
 			previous_gas_level = current_level;
 		}
-
-		// Ensure thread safety when updating the gas data
-		k_sem_take(&gas_sem, K_FOREVER);
-		gas_data[GAS].val1 = current_level / 10;
-		gas_data[GAS].val2 = current_level % 10;
-		k_sem_give(&gas_sem);
 	} break;
 	default:
 		// TODO: Handle the case for other types.
 		break;
 	}
+
+	// Ensure thread safety when updating the gas data
+	k_sem_take(&gas_sem, K_FOREVER);
+	gas_data[device_type].val1 = current_level / 10;
+	gas_data[device_type].val2 = current_level % 10;
+	k_sem_give(&gas_sem);
 
 	return is_gas_data_updated;
 }
