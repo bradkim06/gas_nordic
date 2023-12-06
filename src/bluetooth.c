@@ -467,10 +467,10 @@ static void bluetooth_thread(void)
 
 		/* Create string for notification data */
 #if !defined(CONFIG_BME68X_IAQ_EN)
-		const char *message_format = "[%s] %u.%u;%u;%u;%u;%u;%u\n";
+		const char *message_format = "[%s] %u.%u;%u.%u;%u;%u;%u;%u\n";
 		const int message_len =
 			snprintf(NULL, 0, message_format, timestamp, oxygen.val1, oxygen.val2,
-				 gas.val1, battery.val1, environment.temp.val1,
+				 gas.val1, gas.val2, battery.val1, environment.temp.val1,
 				 environment.press.val1, environment.humidity.val1);
 		char *notify_data = malloc(message_len + 1);
 		snprintf(notify_data, message_len + 1, message_format, timestamp, oxygen.val1,
