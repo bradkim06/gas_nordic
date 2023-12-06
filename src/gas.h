@@ -16,10 +16,14 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 		/* O2 */                                                                           \
 		{                                                                                  \
 			/*  Measurement Range Max 25% Oxygen */                                    \
-			{250, 662}, /*  Zero current (offset) <0.6 % vol O2 */                     \
-			{0, 0},                                                                    \
-		}, /* TODO: Gas */                                                                 \
-		{},                                                                                \
+			{250, 689},                                                                \
+			{0, 0}, /*  Zero current (offset) <0.6 % vol O2 */                         \
+		},                                                                                 \
+		{                                                                                  \
+			/*  Measurement Range Max 100ppm H2S*/                                     \
+			{5000, 700},                                                               \
+			{0, 50},                                                                   \
+		},                                                                                 \
 	}
 
 #define GAS_COEFFICIENT_STRUCT()                                                                   \
@@ -32,8 +36,14 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 			{10000, 2000},                                                             \
 			{9600, 0},                                                                 \
 			{9000, -2000},                                                             \
-		}, /* TODO: Output Temperature Coefficient Gas Sensor */                           \
-		{},                                                                                \
+		}, /* Output Temperature Coefficient Gas Sensor */                                 \
+		{                                                                                  \
+			{10500, 5000},                                                             \
+			{10200, 3000},                                                             \
+			{10000, 2000},                                                             \
+			{9200, 0},                                                                 \
+			{8000, -2000},                                                             \
+		},                                                                                 \
 	}
 
 struct gas_sensor_value {

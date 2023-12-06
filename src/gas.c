@@ -87,8 +87,8 @@ static int32_t calculate_calibrated_mv(int32_t raw_mv, enum gas_device gas_type)
 						   coeff_levels[gas_type]));
 
 	int32_t calibrated_mv = (int32_t)round(raw_mv * temp_coeff);
-	LOG_DBG("Temperature coefficient : %f, Raw millivolts : %d, Calibrated millivolts : %d",
-		temp_coeff, raw_mv, calibrated_mv);
+	// LOG_DBG("Temperature coefficient : %f, Raw millivolts : %d, Calibrated millivolts : %d",
+	// 	temp_coeff, raw_mv, calibrated_mv);
 	return calibrated_mv;
 }
 
@@ -107,26 +107,38 @@ static int32_t calculate_calibrated_mv(int32_t raw_mv, enum gas_device gas_type)
 static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 {
 	bool is_gas_data_updated = false;
-	int current_gas_level = calculate_level_pptt(avg_millivolt, measurement_range[O2]);
+	int current_level = calculate_level_pptt(avg_millivolt, measurement_range[device_type]);
 
 	switch (device_type) {
 	case O2: {
 		static int previous_o2_level = 0;
 		const int O2_THRESHOLD = 2;
 
-		if (abs(current_gas_level - previous_o2_level) > O2_THRESHOLD) {
+		if (abs(current_level - previous_o2_level) > O2_THRESHOLD) {
 			is_gas_data_updated = true;
-			previous_o2_level = current_gas_level;
+			previous_o2_level = current_level;
 		}
 
 		// Ensure thread safety when updating the gas data
 		k_sem_take(&gas_sem, K_FOREVER);
-		gas_data[O2].val1 = current_gas_level / 10;
-		gas_data[O2].val2 = current_gas_level % 10;
+		gas_data[O2].val1 = current_level / 10;
+		gas_data[O2].val2 = current_level % 10;
 		k_sem_give(&gas_sem);
 	} break;
 	case GAS: {
-		// TODO: Handle the case for GAS type.
+		static int previous_gas_level = 0;
+		const int GAS_THRESHOLD = 1;
+
+		if (abs(current_level - previous_gas_level) > GAS_THRESHOLD) {
+			is_gas_data_updated = true;
+			previous_gas_level = current_level;
+		}
+
+		// Ensure thread safety when updating the gas data
+		k_sem_take(&gas_sem, K_FOREVER);
+		gas_data[GAS].val1 = current_level / 10;
+		gas_data[GAS].val2 = current_level % 10;
+		k_sem_give(&gas_sem);
 	} break;
 	default:
 		// TODO: Handle the case for other types.
@@ -180,9 +192,10 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 	}
 
 	LOG_DBG("%s - channel %d: "
-		" current %" PRId32 "mV average %" PRId32 "mV %d.%d%%",
+		" current %" PRId32 "mV average %" PRId32 "mV %d.%d%s",
 		enum_to_str(gas_device_type), adc_channel_spec->channel_id, calibrated_adc_value_mv,
-		average_mv, gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
+		average_mv, gas_data[gas_device_type].val1, gas_data[gas_device_type].val2,
+		(gas_device_type == O2) ? "%" : "ppm");
 }
 
 /**
@@ -236,7 +249,7 @@ static void gas_measurement_thread(void)
 		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 1),
 	};
 
-	for (size_t idx = 0U; idx < 1; idx++) {
+	for (size_t idx = 0U; idx < ARRAY_SIZE(gas_adc_channels); idx++) {
 		setup_gas_adc(gas_adc_channels[idx]);
 	}
 
@@ -261,8 +274,10 @@ static void gas_measurement_thread(void)
 	}
 
 	while (1) {
+		// /* Perform gas sensor measurements. */
+		// perform_adc_measurement(&gas_adc_channels[O2], gas_moving_avg[O2], O2);
 		/* Perform gas sensor measurements. */
-		perform_adc_measurement(&gas_adc_channels[O2], gas_moving_avg[O2], O2);
+		perform_adc_measurement(&gas_adc_channels[GAS], gas_moving_avg[GAS], GAS);
 
 		/* Wait for the specified period of time. */
 		k_sleep(K_SECONDS(GAS_MEASUREMENT_INTERVAL_SEC));

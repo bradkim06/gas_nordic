@@ -111,14 +111,13 @@
 
 	gas_mon: channel@2 {
 		reg = <2>;
-		zephyr,gain = "ADC_GAIN_1";
-		zephyr,reference = "ADC_REF_VDD_1_4";
-		zephyr,vref-mv = <750>;
+		zephyr,gain = "ADC_GAIN_1_2";
+		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
-		zephyr,input-positive = <NRF_SAADC_AIN2>; /* P0.04 */
+		zephyr,input-positive = <NRF_SAADC_AIN2>; /* P0.03 */
 		zephyr,resolution = <14>;
 		zephyr,oversampling = <8>;
-	 };
+	};
 };
 
 &gpio0 {
