@@ -10,6 +10,9 @@ set(BOARD_FLASH_RUNNER jlink)
 set(APP_ROOT ${CMAKE_SOURCE_DIR})
 set(ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
 
+set(CONF_FILE "prj.conf")
+list(APPEND CONF_FILE "debug.conf")
+
 add_compile_definitions(_XOPEN_SOURCE=700)
 
 find_package(Zephyr 3.4.99 EXACT)
