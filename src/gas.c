@@ -268,8 +268,8 @@ static void gas_measurement_thread(void)
 	}
 
 	while (1) {
-		// /* Perform gas sensor measurements. */
-		// perform_adc_measurement(&gas_adc_channels[O2], gas_moving_avg[O2], O2);
+		/* Perform gas sensor measurements. */
+		perform_adc_measurement(&gas_adc_channels[O2], gas_moving_avg[O2], O2);
 		/* Perform gas sensor measurements. */
 		perform_adc_measurement(&gas_adc_channels[GAS], gas_moving_avg[GAS], GAS);
 
