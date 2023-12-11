@@ -15,8 +15,9 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 	static const struct level_point measurement_range[2][2] = {                                \
 		/* O2 */                                                                           \
 		{                                                                                  \
-			/*  Measurement Range Max 25% Oxygen */                                    \
-			{250, 689},                                                                \
+			/*  Max Output Voltage(25% oxygen) =                                       \
+			   (5.28*25*0.001*0.001*100)*(1+5100/100) = 686 */                         \
+			{250, 686},                                                                \
 			{0, 0}, /*  Zero current (offset) <0.6 % vol O2 */                         \
 		},                                                                                 \
 		{                                                                                  \
