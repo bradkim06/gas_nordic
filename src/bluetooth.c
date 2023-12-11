@@ -466,29 +466,29 @@ static void bluetooth_thread(void)
 		strftime(timestamp, sizeof(timestamp), "%m-%dT%X", gmtime(&current_time));
 
 		/* Create string for notification data */
-#if !defined(CONFIG_BME68X_IAQ_EN)
-		const char *message_format = "[%s] %u.%u;%u.%u;%u;%u;%u;%u\n";
-		const int message_len =
-			snprintf(NULL, 0, message_format, timestamp, oxygen.val1, oxygen.val2,
-				 gas.val1, gas.val2, battery.val1, environment.temp.val1,
-				 environment.press.val1, environment.humidity.val1);
-		char *notify_data = malloc(message_len + 1);
-		snprintf(notify_data, message_len + 1, message_format, timestamp, oxygen.val1,
-			 oxygen.val2, gas.val1, battery.val1, battery.val2, environment.temp.val1,
-			 environment.press.val1, environment.humidity.val1);
-#else
-		const char *message_format = "[%s] %u.%u;%u;%u.%u;%u;%u;%u;%u.%u;%u;%u\n";
+#if defined(CONFIG_BME68X_IAQ_EN)
+		const char *message_format = "%u.%u;%u.%u;%u;%u;%u;%u;%u.%u;%u;%u\n";
 		const int message_len = snprintf(
-			NULL, 0, message_format, timestamp, oxygen.val1, oxygen.val2, gas.val1,
-			battery.val1, battery.val2, environment.temp.val1, environment.press.val1,
+			NULL, 0, message_format, oxygen.val1, oxygen.val2, gas.val1, gas.val2,
+			battery.val1, environment.temp.val1, environment.press.val1,
 			environment.humidity.val1, environment.iaq.val1, environment.iaq.val2,
 			environment.eCO2.val1, environment.breathVOC.val1);
 		char *notify_data = malloc(message_len + 1);
-		snprintf(notify_data, message_len + 1, message_format, timestamp, oxygen.val1,
-			 oxygen.val2, gas.val1, battery.val1, battery.val2, environment.temp.val1,
-			 environment.press.val1, environment.humidity.val1, environment.iaq.val1,
-			 environment.iaq.val2, environment.eCO2.val1, environment.breathVOC.val1);
-#endif // !CONFIG_BME68X_IAQ_EN
+		snprintf(notify_data, message_len + 1, oxygen.val1, oxygen.val2, gas.val1, gas.val2,
+			 battery.val1, environment.temp.val1, environment.press.val1,
+			 environment.humidity.val1, environment.iaq.val1, environment.iaq.val2,
+			 environment.eCO2.val1, environment.breathVOC.val1);
+#else
+		const char *message_format = "%u.%u;%u.%u;%u;%u;%u;%u\n";
+		const int message_len =
+			snprintf(NULL, 0, message_format, oxygen.val1, oxygen.val2, gas.val1,
+				 gas.val2, battery.val1, environment.temp.val1,
+				 environment.press.val1, environment.humidity.val1);
+		char *notify_data = malloc(message_len + 1);
+		snprintf(notify_data, message_len + 1, message_format, oxygen.val1, oxygen.val2,
+			 gas.val1, gas.val2, battery.val1, environment.temp.val1,
+			 environment.press.val1, environment.humidity.val1);
+#endif // CONFIG_BME68X_IAQ_EN
 
 		/* Send gas notification */
 		bt_gas_notify(notify_data);
