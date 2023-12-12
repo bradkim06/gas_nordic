@@ -4,6 +4,50 @@ Firmware for Measuring Various Gases (O2, Harmful Gases - Optional 1 select
 \[H2S, CO, CI2, NH3, etc...\] , CO2, VOC, IAQ) in an Industrial Environment
 and Transmitting Data via Bluetooth Low Energy.
 
+## Flow Chart
+
+```mermaid
+---
+title: 휴대용 가스 측정기 Firmware FlowChart
+---
+stateDiagram-v2
+    direction TB
+    [kernel_Init] --> zephyr_rtos
+    bme680 --> ble
+    adc --> ble
+
+    state zephyr_rtos{
+        state bme680{
+            direction LR
+            initialize_bsec_library --> environment(temperature,pressure,humidity)
+            environment(temperature,pressure,humidity) --> gas
+            environment(temperature,pressure,humidity) --> environment(temperature,pressure,humidity) : 3sec
+            initialize_bsec_library --> iaq
+            iaq --> iaq : 60sec
+        }
+        state adc{
+            adc_measuring
+            state gas{
+                direction TB
+                adc_measure --> Temperature_Calibration_Algorithm
+                Temperature_Calibration_Algorithm --> Gas_Concentration_Conversion
+                Gas_Concentration_Conversion --> adc_measure
+            }
+            state battery{
+                direction LR
+                battery_level_check
+            }
+        }
+        state ble{
+            direction LR
+            initialize --> advertising
+            advertising --> connect
+            connect --> notify_data
+            notify_data --> notify_data : 10sec
+        }
+    }
+```
+
 ## Hardware
 
 - schematic see `doc/*.pdf`
