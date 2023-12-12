@@ -52,7 +52,7 @@ static struct gas_sensor_value gas_data[2];
  *
  * @return Converted value in millivolts if successful, error code otherwise.
  */
-static int32_t convert_adc_to_mv(const struct adc_dt_spec *adc_channel, uint16_t raw_adc_data)
+static int32_t convert_adc_to_mv(const struct adc_dt_spec *adc_channel, int16_t raw_adc_data)
 {
 	int32_t millivolts = (adc_channel->channel_cfg.differential)
 				     ? (int32_t)((int16_t)raw_adc_data)
@@ -156,15 +156,19 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 				    moving_average_t *gas_moving_avg,
 				    enum gas_device gas_device_type)
 {
-	uint16_t adc_buffer = 0;
+	int16_t adc_buffer = 0;
 	struct adc_sequence adc_sequence = {
 		.buffer = &adc_buffer,
 		.buffer_size = sizeof(adc_buffer),
 	};
 
-	(void)adc_sequence_init_dt(adc_channel_spec, &adc_sequence);
+	int error = adc_sequence_init_dt(adc_channel_spec, &adc_sequence);
+	if (error < 0) {
+		LOG_WRN("Could not Init ADC channel (%d)", error);
+		return;
+	}
 
-	int error = adc_read(adc_channel_spec->dev, &adc_sequence);
+	error = adc_read(adc_channel_spec->dev, &adc_sequence);
 	if (error < 0) {
 		LOG_WRN("Could not perform ADC read (%d)", error);
 		return;
@@ -172,8 +176,9 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 
 	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer);
 	if (adc_value_mv < 0) {
-		LOG_ERR("Negative ADC values are not allowed");
-		return;
+		LOG_WRN("Negative ADC values(%d) are not allowed. It will be converted to 0",
+			adc_value_mv);
+		adc_value_mv = 0;
 	}
 
 	int32_t calibrated_adc_value_mv = calculate_calibrated_mv(adc_value_mv, gas_device_type);
