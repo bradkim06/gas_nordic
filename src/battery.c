@@ -336,7 +336,7 @@ static void battery_measurement_thread(void)
 		measure_battery_status(battery_status);
 
 /* Define thread period in seconds */
-#define THREAD_PERIOD_SEC 5
+#define THREAD_PERIOD_SEC 10
 
 		/* Sleep for thread period */
 		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
