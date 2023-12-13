@@ -17,7 +17,7 @@
 #define BT_UUID_HHS_LED BT_UUID_DECLARE_128(BT_UUID_HHS_LED_VAL)
 
 /** Product : 10sec **/
-#define TIMEOUT_SEC 60
+#define TIMEOUT_SEC 10
 
 /* Define a list of Bluetooth events with their corresponding values. */
 #define BT_EVENT_LIST(X)                                                                           \
