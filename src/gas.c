@@ -33,7 +33,7 @@ DEFINE_ENUM(gas_device, DEVICE_LIST)
 K_SEM_DEFINE(gas_sem, 1, 1);
 
 GAS_LEVEL_POINT_STRUCT();
-GAS_COEFFICIENT_STRUCT();
+// GAS_COEFFICIENT_STRUCT();
 /* Current value of the gas sensor. */
 static struct gas_sensor_value gas_data[2];
 
@@ -79,17 +79,17 @@ static int32_t convert_adc_to_mv(const struct adc_dt_spec *adc_channel, int16_t 
  */
 static int32_t calculate_calibrated_mv(int32_t raw_mv, enum gas_device gas_type)
 {
-	struct bme680_data env_data = get_bme680_data();
-	double temp_coeff;
-
-	temp_coeff = (10000.f /
-		      (double)calculate_level_pptt(env_data.temp.val1 * 100 + env_data.temp.val2,
-						   coeff_levels[gas_type]));
-
-	int32_t calibrated_mv = (int32_t)round(raw_mv * temp_coeff);
+	// struct bme680_data env_data = get_bme680_data();
+	// double temp_coeff;
+	//
+	// temp_coeff = ((double)calculate_level_pptt(env_data.temp.val1 * 100 + env_data.temp.val2,
+	// 					   coeff_levels[gas_type]) /
+	// 	      10000.f);
+	//
+	// int32_t calibrated_mv = (int32_t)round(raw_mv * temp_coeff);
 	// LOG_DBG("Temperature coefficient : %f, Raw millivolts : %d, Calibrated millivolts : %d",
 	// 	temp_coeff, raw_mv, calibrated_mv);
-	return calibrated_mv;
+	return raw_mv;
 }
 
 /**
