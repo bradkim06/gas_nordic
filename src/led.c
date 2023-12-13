@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(LED, CONFIG_APP_LOG_LEVEL);
 /* LED on time */
 #define LED_TIME_MS               100
 /* LED Brightness level */
-#define LED_PWM_LEVEL             10
+#define LED_PWM_LEVEL             50
 
 /* access the Devicetree for the pwm_led node */
 #define LED_PWM_NODE_ID DT_COMPAT_GET_ANY_STATUS_OKAY(pwm_leds)
@@ -84,9 +84,6 @@ static void led_thread_fn(void)
 	}
 
 	while (1) {
-		/* Wait for LED_THREAD_SLEEP_INTERVAL before checking battery status */
-		k_sleep(K_SECONDS(LED_THREAD_SLEEP_INTERVAL));
-
 		/* Get the battery percentage */
 		enum led_device_state led_color = (get_battery_percent().val1 >= 20)
 							  ? LED_STATE_STABLE_BATTERY
@@ -94,6 +91,8 @@ static void led_thread_fn(void)
 
 		/* Activate the LED with the appropriate color based on the battery status */
 		control_led((uint32_t)led_color);
+		/* Wait for LED_THREAD_SLEEP_INTERVAL before checking battery status */
+		k_sleep(K_SECONDS(LED_THREAD_SLEEP_INTERVAL));
 	}
 }
 
