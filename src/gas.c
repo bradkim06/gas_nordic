@@ -238,8 +238,8 @@ static int setup_gas_adc(struct adc_dt_spec adc_channel)
  */
 static void gas_measurement_thread(void)
 {
-	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 2;
-	const uint8_t GAS_AVERAGE_FILTER_SIZE = 10;
+	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 1;
+	const uint8_t GAS_AVERAGE_FILTER_SIZE = 60;
 	/* Data of ADC io-channels specified in devicetree. */
 	const struct adc_dt_spec gas_adc_channels[] = {
 		// o2
@@ -264,7 +264,7 @@ static void gas_measurement_thread(void)
 	}
 
 	/* Wait for temperature data to become available. */
-	if (k_sem_take(&temperature_semaphore, K_SECONDS(10)) != 0) {
+	if (k_sem_take(&temperature_semaphore, K_SECONDS(5)) != 0) {
 		LOG_WRN("Temperature Input data not available!");
 		// TODO: Temperature sensor error case
 	} else {

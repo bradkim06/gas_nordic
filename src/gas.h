@@ -17,7 +17,7 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 		{                                                                                  \
 			/*  Max Output Voltage(25% oxygen) =                                       \
 			   (5.3*25*0.001*0.001*100)*(1+5100/100) = 689 */                          \
-			{250, 689},                                                                \
+			{250, 2489},                                                               \
 			{0, 0}, /*  Zero current (offset) <0.6 % vol O2 */                         \
 		},                                                                                 \
 		{                                                                                  \

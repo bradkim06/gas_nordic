@@ -4,7 +4,7 @@
 #define VERSION_NUM_H
 #define VERSION_MAJOR      1
 #define VERSION_MINOR      0
-#define VERSION_PATCHLEVEL 1
+#define VERSION_PATCHLEVEL 2
 
 #define VERSION_MAJOR_INIT      (VERSION_MAJOR + '0')
 #define VERSION_MINOR_INIT      (VERSION_MINOR + '0')
