@@ -354,6 +354,6 @@ struct battery_value get_battery_percent(void)
 
 SYS_INIT(battery_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 #define STACKSIZE 1024
-#define PRIORITY  3
+#define PRIORITY  5
 K_THREAD_DEFINE(battmon_id, STACKSIZE, battery_measurement_thread, NULL, NULL, NULL, PRIORITY, 0,
 		0);

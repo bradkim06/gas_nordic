@@ -12,6 +12,7 @@
  */
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <zephyr/drivers/adc.h>
 #include <zephyr/kernel.h>
@@ -22,6 +23,7 @@
 #include "hhs_math.h"
 #include "hhs_util.h"
 #include "bme680_app.h"
+#include "settings.h"
 
 /* Module registration for Gas Monitor with the specified log level. */
 LOG_MODULE_REGISTER(GAS_MON, CONFIG_APP_LOG_LEVEL);
@@ -135,6 +137,7 @@ static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 
 	// Ensure thread safety when updating the gas data
 	k_sem_take(&gas_sem, K_FOREVER);
+	gas_data[device_type].raw = avg_millivolt;
 	gas_data[device_type].val1 = current_level / 10;
 	gas_data[device_type].val2 = current_level % 10;
 	k_sem_give(&gas_sem);
@@ -225,10 +228,57 @@ static int setup_gas_adc(struct adc_dt_spec adc_channel)
 	return 0;
 }
 
-/* Access to the adc device tree. */
-#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
-#error "No suitable devicetree overlay specified"
-#endif // DT Node assert
+struct gas_sensor_value get_gas_data(enum gas_device gas_dev)
+{
+	// function will block indefinitely until the semaphore is available.
+	k_sem_take(&gas_sem, K_FOREVER);
+
+	// Create a local copy of the gas sensor data for the specified gas device.
+	struct gas_sensor_value gas_sensor_copy = gas_data[gas_dev];
+
+	// Release the semaphore after the shared resource has been safely read.
+	k_sem_give(&gas_sem);
+
+	// Return the local copy of the gas sensor data.
+	// This allows the caller to use the sensor data without worrying about concurrent access
+	return gas_sensor_copy;
+}
+
+void calibrate_oxygen(char *reference_value, int len)
+{
+	// Create a buffer to hold the reference value string plus a null terminator
+	uint8_t str[len + 1];
+	// Copy the reference value into the buffer and ensure it's null-terminated
+	snprintf(str, len + 1, "%s",
+		 reference_value); // Fixed the format specifier from "s" to "%s"
+
+	// Convert the reference value string to a floating-point number
+	float reference_percent = atof(str);
+
+	// Calculate the voltage based on the reference percent and the voltage divider
+	// Note: The formula for voltage calculation is specific to the sensor and circuit design
+	float voltage = gas_data[O2].raw / ((1 + 2000 / 10.7) * (reference_percent * 0.001 * 100));
+	// Round down the voltage to two decimal places
+	voltage = floor(voltage * 100) / 100;
+
+	// Calculate the new maximum measurement value in millivolts for the oxygen sensor
+	unsigned int new_mV = (voltage * 25 * 0.001 * 100) * (1 + 2000 / 10.7);
+
+	// Acquire the semaphore to ensure exclusive access to shared resources
+	k_sem_take(&gas_sem, K_FOREVER);
+
+	// Update the oxygen sensor's measurement range in millivolts
+	measurement_range[O2][0].lvl_mV = new_mV;
+
+	// Release the semaphore
+	k_sem_give(&gas_sem);
+
+	// Update the sensor configuration with the new calibration value
+	update_config(OXYGEN_CALIBRATION, new_mV);
+	// Post an event to indicate that the oxygen sensor has been calibrated
+	k_event_post(&config_event, OXYGEN_CALIBRATION);
+}
+
 /**
  * @brief Gas sensor thread function.
  *
@@ -236,8 +286,15 @@ static int setup_gas_adc(struct adc_dt_spec adc_channel)
  * measurements. It reads and processes gas sensor data based on temperature compensation and checks
  * for changes.
  */
+#if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
+#error "No suitable devicetree overlay specified"
+#endif // DT Node assert
 static void gas_measurement_thread(void)
 {
+	k_mutex_init(&config_mutex);
+	k_condvar_init(&config_condvar);
+	k_mutex_lock(&config_mutex, K_FOREVER);
+
 	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 1;
 	const uint8_t GAS_AVERAGE_FILTER_SIZE = 60;
 	/* Data of ADC io-channels specified in devicetree. */
@@ -263,14 +320,18 @@ static void gas_measurement_thread(void)
 		}
 	}
 
-	/* Wait for temperature data to become available. */
-	if (k_sem_take(&temperature_semaphore, K_SECONDS(5)) != 0) {
-		LOG_WRN("Temperature Input data not available!");
-		// TODO: Temperature sensor error case
-	} else {
-		/* Fetch available data. */
-		LOG_INF("Gas temperature sensing ok");
-	}
+	k_condvar_wait(&config_condvar, &config_mutex, K_FOREVER);
+	measurement_range[O2][0].lvl_mV = get_config(OXYGEN_CALIBRATION);
+	k_mutex_unlock(&config_mutex);
+
+	// /* Wait for temperature data to become available. */
+	// if (k_sem_take(&temperature_semaphore, K_SECONDS(3)) != 0) {
+	// 	LOG_WRN("Temperature Input data not available!");
+	// 	// TODO: Temperature sensor error case
+	// } else {
+	// 	/* Fetch available data. */
+	// 	LOG_INF("Gas temperature sensing ok");
+	// }
 
 	while (1) {
 		/* Perform gas sensor measurements. */
@@ -283,21 +344,6 @@ static void gas_measurement_thread(void)
 	}
 }
 
-struct gas_sensor_value get_gas_data(enum gas_device gas_dev)
-{
-	/* Take semaphore to ensure exclusive access to 'curr_result' */
-	k_sem_take(&gas_sem, K_FOREVER);
-
-	/* Make a copy of the current gas sensor data */
-	struct gas_sensor_value gas_sensor_copy = gas_data[gas_dev];
-
-	/* Release semaphore */
-	k_sem_give(&gas_sem);
-
-	/* Return the copied data */
-	return gas_sensor_copy;
-}
-
 #define STACKSIZE 1024
-#define PRIORITY  2
+#define PRIORITY  4
 K_THREAD_DEFINE(gas_id, STACKSIZE, gas_measurement_thread, NULL, NULL, NULL, PRIORITY, 0, 0);

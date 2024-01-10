@@ -98,6 +98,6 @@ static void led_thread_fn(void)
 
 /* Define the stack size and priority for the LED thread */
 #define STACK_SIZE 1024
-#define PRIORITY   4
+#define PRIORITY   6
 /* Define the thread for the LED */
 K_THREAD_DEFINE(led_id, STACK_SIZE, led_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);

@@ -10,8 +10,10 @@
  * @author bradkim06@gmail.com
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <time.h>
+// #include <math.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -76,11 +78,62 @@ static void mylbsbc_ccc_gas_cfg_changed(const struct bt_gatt_attr *attr, uint16_
 	}
 }
 
+// Define a function to handle BLE (Bluetooth Low Energy) write operations.
+// This function is called when a BLE client writes to a characteristic on the BLE server.
+/**
+ * @brief GATT write callback in a Bluetooth stack
+ *
+ * @param conn A pointer to the BLE connection structure.
+ * @param attr A pointer to the GATT attribute that is being written to.
+ * @param buf A pointer to the buffer containing the data to be written.
+ * @param len The length of the data in the buffer.
+ * @param offset The offset at which the data should be written (used for long writes).
+ * @param flags Flags for the write operation (not used in this snippet).
+ * @return the length of the data written if the write operation is successful.
+ */
+static ssize_t write_ble(struct bt_conn *conn, const struct bt_gatt_attr *attr, const void *buf,
+			 uint16_t len, uint16_t offset, uint8_t flags)
+{
+	// Log a debug message with the attribute handle and the connection pointer.
+	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle, (void *)conn);
+
+	// Check if the data length is less than 4 bytes. log an error and return an error code.
+	if (len < 4) {
+		LOG_DBG("Write led: Incorrect data length");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
+	}
+
+	// Check if the data offset is non-zero. If so, log an error and return an error code.
+	if (offset != 0) {
+		LOG_DBG("Write led: Incorrect data offset");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+
+	// Declare a pointer to a character.
+	char *p = NULL;
+
+	// Define a constant string for the O2 calibration command.
+	const char *O2_CALIBRATION = "O2=";
+	// Check if the buffer contains the O2 calibration command.
+	if ((p = strstr(buf, O2_CALIBRATION))) {
+		// Calculate the length of the O2 calibration command prefix.
+		size_t prefix_len = strlen(O2_CALIBRATION);
+		// Move the pointer past the prefix to the actual calibration data.
+		p += prefix_len;
+
+		// Call a function to calibrate the oxygen sensor with the provided data.
+		calibrate_oxygen(p, len - prefix_len);
+	}
+
+	// Return the number of bytes written to indicate success.
+	return len;
+}
+
 /* Service Declaration */
 BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
-		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_LED, BT_GATT_CHRC_WRITE,
-					      BT_GATT_PERM_WRITE, NULL, NULL, NULL),
-		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_GAS, BT_GATT_CHRC_NOTIFY,
+		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_WRITE, BT_GATT_CHRC_WRITE,
+					      BT_GATT_PERM_WRITE, NULL, write_ble, NULL),
+		       BT_GATT_CHARACTERISTIC(BT_UUID_HHS_NOTI, BT_GATT_CHRC_NOTIFY,
 					      BT_GATT_PERM_NONE, NULL, NULL, NULL),
 		       BT_GATT_CCC(mylbsbc_ccc_gas_cfg_changed,
 				   BT_GATT_PERM_READ | BT_GATT_PERM_WRITE));
