@@ -205,6 +205,11 @@ static int battery_measure_enable(bool enable)
 		rc = 0;
 		if (gcp->port) {
 			rc = gpio_pin_set_dt(gcp, enable);
+
+			if (enable) {
+				/* Sleep for enable delay */
+				k_sleep(K_MSEC(200));
+			}
 		}
 	}
 	return rc;
@@ -300,6 +305,11 @@ static bool measure_battery_status(moving_average_t *battery_status)
  * battery measurement and then periodically calls the "measure_battery_status" function to measure
  * battery status. The battery status is maintained with a moving average, and low battery
  * warnings are logged as needed.
+ *
+ * thread period current consumption test result
+ * 10Sec = 3uA
+ * 30Sec = 2uA
+ * 60Sec = 1uA (Recommend)
  */
 static void battery_measurement_thread(void)
 {
@@ -324,22 +334,17 @@ static void battery_measurement_thread(void)
 		return;
 	}
 
-/* Define initial delay for thread in seconds */
-#define INITIAL_DELAY_SEC 3
-
-	/* Sleep for initial delay */
-	k_sleep(K_SECONDS(INITIAL_DELAY_SEC));
-
+	/* Define thread period in seconds */
+#define THREAD_PERIOD_SEC 60
 	/* Loop for continuous measurement */
 	while (1) {
 		/* Call function for measuring battery */
 		measure_battery_status(battery_status);
 
-/* Define thread period in seconds */
-#define THREAD_PERIOD_SEC 10
-
 		/* Sleep for thread period */
+		battery_measure_enable(false);
 		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
+		battery_measure_enable(true);
 	}
 }
 

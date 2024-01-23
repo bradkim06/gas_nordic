@@ -179,8 +179,8 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 
 	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer);
 	if (adc_value_mv < 0) {
-		LOG_WRN("Negative ADC values(%d) are not allowed. It will be converted to 0",
-			adc_value_mv);
+		// LOG_WRN("Negative ADC values(%d) are not allowed. It will be converted to 0",
+		// 	adc_value_mv);
 		adc_value_mv = 0;
 	}
 
@@ -285,6 +285,11 @@ void calibrate_oxygen(char *reference_value, int len)
  * This function configures ADC channels, sets up moving averages, and performs gas sensor
  * measurements. It reads and processes gas sensor data based on temperature compensation and checks
  * for changes.
+ *
+ * thread period current consumption test result
+ * 1Sec = 11uA
+ * 2Sec = 5uA
+ * 3Sec = 3uA
  */
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
 #error "No suitable devicetree overlay specified"
@@ -295,8 +300,8 @@ static void gas_measurement_thread(void)
 	k_condvar_init(&config_condvar);
 	k_mutex_lock(&config_mutex, K_FOREVER);
 
-	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 1;
-	const uint8_t GAS_AVERAGE_FILTER_SIZE = 60;
+	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 2;
+	const uint8_t GAS_AVERAGE_FILTER_SIZE = 15;
 	/* Data of ADC io-channels specified in devicetree. */
 	const struct adc_dt_spec gas_adc_channels[] = {
 		// o2
@@ -323,15 +328,6 @@ static void gas_measurement_thread(void)
 	k_condvar_wait(&config_condvar, &config_mutex, K_FOREVER);
 	measurement_range[O2][0].lvl_mV = get_config(OXYGEN_CALIBRATION);
 	k_mutex_unlock(&config_mutex);
-
-	// /* Wait for temperature data to become available. */
-	// if (k_sem_take(&temperature_semaphore, K_SECONDS(3)) != 0) {
-	// 	LOG_WRN("Temperature Input data not available!");
-	// 	// TODO: Temperature sensor error case
-	// } else {
-	// 	/* Fetch available data. */
-	// 	LOG_INF("Gas temperature sensing ok");
-	// }
 
 	while (1) {
 		/* Perform gas sensor measurements. */

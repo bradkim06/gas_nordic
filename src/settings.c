@@ -5,7 +5,7 @@
 
 #include "settings.h"
 
-LOG_MODULE_REGISTER(config, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(APP_CONFIG, CONFIG_APP_LOG_LEVEL);
 
 #define FAIL_MSG "fail (err %d)"
 
@@ -115,28 +115,21 @@ static void config_thread(void)
 	k_mutex_lock(&config_mutex, K_FOREVER);
 
 	// Initialize the settings subsystem and check for errors.
+	// TODO : solve this log error case
+	// <inf> MAIN: Firmware Info : 1.0.2vconfig settings_subsys_init, error: %d
 	int err = settings_subsys_init();
-	if (err) {
-		LOG_ERR("settings_subsys_init, error: %d", err);
-		return;
-	}
-	LOG_INF("settings subsys initialization: OK.");
+	CODE_IF_ELSE(err, LOG_ERR("config settings_subsys_init, error: %d", err),
+		     LOG_INF("settings subsys initialization: OK."));
 
 	// Register the settings handler for a specific configuration subtree.
 	err = settings_register(&my_conf);
-	if (err) {
-		LOG_ERR("subtree '%s' handler registered: fail (err %d)", my_conf.name, err);
-		return;
-	}
-	LOG_INF("subtree '%s' handler registered: OK", my_conf.name);
+	CODE_IF_ELSE(err,
+		     LOG_ERR("subtree '%s' handler registered: fail (err %d)", my_conf.name, err),
+		     LOG_INF("subtree '%s' handler registered: OK", my_conf.name))
 
 	// Load settings from persistent storage and check for errors.
 	err = settings_load();
-	if (err) {
-		LOG_ERR("settings_load, error: %d", err);
-		return;
-	}
-	LOG_INF("settings load, OK.");
+	CODE_IF_ELSE(err, LOG_ERR("settings_load, error: %d", err), LOG_INF("settings load, OK."))
 
 	// Signal a condition variable to indicate that the configuration is initialized.
 	k_condvar_signal(&config_condvar);

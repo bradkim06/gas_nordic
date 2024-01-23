@@ -26,7 +26,7 @@
 LOG_MODULE_REGISTER(LED, CONFIG_APP_LOG_LEVEL);
 
 /* The battery thread's running period */
-#define LED_THREAD_SLEEP_INTERVAL 5
+#define LED_THREAD_SLEEP_INTERVAL 10
 /* LED on time */
 #define LED_TIME_MS               100
 /* LED Brightness level */
@@ -96,8 +96,8 @@ static void led_thread_fn(void)
 	}
 }
 
-/* Define the stack size and priority for the LED thread */
-#define STACK_SIZE 1024
-#define PRIORITY   6
-/* Define the thread for the LED */
-K_THREAD_DEFINE(led_id, STACK_SIZE, led_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
+// /* Define the stack size and priority for the LED thread */
+// #define STACK_SIZE 1024
+// #define PRIORITY   6
+// /* Define the thread for the LED */
+// K_THREAD_DEFINE(led_id, STACK_SIZE, led_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
