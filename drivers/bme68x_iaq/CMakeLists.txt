@@ -15,7 +15,7 @@ zephyr_library_compile_definitions(BSEC_SAMPLE_PERIOD_S=3)
 # for IAQ sample rate
 zephyr_library_compile_definitions_ifdef(
   CONFIG_BME68X_IAQ_SAMPLE_RATE_ULTRA_LOW_POWER
-  BSEC_SAMPLE_RATE=BSEC_SAMPLE_RATE_ULP
+  BSEC_SAMPLE_RATE=BSEC_SAMPLE_RATE_LP
   BSEC_SAMPLE_RATE_IAQ=BSEC_SAMPLE_RATE_ULP)
 
 zephyr_library_compile_definitions_ifdef(

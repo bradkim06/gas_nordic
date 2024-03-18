@@ -3,7 +3,6 @@
 cmake_minimum_required(VERSION 3.20.0)
 set_property(GLOBAL PROPERTY CSTD c11)
 
-set(CONF_FILE release.conf)
 set(BOARD_ROOT ${CMAKE_SOURCE_DIR})
 set(BOARD hhs_nrf52832)
 # set(BOARD_FLASH_RUNNER jlink)

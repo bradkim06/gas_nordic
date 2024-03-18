@@ -314,7 +314,7 @@ static bool measure_battery_status(moving_average_t *battery_status)
 static void battery_measurement_thread(void)
 {
 /* Define filter size for moving average */
-#define FILTER_SIZE 10
+#define FILTER_SIZE 15
 
 	/* Allocate memory for moving average */
 	/* battery percent moving average filter */
