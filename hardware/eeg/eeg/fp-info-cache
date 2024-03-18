@@ -1,4 +1,11 @@
-23172707919833731
+23186522294134907
+ADS1299-4PAGR
+QFP50P1200X1200X120-64N
+ADS1299-4PAGR
+Integrated Circuit
+0
+64
+64
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -13,6 +20,13 @@ audio belton reverb
 0
 7
 7
+BMI270
+XDCR_BMI270
+
+
+0
+14
+14
 Battery
 BatteryClip_Keystone_54_D16-19mm
 Battery clip for batteries with a diameter between 16-19 mm: https://www.keyelco.com/product.cfm/product_id/826
@@ -2526,6 +2540,27 @@ speaker CUI
 0
 2
 2
+CA0612KRX7R9BB102
+CA0612KRX7R9BB102
+<b>CA0612KRX7R9BB102</b><br>
+
+0
+8
+8
+CAY16-2201F4LF
+RESCAF80P320X160X60-8N
+
+
+0
+8
+8
+CAY16A-2201F4LF
+CAY16A2201F4LF
+CAY16A-2201F4LF-1
+Resistor Network
+0
+8
+8
 Calibration_Scale
 Gauge_10mm_Type1_CopperTop
 Gauge, Massstab, 10mm, CopperTop, Type 1,
@@ -53661,13 +53696,6 @@ SMD SMT ceramic resonator filter filter hand-soldering
 0
 3
 3
-DMC2400UV
-SOTFL50P162X60-6N
-DMC2400UV
-Transistor
-0
-6
-6
 Diode_SMD
 D_0201_0603Metric
 Diode SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator
@@ -55670,13 +55698,13 @@ One digit LED 7 segment SA39-11 SC39-11 SA39-12 SC39-12
 0
 10
 10
-FDV303N
-SOT96P237X111-3N
-SOT−23 (TO−236
-MOSFET (N-Channel)
+FC-135R_32.7680KA-AC
+FC135R327680KAAC
+FC-135R 32.7680KA-AC-2
+Crystal or Oscillator
 0
-3
-3
+2
+2
 Ferrite_THT
 LairdTech_28C0236-0JW-10
 Ferrite, vertical, LairdTech 28C0236-0JW-10, https://assets.lairdtech.com/home/brandworld/files/28C0236-0JW-10.pdf, JW Miller core https://www.bourns.com/products/magnetic-products/j.w.-miller-through-hole-ferrite-beads-emi-filters
@@ -56713,34 +56741,13 @@ Fuse Fuseholder TR5 Littelfuse/Wickmann No. 460 No560
 0
 2
 2
-HHS
-MSL-1C2P
+GSB1C4621DS1HR
+AMPHENOL_GSB1C4621DS1HR
 
 
 0
-6
-6
-HHS
-SS2118_O2
-
-
-0
-3
-3
-HHS
-SS2198_H2S
-
-
-0
-3
-3
-HHS
-gas_nordic_edge
-
-
-0
-0
-0
+16
+16
 Heatsink
 Heatsink_35x26mm_1xFixation3mm_Fischer-SK486-35
 Heatsink, 35mm x 26mm, 1x Fixation 3mm, Fischer SK486-35
@@ -56881,6 +56888,13 @@ heatsink
 0
 0
 0
+ISP2053-AX-RS
+XCVR_ISP2053-AX-RS
+
+
+0
+74
+74
 Inductor_SMD
 L_6.3x6.3_H3
 Choke, SMD, 6.3x6.3mm 3mm height
@@ -63524,31 +63538,31 @@ Yellow 5381 Series LED
 0
 2
 2
-LIB_1285AS-H-2R2M=P2
-1285ASH1R0MP2
-0806 (2016) T=1.0mm
-Inductor
-0
-2
-2
-LPV821DBVR
-SOT95P280X145-5N
-DBV0005A
+LM2664M6X_NOPB
+SOT95P280X145-6N
+DBV (R-PDSO-G6)
 Integrated Circuit
 0
-5
-5
-MDBT42Q-512KV2
-RAYTAC_MDBT42Q-512KV2
+6
+6
+LQM18FN100M00D
+INDC1608X90N
 
 
 0
-39
-39
-MURATA_BLM15PE121SH1D
-MURATA_BLM15PE121SH1D_0
-Power Line Ferrite Bead for Automotive 120Ω @ 100MHz 25% 1.5A 0.09Ω 0402
-
+2
+2
+MDBT53-P1M
+MDBT53P1M
+MDBT53-P1M-3
+Integrated Circuit
+0
+65
+65
+MLP2016H2R2MT0S1
+INDC2016X100N
+MLP2016
+Inductor
 0
 2
 2
@@ -64987,6 +65001,13 @@ mounting hole 8.4mm m8
 0
 9
 1
+MountingHole
+eeg
+
+
+0
+0
+0
 Mounting_Wuerth
 Mounting_Wuerth_WA-SMSE-ExternalM3_H5mm_9771050360
 Mounting Hardware, external M3, height 5, Wuerth electronics 9771050360 (https://katalog.we-online.com/em/datasheet/9771050360.pdf), generated with kicad-footprint-generator
@@ -66128,20 +66149,13 @@ Mounting 4.5mm 9774100982
 0
 8
 1
-NPM1100-QDAA
-QFN50P400X400X90-25N-D
-NPM1100-QDAA-R*
+NPM1300-QEAA-R
+QFN50P500X500X90-33N
+QFN32-2
 Integrated Circuit
 0
-25
-25
-NPM1100-QDAA-R
-QFN50P400X400X90-25N-D
-NPM1100-QDAA-R*
-Integrated Circuit
-0
-25
-25
+33
+33
 NetTie
 NetTie-2_SMD_Pad0.5mm
 Net tie, 2 pin, 0.5mm square SMD pads
@@ -67371,6 +67385,13 @@ Oscillator
 Oscillator_SeikoEpson_SG-8002DC
 8-lead dip package, row spacing 7.62 mm (300 mils)
 DIL DIP PDIP 2.54mm 7.62mm 300mil
+0
+4
+4
+PRTR5V0U2X
+SOT190P230X110-4N
+Plastic Surface-mounted Package; 4 leads
+
 0
 4
 4
@@ -87268,6 +87289,13 @@ rotary encoder
 0
 7
 6
+SK12D07VG5
+SK12D07VG4NSPA_CNK
+
+SK12D07VG4NSPA 
+0
+5
+5
 Sensor
 ASAIR_AM2302_P2.54mm_Lead2.75mm_TabDown
 Temperature and humidity module, http://akizukidenshi.com/download/ds/aosong/AM2302.pdf
@@ -88920,13 +88948,20 @@ Logo WEEE
 0
 0
 0
-TCK106AG,LF
-BGA4C40P2X2_79X79X59
-TCK107AG,LF
-Integrated Circuit
+TPD4E1B06DRLR
+SOT50P160X60-6N
+
+
 0
-4
-4
+6
+6
+TYPE-C-31-M-12
+HRO_TYPE-C-31-M-12
+
+
+0
+16
+16
 TerminalBlock
 TerminalBlock_Altech_AK300-2_P5.00mm
 Altech AK300 terminal block, pitch 5.0mm, 45 degree angled, see http://www.mouser.com/ds/2/16/PCBMETRC-24178.pdf
@@ -94044,13 +94079,13 @@ igbt diode module
 0
 25
 25
-USB4515-GF-A_REVA
-USB4515GFA
-USB4515-GF-A-2
-Connector
+USB4105-GF-A
+GCT_USB4105-GF-A
+
+
 0
-10
-10
+16
+16
 Valve
 Valve_ECC-83-1
 Valve ECC-83-1 round pins
@@ -94835,3 +94870,24 @@ Varistor VF
 0
 2
 2
+nPM1300-CAAA-R7
+WLCSP35_2p3775X3p0775_NOR
+
+NPM1300-CAAA-R7 
+0
+35
+35
+nPM1300-CAAA-R7
+WLCSP35_2p3775X3p0775_NOR-L
+
+NPM1300-CAAA-R7 
+0
+35
+35
+nPM1300-CAAA-R7
+WLCSP35_2p3775X3p0775_NOR-M
+
+NPM1300-CAAA-R7 
+0
+35
+35

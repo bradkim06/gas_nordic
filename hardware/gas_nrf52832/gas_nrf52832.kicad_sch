@@ -1,85 +1,171 @@
-(kicad_sch (version 20230121) (generator eeschema)
-
-  (uuid 49921ab5-3ded-458c-bdac-830c92c2ee0e)
-
-  (paper "A4")
-
-  (lib_symbols
-  )
-
-
-  (text "Revision History" (at 186.69 190.5 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 339bc1c8-fbde-4cd1-9660-2b0750198d4b)
-  )
-  (text "Rev 1.0.1\n- Oxygen Sensor\n	- Voltage Amplification Ratio AdjustmentR11(100 -> 10.7), R12(5.1k -> 2.0k)\n	- Addition of Capacitor for Noise Reduction (C22)\n- Gas Sensor\n	- Addition of Capacitor for Noise Reduction (R19, C23)\n- Battery Connector pitch fix (2.5mm -> 1.25mm)"
-    (at 22.86 74.93 0)
-    (effects (font (size 2.5 2.5)) (justify left bottom))
-    (uuid 7052e634-f647-4e2d-b97d-dc75354d40e1)
-  )
-  (text "Rev 1.0.0\n- 65mm/34mm Edge Cut Size\n- 3V0 VDD Capacitor(bypass) & Beads\n- Sensor & Battery Bug Fix"
-    (at 22.86 40.64 0)
-    (effects (font (size 2.5 2.5)) (justify left bottom))
-    (uuid 71f987b9-f1a6-487c-a5d1-60f8a6aac86b)
-  )
-  (text "TODO\n- hansam digitec requirement\n	- If USB and RC are very close, errors may occur\n	so increase the distance (R8, R20, R21, C8)"
-    (at 24.13 173.99 0)
-    (effects (font (size 2.5 2.5)) (justify left bottom))
-    (uuid f75b7212-1e84-4587-b0ed-4b6c6558372f)
-  )
-
-  (sheet (at -295.91 254) (size 243.84 161.29) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid b452f039-bfae-4e82-aaf6-f9a30b605e1b)
-    (property "Sheetname" "nrf52832" (at -295.91 253.2884 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "nrf52832.kicad_sch" (at -295.91 415.8746 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "gas_nrf52832"
-        (path "/49921ab5-3ded-458c-bdac-830c92c2ee0e" (page "2"))
-      )
-    )
-  )
-
-  (sheet (at 64.77 255.27) (size 53.34 39.37) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid b8ce7ae9-40f3-4682-a875-327e7c1cd28b)
-    (property "Sheetname" "Sensor Sheet" (at 64.77 254.5584 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "sensor.kicad_sch" (at 64.77 295.2246 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "gas_nrf52832"
-        (path "/49921ab5-3ded-458c-bdac-830c92c2ee0e" (page "4"))
-      )
-    )
-  )
-
-  (sheet (at 5.08 255.27) (size 53.34 39.37) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4)
-    (property "Sheetname" "Power Sheet" (at 5.08 254.5584 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "power.kicad_sch" (at 5.08 295.2246 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "gas_nrf52832"
-        (path "/49921ab5-3ded-458c-bdac-830c92c2ee0e" (page "3"))
-      )
-    )
-  )
-
-  (sheet_instances
-    (path "/" (page "1"))
-  )
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "49921ab5-3ded-458c-bdac-830c92c2ee0e")
+	(paper "A4")
+	(lib_symbols)
+	(text "Revision History"
+		(exclude_from_sim no)
+		(at 186.69 190.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "339bc1c8-fbde-4cd1-9660-2b0750198d4b")
+	)
+	(text "Rev 1.0.1\n- Oxygen Sensor\n	- Voltage Amplification Ratio AdjustmentR11(100 -> 10.7), R12(5.1k -> 2.0k)\n	- Addition of Capacitor for Noise Reduction (C22)\n- Gas Sensor\n	- Addition of Capacitor for Noise Reduction (R19, C23)\n- Battery Connector pitch fix (2.5mm -> 1.25mm)"
+		(exclude_from_sim no)
+		(at 22.86 74.93 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left bottom)
+		)
+		(uuid "7052e634-f647-4e2d-b97d-dc75354d40e1")
+	)
+	(text "Rev 1.0.0\n- 65mm/34mm Edge Cut Size\n- 3V0 VDD Capacitor(bypass) & Beads\n- Sensor & Battery Bug Fix"
+		(exclude_from_sim no)
+		(at 22.86 40.64 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left bottom)
+		)
+		(uuid "71f987b9-f1a6-487c-a5d1-60f8a6aac86b")
+	)
+	(text "TODO\n- hansam digitec requirement\n	- If USB and RC are very close, errors may occur\n	so increase the distance (R8, R20, R21, C8)"
+		(exclude_from_sim no)
+		(at 24.13 173.99 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left bottom)
+		)
+		(uuid "f75b7212-1e84-4587-b0ed-4b6c6558372f")
+	)
+	(sheet
+		(at -295.91 254)
+		(size 243.84 161.29)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "b452f039-bfae-4e82-aaf6-f9a30b605e1b")
+		(property "Sheetname" "nrf52832"
+			(at -295.91 253.2884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "nrf52832.kicad_sch"
+			(at -295.91 415.8746 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 64.77 255.27)
+		(size 53.34 39.37)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "b8ce7ae9-40f3-4682-a875-327e7c1cd28b")
+		(property "Sheetname" "Sensor Sheet"
+			(at 64.77 254.5584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "sensor.kicad_sch"
+			(at 64.77 295.2246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 5.08 255.27)
+		(size 53.34 39.37)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4")
+		(property "Sheetname" "Power Sheet"
+			(at 5.08 254.5584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 5.08 295.2246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
 )
