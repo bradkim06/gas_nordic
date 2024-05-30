@@ -111,7 +111,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	sensor_channel_get(dev, SENSOR_CHAN_VOC, &bme680.breathVOC);
 #endif // CONFIG_BME68X_IAQ_EN
 
-	truncate_sensor_data_decimal_places(&bme680.temp.val2, 2);
+	truncate_sensor_data_decimal_places(&bme680.temp.val2, 1);
 	truncate_sensor_data_decimal_places(&bme680.press.val2, 2);
 	truncate_sensor_data_decimal_places(&bme680.humidity.val2, 2);
 
