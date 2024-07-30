@@ -20,21 +20,25 @@
 
 #define GAS_COEFFICIENT_STRUCT()                                                                   \
 	/* curve specific to the gas temperature coefficient. */                                   \
-	static struct level_point coeff_levels[2][5] = {                                           \
+	static struct level_point coeff_levels[2][7] = {                                           \
 		/* Output Temperature Coefficient Oxygen Sensor */                                 \
 		{                                                                                  \
-			{10500, 5000},                                                             \
-			{10400, 4000},                                                             \
-			{10000, 2000},                                                             \
-			{9600, 0},                                                                 \
-			{9000, -2000},                                                             \
+			{1030, 4000},                                                              \
+			{1015, 3000},                                                              \
+			{1000, 2000},                                                              \
+			{975, 1000},                                                               \
+			{950, 0},                                                                  \
+			{920, -1000},                                                              \
+			{890, -2000},                                                              \
 		}, /* Output Temperature Coefficient Gas Sensor */                                 \
 		{                                                                                  \
-			{10500, 5000},                                                             \
-			{10200, 3000},                                                             \
-			{10000, 2000},                                                             \
-			{9200, 0},                                                                 \
-			{8000, -2000},                                                             \
+			{1030, 4000},                                                              \
+			{1015, 3000},                                                              \
+			{1000, 2000},                                                              \
+			{975, 1000},                                                               \
+			{950, 0},                                                                  \
+			{920, -1000},                                                              \
+			{890, -2000},                                                              \
 		},                                                                                 \
 	}
 

@@ -35,9 +35,10 @@ DEFINE_ENUM(gas_device, DEVICE_LIST)
 K_SEM_DEFINE(gas_sem, 1, 1);
 
 GAS_LEVEL_POINT_STRUCT();
-// GAS_COEFFICIENT_STRUCT();
+GAS_COEFFICIENT_STRUCT();
 /* Current value of the gas sensor. */
 static struct gas_sensor_value gas_data[2];
+static bool is_temperature_invalid;
 
 #define DATA_BUFFER_SIZE 30 // 데이터 버퍼 크기
 #define SIGMA_MULTIPLIER 3  // 3-시그마 규칙을 위한 승수
@@ -92,17 +93,19 @@ static int32_t convert_adc_to_mv(const struct adc_dt_spec *adc_channel, int16_t 
  */
 static int32_t calculate_calibrated_mv(int32_t raw_mv, enum gas_device gas_type)
 {
-	// struct bme680_data env_data = get_bme680_data();
-	// double temp_coeff;
-	//
-	// temp_coeff = ((double)calculate_level_pptt(env_data.temp.val1 * 100 + env_data.temp.val2,
-	// 					   coeff_levels[gas_type]) /
-	// 	      10000.f);
-	//
-	// int32_t calibrated_mv = (int32_t)round(raw_mv * temp_coeff);
-	// LOG_DBG("Temperature coefficient : %f, Raw millivolts : %d, Calibrated millivolts : %d",
-	// 	temp_coeff, raw_mv, calibrated_mv);
-	return raw_mv;
+	if (is_temperature_invalid) {
+		return raw_mv;
+	}
+
+	struct bme680_data env_data = get_bme680_data();
+	unsigned int temperature_celsius = env_data.temp.val1 * 100 + env_data.temp.val2;
+	float temp_coeff = (float)calculate_level_pptt(temperature_celsius, coeff_levels[gas_type]);
+
+	temp_coeff = 1000.0f / temp_coeff;
+	int32_t calibrated_mv = (int32_t)round(raw_mv * temp_coeff);
+	LOG_DBG("Temperature coefficient : %f, Raw millivolts : %d, Calibrated millivolts : %d",
+		temp_coeff, raw_mv, calibrated_mv);
+	return calibrated_mv;
 }
 
 /**
@@ -226,8 +229,10 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 	}
 
 	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer_value);
-	if (adc_value_mv < 0) {
+	if (adc_value_mv <= 0) {
 		adc_value_mv = 0;
+		update_gas_data(adc_value_mv, gas_device_type);
+		return;
 	}
 
 	int32_t calibrated_adc_value_mv = calculate_calibrated_mv(adc_value_mv, gas_device_type);
@@ -239,7 +244,7 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 
 	int32_t average_mv = calculate_moving_average(gas_moving_avg, filtered_value);
 
-	if (update_gas_data(average_mv, gas_device_type)) {
+	if (update_gas_data(filtered_value, gas_device_type)) {
 		LOG_INF("O2 value changed %d.%d%%", gas_data[gas_device_type].val1,
 			gas_data[gas_device_type].val2);
 		k_event_post(&bt_event, GAS_VAL_CHANGE);
@@ -352,7 +357,7 @@ static void gas_measurement_thread(void)
 	k_condvar_init(&config_condvar);
 	k_mutex_lock(&config_mutex, K_FOREVER);
 
-	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 1;
+	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 2;
 	const uint8_t GAS_AVERAGE_FILTER_SIZE = 1;
 	/* Data of ADC io-channels specified in devicetree. */
 	const struct adc_dt_spec gas_adc_channels[] = {
@@ -380,6 +385,17 @@ static void gas_measurement_thread(void)
 	k_condvar_wait(&config_condvar, &config_mutex, K_FOREVER);
 	measurement_range[O2][0].lvl_mV = get_config(OXYGEN_CALIBRATION);
 	k_mutex_unlock(&config_mutex);
+
+	/* Wait for temperature data to become available. */
+	if (k_sem_take(&temperature_semaphore, K_SECONDS(20)) != 0) {
+		LOG_WRN("Temperature Input data not available!");
+		// TODO: Temperature sensor error case
+		is_temperature_invalid = true;
+	} else {
+		/* Fetch available data. */
+		LOG_INF("Gas temperature sensing ok");
+		is_temperature_invalid = false;
+	}
 
 	while (1) {
 		/* Perform gas sensor measurements. */
