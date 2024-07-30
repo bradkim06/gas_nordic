@@ -39,6 +39,17 @@ GAS_LEVEL_POINT_STRUCT();
 /* Current value of the gas sensor. */
 static struct gas_sensor_value gas_data[2];
 
+#define DATA_BUFFER_SIZE 30 // 데이터 버퍼 크기
+#define SIGMA_MULTIPLIER 3  // 3-시그마 규칙을 위한 승수
+
+typedef struct {
+	int32_t buffer[DATA_BUFFER_SIZE];
+	int index;
+	bool is_full;
+} CircularBuffer;
+
+static CircularBuffer adc_buffer[2] = {0}; // O2와 GAS를 위한 두 개의 버퍼
+
 /**
  * @brief Converts ADC raw data to millivolts.
  *
@@ -145,24 +156,61 @@ static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 	return is_gas_data_updated;
 }
 
-/**
- * @brief Perform ADC measurement and update gas data
- *
- * This function performs an ADC measurement on the specified channel, calculates the moving
- * average, updates the gas data and logs the information.
- *
- * @param adc_channel Pointer to the ADC channel specification.
- * @param gas_moving_avg Pointer to the moving average data structure.
- * @param type The type of the gas device.
- */
+static void add_to_buffer(CircularBuffer *cb, int32_t value)
+{
+	cb->buffer[cb->index] = value;
+	cb->index = (cb->index + 1) % DATA_BUFFER_SIZE;
+	if (cb->index == 0) {
+		cb->is_full = true;
+	}
+}
+
+static float calculate_mean(CircularBuffer *cb)
+{
+	int32_t sum = 0;
+	int count = cb->is_full ? DATA_BUFFER_SIZE : cb->index;
+	for (int i = 0; i < count; i++) {
+		sum += cb->buffer[i];
+	}
+	return (float)sum / count;
+}
+
+static float calculate_std_dev(CircularBuffer *cb, float mean)
+{
+	float sum_squared_diff = 0;
+	int count = cb->is_full ? DATA_BUFFER_SIZE : cb->index;
+	for (int i = 0; i < count; i++) {
+		float diff = cb->buffer[i] - mean;
+		sum_squared_diff += diff * diff;
+	}
+	return sqrt(sum_squared_diff / count);
+}
+
+static int32_t apply_3_sigma_rule(CircularBuffer *cb, int32_t value)
+{
+	if (!cb->is_full) {
+		return value; // 버퍼가 가득 차지 않았으면 원래 값 반환
+	}
+
+	float mean = calculate_mean(cb);
+	float std_dev = calculate_std_dev(cb, mean);
+	float lower_bound = mean - SIGMA_MULTIPLIER * std_dev;
+	float upper_bound = mean + SIGMA_MULTIPLIER * std_dev;
+
+	if (value < lower_bound || value > upper_bound) {
+		return (int32_t)mean; // 이상치를 평균값으로 대체
+	}
+	return value;
+}
+
 static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 				    moving_average_t *gas_moving_avg,
 				    enum gas_device gas_device_type)
 {
-	int16_t adc_buffer = 0;
+	int16_t adc_buffer_value = 0;
 	struct adc_sequence adc_sequence = {
-		.buffer = &adc_buffer,
-		.buffer_size = sizeof(adc_buffer),
+		.buffer = &adc_buffer_value,
+		.buffer_size = sizeof(adc_buffer_value),
 	};
 
 	int error = adc_sequence_init_dt(adc_channel_spec, &adc_sequence);
@@ -177,15 +225,19 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 		return;
 	}
 
-	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer);
+	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer_value);
 	if (adc_value_mv < 0) {
-		// LOG_WRN("Negative ADC values(%d) are not allowed. It will be converted to 0",
-		// 	adc_value_mv);
 		adc_value_mv = 0;
 	}
 
 	int32_t calibrated_adc_value_mv = calculate_calibrated_mv(adc_value_mv, gas_device_type);
-	int32_t average_mv = calculate_moving_average(gas_moving_avg, calibrated_adc_value_mv);
+
+	// 3-시그마 규칙 적용
+	add_to_buffer(&adc_buffer[gas_device_type], calibrated_adc_value_mv);
+	int32_t filtered_value =
+		apply_3_sigma_rule(&adc_buffer[gas_device_type], calibrated_adc_value_mv);
+
+	int32_t average_mv = calculate_moving_average(gas_moving_avg, filtered_value);
 
 	if (update_gas_data(average_mv, gas_device_type)) {
 		LOG_INF("O2 value changed %d.%d%%", gas_data[gas_device_type].val1,
@@ -194,10 +246,10 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 	}
 
 	LOG_DBG("%s - channel %d: "
-		" current %" PRId32 "mV average %" PRId32 "mV %d.%d%s",
+		" current %" PRId32 "mV filtered %" PRId32 "mV average %" PRId32 "mV %d.%d%s",
 		enum_to_str(gas_device_type), adc_channel_spec->channel_id, calibrated_adc_value_mv,
-		average_mv, gas_data[gas_device_type].val1, gas_data[gas_device_type].val2,
-		(gas_device_type == O2) ? "%" : "ppm");
+		filtered_value, average_mv, gas_data[gas_device_type].val1,
+		gas_data[gas_device_type].val2, (gas_device_type == O2) ? "%" : "ppm");
 }
 
 /**
@@ -300,8 +352,8 @@ static void gas_measurement_thread(void)
 	k_condvar_init(&config_condvar);
 	k_mutex_lock(&config_mutex, K_FOREVER);
 
-	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 2;
-	const uint8_t GAS_AVERAGE_FILTER_SIZE = 15;
+	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 1;
+	const uint8_t GAS_AVERAGE_FILTER_SIZE = 1;
 	/* Data of ADC io-channels specified in devicetree. */
 	const struct adc_dt_spec gas_adc_channels[] = {
 		// o2
