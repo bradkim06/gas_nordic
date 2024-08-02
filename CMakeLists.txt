@@ -14,7 +14,7 @@ set(CONF_FILE "prj.conf")
 
 add_compile_definitions(_XOPEN_SOURCE=700)
 
-find_package(Zephyr 3.4.99 EXACT)
+find_package(Zephyr 3.5.99 EXACT)
 project(gas_ces)
 
 zephyr_include_directories(include)

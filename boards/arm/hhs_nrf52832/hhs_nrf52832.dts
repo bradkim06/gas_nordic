@@ -154,6 +154,10 @@ i2c: &i2c0 {
 	};
 };
 
+&gpiote {
+    status = "okay";
+};
+
 &flash0 {
 	partitions {
 		compatible = "fixed-partitions";
