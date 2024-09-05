@@ -2597,6 +2597,90 @@
 		(color 0 0 0 0)
 		(uuid "a86aa5af-f8b8-44b3-9d42-61479b505808")
 	)
+	(no_connect
+		(at 77.47 80.01)
+		(uuid "03404c79-d991-4720-b19e-135eede8e2b6")
+	)
+	(no_connect
+		(at 77.47 77.47)
+		(uuid "19cd7306-fe54-4578-a772-614174cfa96c")
+	)
+	(no_connect
+		(at 77.47 87.63)
+		(uuid "2474b27b-971a-41db-abe5-48ac503ff934")
+	)
+	(no_connect
+		(at 128.27 72.39)
+		(uuid "28eacfee-5b51-4b8a-8f6b-c639e78e3384")
+	)
+	(no_connect
+		(at 128.27 85.09)
+		(uuid "4414415b-aefa-4dde-9c93-06e35a032808")
+	)
+	(no_connect
+		(at 128.27 64.77)
+		(uuid "4c71dbfb-b153-4c5d-b410-ffad8fd68aa7")
+	)
+	(no_connect
+		(at 77.47 85.09)
+		(uuid "4f023054-e82e-40a5-a6b8-4c37de054b8b")
+	)
+	(no_connect
+		(at 128.27 82.55)
+		(uuid "560954d6-5d9b-4678-b10c-10cb5d0fb306")
+	)
+	(no_connect
+		(at 128.27 90.17)
+		(uuid "59ec50cd-96ca-496c-88e2-242f91285e50")
+	)
+	(no_connect
+		(at 77.47 92.71)
+		(uuid "6ba9bd07-e6be-4d70-ba42-2cd5d9513fb3")
+	)
+	(no_connect
+		(at 128.27 97.79)
+		(uuid "746bafbd-1c98-403b-8d22-4fd4257670b5")
+	)
+	(no_connect
+		(at 128.27 100.33)
+		(uuid "846ca264-abb6-409e-86c5-2957b2945e5d")
+	)
+	(no_connect
+		(at 128.27 80.01)
+		(uuid "858cbfa3-a057-4c0e-a06f-f4a76ca6e77c")
+	)
+	(no_connect
+		(at 128.27 77.47)
+		(uuid "9ca8f015-b6b1-4e2c-95e5-1dc5eb81f32d")
+	)
+	(no_connect
+		(at 77.47 82.55)
+		(uuid "ab106fad-0566-4262-be3a-b3bc9206613d")
+	)
+	(no_connect
+		(at 77.47 67.31)
+		(uuid "af83f947-7108-41f5-85e6-be3055975c93")
+	)
+	(no_connect
+		(at 128.27 62.23)
+		(uuid "b2ff9d5b-b84c-4ff1-bacb-c88ac321f268")
+	)
+	(no_connect
+		(at 128.27 74.93)
+		(uuid "cc4bad02-0a24-4535-9227-1acdcc4210aa")
+	)
+	(no_connect
+		(at 77.47 95.25)
+		(uuid "d1e98171-cf49-428b-a8b8-dedbcaa85f74")
+	)
+	(no_connect
+		(at 77.47 90.17)
+		(uuid "defe362f-bf74-40c5-acbf-b76cccde809f")
+	)
+	(no_connect
+		(at 77.47 69.85)
+		(uuid "f0cd4583-92e0-4407-b371-18a09cf1a3e9")
+	)
 	(wire
 		(pts
 			(xy 110.49 115.57) (xy 113.03 115.57)
@@ -3259,16 +3343,6 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 90.17) (xy 77.47 90.17)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f0412f77-0e2e-48c4-aff6-394a28a7a3bc")
-	)
-	(wire
-		(pts
 			(xy 191.77 27.94) (xy 194.31 27.94)
 		)
 		(stroke
@@ -3338,7 +3412,7 @@
 		)
 		(uuid "25a4d95b-eea0-49c3-97b1-786c0de38775")
 	)
-	(text "NRF52932"
+	(text "NRF52832"
 		(exclude_from_sim no)
 		(at 83.82 132.08 0)
 		(effects
@@ -3455,28 +3529,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "SENSOR_EN"
-		(shape input)
-		(at 67.31 90.17 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "6df3100b-b826-4dd5-8247-867ab322bc2d")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 53.3787 90.17 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 				(hide yes)
 			)
 		)
@@ -3901,7 +3953,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/℃ ±1% 1MΩ 0402  Chip Resistor - Surface Mount ROHS"
+			(at 205.74 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 205.74 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "YAGEO"
+			(at 205.74 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0402FR-071ML"
+			(at 205.74 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 205.74 49.53 0)
 			(effects
 				(font
@@ -3969,7 +4057,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Yellow Green Light-emitting diode "
+			(at 208.28 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 208.28 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "BL-HG036A-AV-TRB"
+			(at 208.28 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "BRIGHT LED"
+			(at 208.28 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0603 (1608 Metric)"
 			(at 208.28 27.94 0)
 			(effects
 				(font
@@ -4012,7 +4136,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1.0uF"
+		(property "Value" "1uF"
 			(at 165.1 57.15 0)
 			(effects
 				(font
@@ -4039,7 +4163,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 161.29 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C71A105ME11D"
+			(at 161.29 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 161.29 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 161.29 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 161.29 55.88 0)
 			(effects
 				(font
@@ -4068,7 +4228,7 @@
 		(at 181.61 115.57 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -4110,6 +4270,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 181.61 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" ""
 			(at 181.61 115.57 0)
 			(effects
 				(font
@@ -4248,6 +4417,15 @@
 				(hide yes)
 			)
 		)
+		(property "Type" ""
+			(at 185.42 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "eb098e91-4f55-4f32-ac11-82f25edc560f")
 		)
@@ -4311,6 +4489,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 58.42 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" ""
 			(at 58.42 57.15 0)
 			(effects
 				(font
@@ -4384,7 +4571,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 150 ohm, 50V, 1% +/-Tol, 100ppm/Cel"
+			(at 198.12 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 198.12 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 198.12 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "TA-I Tech"
+			(at 198.12 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RM04FTN1500"
 			(at 198.12 27.94 0)
 			(effects
 				(font
@@ -4453,7 +4676,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "\n802.15.4, Bluetooth Bluetooth v5.2, Zigbee® Transceiver Module 2.36GHz ~ 2.5GHz Integrated, Chip Surface Mount\n"
+		(property "Description" "Bluetooth Bluetooth v5.2 Transceiver Module"
 			(at 102.87 74.93 0)
 			(effects
 				(font
@@ -4483,7 +4706,7 @@
 				(hide yes)
 			)
 		)
-		(property "Package" "SMD-41 Raytac Corporation"
+		(property "Package" "SMD-41"
 			(at 102.87 74.93 0)
 			(effects
 				(font
@@ -4580,6 +4803,24 @@
 					(size 1.27 1.27)
 				)
 				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "MDBT42Q-512KV2"
+			(at 102.87 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 102.87 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -4894,7 +5135,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "50mA 10uH ±20% 50mA 1.17Ω 0603  Inductors (SMD) ROHS"
+			(at 140.97 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 140.97 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 140.97 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "LQM18FN100M00D"
+			(at 140.97 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0603 (1608 Metric)"
 			(at 140.97 46.99 0)
 			(effects
 				(font
@@ -4962,7 +5239,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "400mA 15nH ±5% 350mΩ 0402  Inductors (SMD) ROHS"
+			(at 154.94 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 154.94 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "TDK"
+			(at 154.94 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "MLG1005S15NJT000"
+			(at 154.94 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 154.94 46.99 0)
 			(effects
 				(font
@@ -5098,7 +5411,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "50V 12pF C0G ±5% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 26.67 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05C120JB5NNNC"
+			(at 26.67 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 26.67 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 26.67 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 26.67 62.23 0)
 			(effects
 				(font
@@ -5249,6 +5598,33 @@
 				(hide yes)
 			)
 		)
+		(property "Type" "Surface Mount "
+			(at 205.74 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "ONSEMI "
+			(at 205.74 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "SOT-23"
+			(at 205.74 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "ed8883be-ce3a-4a67-a478-35800d42978c")
 		)
@@ -5311,7 +5687,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "50V 12pF C0G ±5% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 26.67 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05C120JB5NNNC"
+			(at 26.67 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 26.67 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 26.67 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 26.67 80.01 0)
 			(effects
 				(font
@@ -5381,7 +5793,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Crystals SMD 32.768kHz"
+			(at 38.1 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 38.1 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "EPSON"
+			(at 38.1 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "FC-135 32.7680KA-A5"
+			(at 38.1 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "SMD3215-2P"
 			(at 38.1 71.12 0)
 			(effects
 				(font
@@ -5516,7 +5964,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "6.3V 10uF X6S ±20% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 140.97 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C80J106ME11D"
+			(at 140.97 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 140.97 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 140.97 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 140.97 38.1 0)
 			(effects
 				(font

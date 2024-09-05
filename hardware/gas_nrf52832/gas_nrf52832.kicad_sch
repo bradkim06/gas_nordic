@@ -38,16 +38,16 @@
 		)
 		(uuid "71f987b9-f1a6-487c-a5d1-60f8a6aac86b")
 	)
-	(text "TODO\n- hansam digitec requirement\n	- If USB and RC are very close, errors may occur\n	so increase the distance (R8, R20, R21, C8)"
+	(text "Rev 1.0.2\n- Oxygen Sensor\n	- Voltage Amplification Ratio AdjustmentR18(10.7 -> 10k), R12(2.0k -> 2M)\n	-> Reduce Current Consumption\n	- Addition of lowpass filter for Noise Reduction\n- Gas Sensor\n	- Addition of lowpass filter for Noise Reduction\n- 2 Layter -> 4 Layer\n- hansam digitec requirement\n	- If USB and RC are very close, errors may occur\n	so increase the distance (R1, R23, R24, C22)\n- BME680 Sensor Enable ctrl remove\n- 32k Crystal Layout fix"
 		(exclude_from_sim no)
-		(at 24.13 173.99 0)
+		(at 23.368 130.302 0)
 		(effects
 			(font
 				(size 2.5 2.5)
 			)
 			(justify left bottom)
 		)
-		(uuid "f75b7212-1e84-4587-b0ed-4b6c6558372f")
+		(uuid "8da4f622-7cfb-4158-91d5-176f1a4a63d7")
 	)
 	(sheet
 		(at -295.91 254)

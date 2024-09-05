@@ -1298,12 +1298,6 @@
 		(uuid "0d303e6e-9f5a-4540-8786-9bd24ac6314b")
 	)
 	(junction
-		(at 152.4 63.5)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "250f7c17-7406-4493-8ebe-88669ce9fb31")
-	)
-	(junction
 		(at 60.96 64.77)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1346,12 +1340,6 @@
 		(uuid "6b77129f-9ab9-4778-aa5c-172a4b50abf7")
 	)
 	(junction
-		(at 118.11 63.5)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "6cd2afea-0761-4f3a-a7cd-cb145e4a3158")
-	)
-	(junction
 		(at 66.04 69.85)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1362,6 +1350,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "75b9e2c2-4602-487f-8585-92676122eea9")
+	)
+	(junction
+		(at 152.4 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7d04313b-ff67-4d7e-a701-f5adbe938814")
 	)
 	(junction
 		(at 83.82 146.05)
@@ -1404,6 +1398,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e38da5f0-083c-4117-87d9-02bd151aa3d6")
+	)
+	(junction
+		(at 118.11 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e92ad1ae-e22a-4c7b-96a7-d339d607081d")
 	)
 	(junction
 		(at 62.23 125.73)
@@ -1739,16 +1739,6 @@
 	)
 	(wire
 		(pts
-			(xy 118.11 73.66) (xy 118.11 63.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "51e6f58d-899e-462a-9c10-e4818f6062c2")
-	)
-	(wire
-		(pts
 			(xy 152.4 53.34) (xy 151.13 53.34)
 		)
 		(stroke
@@ -1829,16 +1819,6 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 73.66) (xy 139.7 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6a8ca267-7e6c-466c-ab77-c0cca52a4add")
-	)
-	(wire
-		(pts
 			(xy 93.98 146.05) (xy 96.52 146.05)
 		)
 		(stroke
@@ -1876,6 +1856,16 @@
 			(type default)
 		)
 		(uuid "71840cab-b3b7-41a8-9b74-448e22b00aa1")
+	)
+	(wire
+		(pts
+			(xy 118.11 63.5) (xy 118.11 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7348e11a-e230-4db5-82ab-c39277c71850")
 	)
 	(wire
 		(pts
@@ -2059,6 +2049,16 @@
 	)
 	(wire
 		(pts
+			(xy 139.7 73.66) (xy 152.4 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aa27f3a1-197c-447c-807e-626f8db29f3a")
+	)
+	(wire
+		(pts
 			(xy 59.69 125.73) (xy 62.23 125.73)
 		)
 		(stroke
@@ -2079,13 +2079,13 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 73.66) (xy 152.4 63.5)
+			(xy 118.11 73.66) (xy 132.08 73.66)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "bc110926-b771-4e39-a0db-d8c1d334f115")
+		(uuid "bc65b342-748f-4636-980e-ae701948a181")
 	)
 	(wire
 		(pts
@@ -2249,16 +2249,6 @@
 	)
 	(wire
 		(pts
-			(xy 132.08 73.66) (xy 118.11 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "efa46071-22f8-4bda-b26b-e40df49f2a2a")
-	)
-	(wire
-		(pts
 			(xy 95.25 128.27) (xy 109.22 128.27)
 		)
 		(stroke
@@ -2386,6 +2376,16 @@
 			(type default)
 		)
 		(uuid "fdc2e44d-a69a-4558-aba5-dfcf1f21456d")
+	)
+	(wire
+		(pts
+			(xy 152.4 73.66) (xy 152.4 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fe1da617-a50a-46f1-911b-8d267ba07d02")
 	)
 	(wire
 		(pts
@@ -2744,7 +2744,7 @@
 				)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 55.88 59.69 90)
 			(effects
 				(font
@@ -2770,7 +2770,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "16V 100nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05B104KO5NNNC"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 55.88 64.77 0)
 			(effects
 				(font
@@ -2805,7 +2841,7 @@
 		(fields_autoplaced yes)
 		(uuid "09d18d96-266a-411b-baf6-0378d0412288")
 		(property "Reference" "C13"
-			(at 168.91 62.2301 0)
+			(at 168.91 59.6899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2813,8 +2849,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "4.7uF"
-			(at 168.91 59.6901 0)
+		(property "Value" "1uF"
+			(at 168.91 62.2299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2840,7 +2876,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 165.1 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C71A105ME11D"
+			(at 165.1 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 165.1 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 165.1 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 165.1 60.96 0)
 			(effects
 				(font
@@ -3144,7 +3216,7 @@
 		(fields_autoplaced yes)
 		(uuid "37fdb2b3-0a2a-4924-8e1d-2761154a4b4e")
 		(property "Reference" "R12"
-			(at 135.89 69.85 90)
+			(at 135.89 67.31 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3152,7 +3224,7 @@
 			)
 		)
 		(property "Value" "2M"
-			(at 135.89 67.31 90)
+			(at 135.89 69.85 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3177,7 +3249,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/℃ ±1% 2MΩ 0402  Chip Resistor - Surface Mount ROHS"
+			(at 135.89 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 135.89 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 135.89 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "YAGEO"
+			(at 135.89 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0402FR-072ML"
 			(at 135.89 63.5 0)
 			(effects
 				(font
@@ -3206,7 +3314,7 @@
 		(at 177.8 39.37 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -3256,6 +3364,15 @@
 				(hide yes)
 			)
 		)
+		(property "Type" ""
+			(at 177.8 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "+ve"
 			(uuid "9458522e-b1fa-4ff5-bd3a-cf3a569e8806")
 		)
@@ -3290,7 +3407,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 114.3 39.3701 0)
 			(effects
 				(font
@@ -3317,7 +3434,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "16V 100nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 118.11 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05B104KO5NNNC"
+			(at 118.11 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 118.11 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 118.11 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 118.11 40.64 0)
 			(effects
 				(font
@@ -3553,18 +3706,17 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "623ef229-049d-4c82-82c7-9fb751a7e4b5")
 		(property "Reference" "R2"
-			(at 158.75 59.69 90)
+			(at 158.75 56.388 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "10k"
-			(at 158.75 57.15 90)
+		(property "Value" "49.9k"
+			(at 158.75 58.928 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3589,7 +3741,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/℃ ±1% 49.9kΩ 0402  Chip Resistor - Surface Mount ROHS"
+			(at 158.75 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 158.75 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 158.75 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "TA-I Tech"
+			(at 158.75 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RM04FTN4992"
 			(at 158.75 53.34 0)
 			(effects
 				(font
@@ -3631,7 +3819,7 @@
 				)
 			)
 		)
-		(property "Value" "150k"
+		(property "Value" "100k"
 			(at 64.77 163.83 90)
 			(effects
 				(font
@@ -3657,7 +3845,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/℃ ±1% 100kΩ 0402 Chip Resistor - Surface Mount ROHS"
+			(at 64.77 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 64.77 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 64.77 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "YAGEO"
+			(at 64.77 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0402FR-07100KL"
 			(at 64.77 167.64 0)
 			(effects
 				(font
@@ -3725,7 +3949,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 10k ohm, 50V, 1% +/-Tol, 100ppm/Cel"
+			(at 110.49 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 110.49 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 110.49 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "TA-I Tech"
+			(at 110.49 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RM04FTN1002"
 			(at 110.49 53.34 0)
 			(effects
 				(font
@@ -3795,7 +4055,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Operational Amplifiers - Op Amps 650nA, Precision Zero-Drift Nanopower Amplifier 5-SOT-23 -40 to 125"
+		(property "Description" "8kHz 1.5uV 7pA Single Channel Precision Op Amps ROHS"
 			(at 95.25 128.27 0)
 			(effects
 				(font
@@ -3874,6 +4134,33 @@
 				(hide yes)
 			)
 		)
+		(property "Type" "Surface Mount "
+			(at 95.25 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Texas Instruments"
+			(at 95.25 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "SOT-23-5"
+			(at 95.25 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "4"
 			(uuid "fe2db409-9876-428e-a8ee-fdef72ad21c1")
 		)
@@ -3917,7 +4204,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "4.7uF"
+		(property "Value" "1uF"
 			(at 100.33 154.9399 0)
 			(effects
 				(font
@@ -3944,7 +4231,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 96.52 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C71A105ME11D"
+			(at 96.52 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 96.52 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 96.52 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 96.52 153.67 0)
 			(effects
 				(font
@@ -4150,7 +4473,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Pressure Sensors ROHS"
+			(at 63.5 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 63.5 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Bosch Sensortec"
+			(at 63.5 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "BME680"
+			(at 63.5 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "LGA-8"
 			(at 63.5 45.72 0)
 			(effects
 				(font
@@ -4236,7 +4595,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±1% ±200ppm/℃ 10Ω 0402  Chip Resistor - Surface Mount ROHS"
+			(at 38.1 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 38.1 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 38.1 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "YAGEO"
+			(at 38.1 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0402FR-0710RL"
 			(at 38.1 146.05 0)
 			(effects
 				(font
@@ -4306,7 +4701,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Operational Amplifiers - Op Amps 650nA, Precision Zero-Drift Nanopower Amplifier 5-SOT-23 -40 to 125"
+		(property "Description" "8kHz 1.5uV 7pA Single Channel Precision Op Amps ROHS"
 			(at 80.01 146.05 0)
 			(effects
 				(font
@@ -4382,6 +4777,33 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 80.01 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Texas Instruments"
+			(at 80.01 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "SOT-23-5"
+			(at 80.01 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -4522,7 +4944,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/℃ ±1% 100Ω 0402  Chip Resistor - Surface Mount ROHS"
+			(at 163.83 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 163.83 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 163.83 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "YAGEO"
+			(at 163.83 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0402FR-07100RL"
 			(at 163.83 39.37 0)
 			(effects
 				(font
@@ -4564,7 +5022,7 @@
 				)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "10"
 			(at 39.37 124.46 90)
 			(effects
 				(font
@@ -4590,7 +5048,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±1% ±200ppm/℃ 10Ω 0402  Chip Resistor - Surface Mount ROHS"
+			(at 39.37 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 39.37 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 39.37 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "YAGEO"
+			(at 39.37 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0402FR-0710RL"
 			(at 39.37 128.27 0)
 			(effects
 				(font
@@ -4658,7 +5152,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±1% ±200ppm/℃ 10Ω 0402  Chip Resistor - Surface Mount ROHS"
+			(at 87.63 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 87.63 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 87.63 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "YAGEO"
+			(at 87.63 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0402FR-0710RL"
 			(at 87.63 140.97 0)
 			(effects
 				(font
@@ -4752,6 +5282,110 @@
 	)
 	(symbol
 		(lib_id "Device:C")
+		(at 135.89 73.66 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "cf7016e0-cc7e-4bc6-93a3-fabc80750cd0")
+		(property "Reference" "C8"
+			(at 135.89 78.74 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1uF"
+			(at 135.89 81.28 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 132.08 74.6252 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 135.89 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 135.89 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C71A105ME11D"
+			(at 135.89 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 135.89 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 135.89 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 135.89 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3feb5cc6-f03e-441b-9ffc-d2809e2c7fd5")
+		)
+		(pin "2"
+			(uuid "cdbaf3a1-f3d6-4382-ae44-3c8af59065d3")
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/b8ce7ae9-40f3-4682-a875-327e7c1cd28b"
+					(reference "C8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
 		(at 46.99 137.16 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4769,7 +5403,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 43.18 138.4299 0)
 			(effects
 				(font
@@ -4796,7 +5430,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "16V 100nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 46.99 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05B104KO5NNNC"
+			(at 46.99 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 46.99 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 46.99 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 46.99 137.16 0)
 			(effects
 				(font
@@ -4907,7 +5577,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 58.42 120.6499 0)
 			(effects
 				(font
@@ -4934,7 +5604,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "16V 100nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 62.23 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05B104KO5NNNC"
+			(at 62.23 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 62.23 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 62.23 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 62.23 119.38 0)
 			(effects
 				(font
@@ -4960,74 +5666,6 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 135.89 73.66 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "dbeb1c2f-9405-47e9-90f2-87904c2c15d0")
-		(property "Reference" "C17"
-			(at 135.89 81.28 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "4.7uF"
-			(at 135.89 78.74 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 132.08 74.6252 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 135.89 73.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 135.89 73.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "43b7426b-5719-4447-b5ac-552cd3052fe3")
-		)
-		(pin "2"
-			(uuid "f0f22a6f-201f-48fe-b21f-002d468d06d2")
-		)
-		(instances
-			(project "gas_nrf52832"
-				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/b8ce7ae9-40f3-4682-a875-327e7c1cd28b"
-					(reference "C17")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
 		(at 55.88 69.85 90)
 		(unit 1)
 		(exclude_from_sim no)
@@ -5044,7 +5682,7 @@
 				)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 55.88 77.47 90)
 			(effects
 				(font
@@ -5070,7 +5708,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "16V 100nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 55.88 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05B104KO5NNNC"
+			(at 55.88 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 55.88 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 55.88 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 55.88 69.85 0)
 			(effects
 				(font
@@ -5102,18 +5776,17 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "e26adce9-659e-44e6-92d0-5629014704c8")
 		(property "Reference" "R19"
-			(at 90.17 149.86 90)
+			(at 90.17 149.352 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "10k"
-			(at 90.17 152.4 90)
+		(property "Value" "49.9k"
+			(at 90.17 151.892 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5138,7 +5811,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/℃ ±1% 49.9kΩ 0402  Chip Resistor - Surface Mount ROHS"
+			(at 90.17 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 90.17 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 90.17 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "TA-I Tech"
+			(at 90.17 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RM04FTN4992"
 			(at 90.17 146.05 0)
 			(effects
 				(font
@@ -5249,7 +5958,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 43.18 118.1099 0)
 			(effects
 				(font
@@ -5276,7 +5985,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "16V 100nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 46.99 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL05B104KO5NNNC"
+			(at 46.99 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 46.99 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Samsung Electro-Mechanics"
+			(at 46.99 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 46.99 116.84 0)
 			(effects
 				(font
@@ -5386,7 +6131,7 @@
 				)
 			)
 		)
-		(property "Value" "1.0uF"
+		(property "Value" "1uF"
 			(at 64.77 152.4 90)
 			(effects
 				(font
@@ -5412,7 +6157,43 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 64.77 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C71A105ME11D"
+			(at 64.77 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 64.77 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 64.77 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
 			(at 64.77 157.48 0)
 			(effects
 				(font
@@ -5441,7 +6222,7 @@
 		(at 27.94 128.27 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -5483,6 +6264,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 27.94 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" ""
 			(at 27.94 128.27 0)
 			(effects
 				(font
@@ -5555,7 +6345,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Operational Amplifiers - Op Amps 650nA, Precision Zero-Drift Nanopower Amplifier 5-SOT-23 -40 to 125"
+		(property "Description" "8kHz 1.5uV 7pA Single Channel Precision Op Amps ROHS"
 			(at 151.13 53.34 0)
 			(effects
 				(font
@@ -5631,6 +6421,33 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 151.13 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Texas Instruments"
+			(at 151.13 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "SOT-23-5"
+			(at 151.13 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
