@@ -40,8 +40,8 @@ GAS_COEFFICIENT_STRUCT();
 static struct gas_sensor_value gas_data[2];
 static bool is_temperature_invalid;
 
-#define DATA_BUFFER_SIZE 30 // 데이터 버퍼 크기
-#define SIGMA_MULTIPLIER 3  // 3-시그마 규칙을 위한 승수
+#define DATA_BUFFER_SIZE 300 // 데이터 버퍼 크기
+#define SIGMA_MULTIPLIER 3   // 3-시그마 규칙을 위한 승수
 
 typedef struct {
 	int32_t buffer[DATA_BUFFER_SIZE];

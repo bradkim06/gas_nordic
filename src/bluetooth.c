@@ -309,7 +309,7 @@ static void on_connected(struct bt_conn *conn, uint8_t err)
 		connection_interval, info.le.latency, supervision_timeout);
 
 	// Update the PHY mode
-	update_phy(my_conn);
+	// update_phy(my_conn);
 
 	// Update the data length and MTU
 	update_data_length(my_conn);
@@ -419,7 +419,7 @@ int bt_setup(void)
 		(BT_LE_ADV_OPT_CONNECTABLE |
 		 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
 		3200,                         /* Min Advertising Interval 500ms (800*0.625ms) */
-		3201,                         /* Max Advertising Interval 2000ms (3200*0.625ms) */
+		6400,                         /* Max Advertising Interval 2000ms (3200*0.625ms) */
 		NULL);                        /* Set to NULL for undirected advertising */
 
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));

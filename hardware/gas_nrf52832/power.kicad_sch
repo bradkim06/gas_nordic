@@ -2180,12 +2180,24 @@
 				)
 			)
 		)
-		(symbol "USB4515-GF-A:USB4515-GF-A"
+		(symbol "USB4515-GF-A_REVA:USB4515-GF-A_REVA"
+			(pin_names
+				(offset 1.016)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "J"
-				(at 29.21 7.62 0)
+				(at -7.62 10.922 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Value" "USB4515-GF-A_REVA"
+				(at -7.62 -13.462 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -2193,36 +2205,17 @@
 					(justify left top)
 				)
 			)
-			(property "Value" "USB4515-GF-A"
-				(at 29.21 5.08 0)
+			(property "Footprint" "USB4515-GF-A_REVA:GCT_USB4515-GF-A_REVA"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
-				)
-			)
-			(property "Footprint" "USB4515GFA"
-				(at 29.21 -94.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://gct.co/files/drawings/usb4515.pdf"
-				(at 29.21 -194.92 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-					(hide yes)
-				)
-			)
-			(property "Description" "USB Connectors USB C Rec 6P SMT Mid Mnt 1.6mm"
+			(property "Datasheet" ""
 				(at 0 0 0)
 				(effects
 					(font
@@ -2231,80 +2224,130 @@
 					(hide yes)
 				)
 			)
-			(property "Height" "3.36"
-				(at 29.21 -394.92 0)
+			(property "Description" "\nType C USB Charging Connector\n"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(property "Manufacturer_Name" "GCT (GLOBAL CONNECTOR TECHNOLOGY)"
-				(at 29.21 -494.92 0)
+			(property "MF" "Global Connector Technology"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(property "Manufacturer_Part_Number" "USB4515-GF-A"
-				(at 29.21 -594.92 0)
+			(property "MAXIMUM_PACKAGE_HEIGHT" "3.16 mm"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(property "Mouser Part Number" "640-USB4515GFA"
-				(at 29.21 -694.92 0)
+			(property "Package" "None"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/GCT/USB4515-GF-A?qs=A6eO%252BMLsxmTmzrD1rreXzA%3D%3D"
-				(at 29.21 -794.92 0)
+			(property "Price" "None"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(property "Arrow Part Number" ""
-				(at 29.21 -894.92 0)
+			(property "Check_prices" "https://www.snapeda.com/parts/USB4515-GF-A/Global+Connector+Technology/view-part/?ref=eda"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(property "Arrow Price/Stock" ""
-				(at 29.21 -994.92 0)
+			(property "STANDARD" "Manufacturer Recommendations"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left top)
+					(justify bottom)
 					(hide yes)
 				)
 			)
-			(symbol "USB4515-GF-A_1_1"
+			(property "PARTREV" "A"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "SnapEDA_Link" "https://www.snapeda.com/parts/USB4515-GF-A/Global+Connector+Technology/view-part/?ref=snap"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MP" "USB4515-GF-A"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Availability" "In Stock"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MANUFACTURER" "GCT"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(symbol "USB4515-GF-A_REVA_0_0"
 				(rectangle
-					(start 5.08 2.54)
-					(end 27.94 -12.7)
+					(start -7.62 -12.7)
+					(end 7.62 10.16)
 					(stroke
 						(width 0.254)
 						(type default)
@@ -2313,182 +2356,182 @@
 						(type background)
 					)
 				)
-				(pin passive line
-					(at 0 -5.08 0)
+				(pin power_in line
+					(at 12.7 -5.08 180)
 					(length 5.08)
-					(name "GND_1"
+					(name "GND"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 					(number "A12"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
 				(pin passive line
-					(at 0 0 0)
+					(at 12.7 2.54 180)
 					(length 5.08)
 					(name "CC1"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 					(number "A5"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
-				(pin passive line
-					(at 0 -2.54 0)
+				(pin power_in line
+					(at 12.7 7.62 180)
 					(length 5.08)
-					(name "VBUS_1"
+					(name "VBUS"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 					(number "A9"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
-				(pin passive line
-					(at 33.02 0 180)
+				(pin power_in line
+					(at 12.7 -5.08 180)
 					(length 5.08)
-					(name "GND_2"
+					(name "GND"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 					(number "B12"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
 				(pin passive line
-					(at 0 -7.62 0)
+					(at 12.7 0 180)
 					(length 5.08)
 					(name "CC2"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 					(number "B5"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
-				(pin passive line
-					(at 0 -10.16 0)
+				(pin power_in line
+					(at 12.7 7.62 180)
 					(length 5.08)
-					(name "VBUS_2"
+					(name "VBUS"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 					(number "B9"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
-				(pin passive line
-					(at 33.02 -2.54 180)
+				(pin power_in line
+					(at 12.7 -10.16 180)
 					(length 5.08)
-					(name "MH1"
+					(name "SHIELD"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
-					(number "MH1"
+					(number "S1"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
-				(pin passive line
-					(at 33.02 -5.08 180)
+				(pin power_in line
+					(at 12.7 -10.16 180)
 					(length 5.08)
-					(name "MH2"
+					(name "SHIELD"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
-					(number "MH2"
+					(number "S2"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
-				(pin passive line
-					(at 33.02 -7.62 180)
+				(pin power_in line
+					(at 12.7 -10.16 180)
 					(length 5.08)
-					(name "MH3"
+					(name "SHIELD"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
-					(number "MH3"
+					(number "S3"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
 				)
-				(pin passive line
-					(at 33.02 -10.16 180)
+				(pin power_in line
+					(at 12.7 -10.16 180)
 					(length 5.08)
-					(name "MH4"
+					(name "SHIELD"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
-					(number "MH4"
+					(number "S4"
 						(effects
 							(font
-								(size 1.27 1.27)
+								(size 1.016 1.016)
 							)
 						)
 					)
@@ -2503,13 +2546,19 @@
 		(uuid "110427e7-314d-4ab7-b1f2-c3a718762c43")
 	)
 	(junction
+		(at 172.72 120.65)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "14cb28f4-4ca1-4fd2-9f3b-0ffdeffbd4a7")
+	)
+	(junction
 		(at 237.49 33.02)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "231848eb-34f8-4efb-bd24-48fce85bd749")
 	)
 	(junction
-		(at 194.31 101.6)
+		(at 175.26 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "2acc6753-5401-4050-b5b5-78dcb96fff8c")
@@ -2569,12 +2618,6 @@
 		(uuid "5a139e7d-1b82-470c-9164-b937ee1ecce4")
 	)
 	(junction
-		(at 189.23 101.6)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "62729d58-d9c2-4d87-a152-eaa245af45f4")
-	)
-	(junction
 		(at 96.52 86.36)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2623,13 +2666,13 @@
 		(uuid "ce0cbb26-033e-4879-bf06-0d45df2d2bab")
 	)
 	(junction
-		(at 203.2 104.14)
+		(at 185.42 107.95)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d1ffb340-0118-414d-8e86-c0e37dad4b73")
 	)
 	(junction
-		(at 215.9 101.6)
+		(at 196.85 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ed7f9b09-c089-4b6e-b218-f1b9630d7cb1")
@@ -2639,18 +2682,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "fc93af52-a65f-4eba-9cbe-751db7b085d8")
-	)
-	(no_connect
-		(at 152.4 104.14)
-		(uuid "14de31b5-6ca0-4321-903d-3bf5fc9e32f5")
-	)
-	(no_connect
-		(at 152.4 106.68)
-		(uuid "2c3317be-86af-4631-bf7d-07aa287f1df5")
-	)
-	(no_connect
-		(at 152.4 101.6)
-		(uuid "2f9069f8-e089-4422-bd94-5ce05463d3e8")
 	)
 	(no_connect
 		(at 72.39 63.5)
@@ -2667,10 +2698,6 @@
 	(no_connect
 		(at 85.09 91.44)
 		(uuid "d133929d-dccb-46d9-9d70-74721a58a5d8")
-	)
-	(no_connect
-		(at 152.4 109.22)
-		(uuid "ef34a829-cbaa-45db-a615-3e47772bbedd")
 	)
 	(wire
 		(pts
@@ -2734,7 +2761,7 @@
 	)
 	(wire
 		(pts
-			(xy 215.9 97.79) (xy 215.9 101.6)
+			(xy 196.85 99.06) (xy 196.85 102.87)
 		)
 		(stroke
 			(width 0)
@@ -2804,7 +2831,7 @@
 	)
 	(wire
 		(pts
-			(xy 215.9 101.6) (xy 220.98 101.6)
+			(xy 196.85 102.87) (xy 201.93 102.87)
 		)
 		(stroke
 			(width 0)
@@ -2964,17 +2991,7 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 111.76) (xy 147.32 111.76)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3592990b-3c5d-4fec-9a43-27b1ef7d82ff")
-	)
-	(wire
-		(pts
-			(xy 194.31 101.6) (xy 199.39 101.6)
+			(xy 175.26 102.87) (xy 180.34 102.87)
 		)
 		(stroke
 			(width 0)
@@ -2984,13 +3001,23 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 86.36) (xy 194.31 90.17)
+			(xy 175.26 87.63) (xy 175.26 91.44)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "37f308cf-a711-407f-8061-febbe688418f")
+	)
+	(wire
+		(pts
+			(xy 172.72 120.65) (xy 170.18 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3834b7f6-f84b-49ca-b5d5-a37dca62f40b")
 	)
 	(wire
 		(pts
@@ -3014,7 +3041,7 @@
 	)
 	(wire
 		(pts
-			(xy 215.9 86.36) (xy 215.9 90.17)
+			(xy 196.85 87.63) (xy 196.85 91.44)
 		)
 		(stroke
 			(width 0)
@@ -3044,7 +3071,7 @@
 	)
 	(wire
 		(pts
-			(xy 199.39 104.14) (xy 203.2 104.14)
+			(xy 181.61 107.95) (xy 185.42 107.95)
 		)
 		(stroke
 			(width 0)
@@ -3104,7 +3131,7 @@
 	)
 	(wire
 		(pts
-			(xy 189.23 101.6) (xy 194.31 101.6)
+			(xy 170.18 102.87) (xy 175.26 102.87)
 		)
 		(stroke
 			(width 0)
@@ -3134,7 +3161,17 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 104.14) (xy 203.2 111.76)
+			(xy 175.26 120.65) (xy 172.72 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "574c25db-1f33-4df0-b31c-86b643e9b6c4")
+	)
+	(wire
+		(pts
+			(xy 185.42 107.95) (xy 185.42 110.49)
 		)
 		(stroke
 			(width 0)
@@ -3174,7 +3211,7 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 97.79) (xy 194.31 101.6)
+			(xy 175.26 99.06) (xy 175.26 102.87)
 		)
 		(stroke
 			(width 0)
@@ -3234,6 +3271,16 @@
 	)
 	(wire
 		(pts
+			(xy 172.72 115.57) (xy 172.72 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6e9561f0-c9a0-43df-8f51-8ad0a81a016a")
+	)
+	(wire
+		(pts
 			(xy 222.25 36.83) (xy 226.06 36.83)
 		)
 		(stroke
@@ -3281,6 +3328,16 @@
 			(type default)
 		)
 		(uuid "7a679d02-4e22-4928-b086-d68dc164fd6b")
+	)
+	(wire
+		(pts
+			(xy 170.18 110.49) (xy 173.99 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7b45a224-ce38-4659-9764-ca1710cca79d")
 	)
 	(wire
 		(pts
@@ -3364,16 +3421,6 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 104.14) (xy 191.77 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8db22d75-7e86-48fe-b42b-bab2df0d4aff")
-	)
-	(wire
-		(pts
 			(xy 67.31 63.5) (xy 67.31 53.34)
 		)
 		(stroke
@@ -3404,6 +3451,16 @@
 	)
 	(wire
 		(pts
+			(xy 170.18 115.57) (xy 172.72 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "99421a9a-23cd-485e-9a8d-d966b0b16b5a")
+	)
+	(wire
+		(pts
 			(xy 49.53 78.74) (xy 48.26 78.74)
 		)
 		(stroke
@@ -3411,16 +3468,6 @@
 			(type default)
 		)
 		(uuid "9c198093-0fd7-44f7-bf15-be664fdf8d3c")
-	)
-	(wire
-		(pts
-			(xy 189.23 101.6) (xy 185.42 101.6)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9e19a864-81d4-43ad-96b1-b5a5c2881e8b")
 	)
 	(wire
 		(pts
@@ -3474,7 +3521,7 @@
 	)
 	(wire
 		(pts
-			(xy 199.39 111.76) (xy 203.2 111.76)
+			(xy 181.61 110.49) (xy 185.42 110.49)
 		)
 		(stroke
 			(width 0)
@@ -3554,16 +3601,6 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 109.22) (xy 189.23 109.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c9c58556-95d8-4a2e-8639-1cad5bbbc1b9")
-	)
-	(wire
-		(pts
 			(xy 72.39 111.76) (xy 72.39 121.92)
 		)
 		(stroke
@@ -3624,7 +3661,7 @@
 	)
 	(wire
 		(pts
-			(xy 212.09 101.6) (xy 215.9 101.6)
+			(xy 193.04 102.87) (xy 196.85 102.87)
 		)
 		(stroke
 			(width 0)
@@ -3641,16 +3678,6 @@
 			(type default)
 		)
 		(uuid "d1cf3817-49cc-48a1-a047-316f3d67dfc5")
-	)
-	(wire
-		(pts
-			(xy 189.23 109.22) (xy 189.23 101.6)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d3710436-23bd-4f99-a81d-21a2311bb998")
 	)
 	(wire
 		(pts
@@ -3704,7 +3731,7 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 104.14) (xy 205.74 104.14)
+			(xy 185.42 107.95) (xy 187.96 107.95)
 		)
 		(stroke
 			(width 0)
@@ -3761,16 +3788,6 @@
 			(type default)
 		)
 		(uuid "e2ebdb50-acfe-44d2-9186-d2b62668f4ab")
-	)
-	(wire
-		(pts
-			(xy 190.5 106.68) (xy 185.42 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e4ae7bfb-a864-4813-84ae-b1ba0109fc92")
 	)
 	(wire
 		(pts
@@ -3854,6 +3871,16 @@
 	)
 	(wire
 		(pts
+			(xy 170.18 107.95) (xy 173.99 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f45403be-d5e6-4ec2-bb3a-be1c0e527660")
+	)
+	(wire
+		(pts
 			(xy 209.55 36.83) (xy 217.17 36.83)
 		)
 		(stroke
@@ -3861,16 +3888,6 @@
 			(type default)
 		)
 		(uuid "f463e14a-251f-4830-b870-88e4071e7a45")
-	)
-	(wire
-		(pts
-			(xy 185.42 111.76) (xy 191.77 111.76)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f940489e-9559-4426-93a7-6e3139da2d3c")
 	)
 	(wire
 		(pts
@@ -4114,7 +4131,7 @@
 	)
 	(global_label "VBUS"
 		(shape input)
-		(at 220.98 101.6 0)
+		(at 201.93 102.87 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4124,7 +4141,7 @@
 		)
 		(uuid "c7711656-48e8-4afc-be89-0767ec2a7568")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 228.8638 101.6 0)
+			(at 209.8138 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4869,17 +4886,84 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 195.58 111.76 90)
+		(lib_name "GND_1")
+		(lib_id "power:GND")
+		(at 175.26 120.65 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
+		(uuid "31cda870-14f4-4f64-85c6-9937ecf9ef41")
+		(property "Reference" "#PWR014"
+			(at 181.61 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 179.07 120.6499 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 175.26 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 175.26 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 175.26 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8d13857a-8f08-4df0-bb01-caa1b0404d88")
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
+					(reference "#PWR014")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 177.8 110.49 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
 		(uuid "338a2dca-140e-408a-b06f-078b01f08c87")
-		(property "Reference" "R23"
-			(at 195.58 115.57 90)
+		(property "Reference" "R24"
+			(at 177.8 113.03 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4887,7 +4971,7 @@
 			)
 		)
 		(property "Value" "5.1k"
-			(at 195.58 118.11 90)
+			(at 177.8 115.57 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4895,7 +4979,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 195.58 113.538 90)
+			(at 177.8 112.268 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4904,7 +4988,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 195.58 111.76 0)
+			(at 177.8 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4913,7 +4997,7 @@
 			)
 		)
 		(property "Description" "Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 5.1k ohm, 50V, 1% +/-Tol, 100ppm/Cel"
-			(at 195.58 111.76 0)
+			(at 177.8 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4922,7 +5006,7 @@
 			)
 		)
 		(property "Type" "Surface Mount "
-			(at 195.58 111.76 0)
+			(at 177.8 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4931,7 +5015,7 @@
 			)
 		)
 		(property "Package" "0402 (1005 Metric)"
-			(at 195.58 111.76 0)
+			(at 177.8 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4940,7 +5024,7 @@
 			)
 		)
 		(property "MANUFACTURER" "TA-I Tech"
-			(at 195.58 111.76 0)
+			(at 177.8 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4949,7 +5033,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "RM04FTN5101"
-			(at 195.58 111.76 0)
+			(at 177.8 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4966,7 +5050,7 @@
 		(instances
 			(project "gas_nrf52832"
 				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
-					(reference "R23")
+					(reference "R24")
 					(unit 1)
 				)
 			)
@@ -5071,188 +5155,6 @@
 			(project "gas_nrf52832"
 				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
 					(reference "D2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "USB4515-GF-A:USB4515-GF-A")
-		(at 185.42 111.76 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "39832dfc-b208-4ebe-be4e-1e56821106e3")
-		(property "Reference" "J5"
-			(at 168.91 93.98 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "USB4515-GF-A"
-			(at 168.91 96.52 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "USB4515-GF-A_REVA:USB4515GFA"
-			(at 156.21 16.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://gct.co/files/drawings/usb4515.pdf"
-			(at 156.21 -83.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Description" "USB Connectors USB C Rec 6P SMT Mid Mnt 1.6mm"
-			(at 185.42 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Height" "3.36"
-			(at 156.21 -283.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer_Name" "GCT (GLOBAL CONNECTOR TECHNOLOGY)"
-			(at 156.21 -383.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer_Part_Number" "USB4515-GF-A"
-			(at 156.21 -483.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Mouser Part Number" "640-USB4515GFA"
-			(at 156.21 -583.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/GCT/USB4515-GF-A?qs=A6eO%252BMLsxmTmzrD1rreXzA%3D%3D"
-			(at 156.21 -683.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Arrow Part Number" ""
-			(at 156.21 -783.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Arrow Price/Stock" ""
-			(at 156.21 -883.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "Type" "Surface Mount "
-			(at 185.42 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "MANUFACTURER" "Global Connector Technology"
-			(at 185.42 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "MH1"
-			(uuid "4970e7c9-9896-4c2b-a2f3-42dcc961cbb2")
-		)
-		(pin "B5"
-			(uuid "89b2c4a6-169c-4393-b5e6-dcc61f37a5be")
-		)
-		(pin "A12"
-			(uuid "d222ea0b-85ce-45dc-aa05-11036b97fb94")
-		)
-		(pin "MH2"
-			(uuid "eb66d37d-b156-4df6-b9e0-5ba8007be3ed")
-		)
-		(pin "B12"
-			(uuid "26e91042-ad27-4519-b40e-506f81b14b1b")
-		)
-		(pin "A9"
-			(uuid "5eea62fd-7232-4587-9596-33753bf42990")
-		)
-		(pin "MH3"
-			(uuid "63651aba-2992-4e79-b161-e084e575bd05")
-		)
-		(pin "MH4"
-			(uuid "8b162884-19a1-4b03-b6e2-5c9b6e72f1c3")
-		)
-		(pin "B9"
-			(uuid "63f67774-c563-422c-8718-1244b83f4fb4")
-		)
-		(pin "A5"
-			(uuid "f6fc066d-4727-47b6-ab12-0b4ae9a4074c")
-		)
-		(instances
-			(project "gas_nrf52832"
-				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
-					(reference "J5")
 					(unit 1)
 				)
 			)
@@ -5500,16 +5402,15 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 195.58 104.14 90)
+		(at 177.8 107.95 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "586b1e94-a4d8-4d97-a171-2d397892362c")
-		(property "Reference" "R24"
-			(at 195.58 97.79 90)
+		(property "Reference" "R23"
+			(at 178.054 102.87 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5517,7 +5418,7 @@
 			)
 		)
 		(property "Value" "5.1k"
-			(at 195.58 100.33 90)
+			(at 178.054 105.41 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5525,7 +5426,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 195.58 105.918 90)
+			(at 177.8 109.728 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5534,7 +5435,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 195.58 104.14 0)
+			(at 177.8 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5543,7 +5444,7 @@
 			)
 		)
 		(property "Description" "Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 5.1k ohm, 50V, 1% +/-Tol, 100ppm/Cel"
-			(at 195.58 104.14 0)
+			(at 177.8 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5552,7 +5453,7 @@
 			)
 		)
 		(property "Type" "Surface Mount "
-			(at 195.58 104.14 0)
+			(at 177.8 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5561,7 +5462,7 @@
 			)
 		)
 		(property "Package" "0402 (1005 Metric)"
-			(at 195.58 104.14 0)
+			(at 177.8 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5570,7 +5471,7 @@
 			)
 		)
 		(property "MANUFACTURER" "TA-I Tech"
-			(at 195.58 104.14 0)
+			(at 177.8 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5579,7 +5480,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "RM04FTN5101"
-			(at 195.58 104.14 0)
+			(at 177.8 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5596,7 +5497,7 @@
 		(instances
 			(project "gas_nrf52832"
 				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
-					(reference "R24")
+					(reference "R23")
 					(unit 1)
 				)
 			)
@@ -5605,7 +5506,7 @@
 	(symbol
 		(lib_name "GND_1")
 		(lib_id "power:GND")
-		(at 205.74 104.14 90)
+		(at 187.96 107.95 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5614,7 +5515,7 @@
 		(fields_autoplaced yes)
 		(uuid "5a7acbf9-79ac-4a27-9885-b03edd402342")
 		(property "Reference" "#PWR043"
-			(at 212.09 104.14 0)
+			(at 194.31 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5623,7 +5524,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 209.55 104.1399 90)
+			(at 191.77 107.9499 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5632,7 +5533,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 205.74 104.14 0)
+			(at 187.96 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5641,7 +5542,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 205.74 104.14 0)
+			(at 187.96 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5650,7 +5551,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 205.74 104.14 0)
+			(at 187.96 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5665,74 +5566,6 @@
 			(project "gas_nrf52832"
 				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
 					(reference "#PWR043")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_name "GND_1")
-		(lib_id "power:GND")
-		(at 147.32 111.76 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "636baa0e-f8ee-432c-a4c9-b49631c75f1b")
-		(property "Reference" "#PWR040"
-			(at 140.97 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 143.51 111.7599 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 147.32 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 147.32 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 147.32 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "53960676-05f5-4e2b-af42-fb904eb5b750")
-		)
-		(instances
-			(project "gas_nrf52832"
-				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
-					(reference "#PWR040")
 					(unit 1)
 				)
 			)
@@ -6068,7 +5901,7 @@
 	)
 	(symbol
 		(lib_id "MURATA_BLM15PE121SH1D:MURATA_BLM15PE121SH1D")
-		(at 199.39 96.52 0)
+		(at 180.34 97.79 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6076,7 +5909,7 @@
 		(dnp no)
 		(uuid "8e8b6add-0764-47c4-bd3a-d8e790ba047a")
 		(property "Reference" "FB1"
-			(at 206.756 96.266 0)
+			(at 187.706 97.536 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6084,7 +5917,7 @@
 			)
 		)
 		(property "Value" "120R/0.9A"
-			(at 206.756 98.298 0)
+			(at 187.706 99.568 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6092,7 +5925,7 @@
 			)
 		)
 		(property "Footprint" "MURATA_BLM15PE121SH1D:MURATA_BLM15PE121SH1D_0"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6101,7 +5934,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6110,7 +5943,7 @@
 			)
 		)
 		(property "Description" "FERRITE BEAD"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6119,7 +5952,7 @@
 			)
 		)
 		(property "DigiKey_Part_Number" "490-BLM15PE121SH1DTR-ND"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6129,7 +5962,7 @@
 			)
 		)
 		(property "MF" "Murata Electronics"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6139,7 +5972,7 @@
 			)
 		)
 		(property "Purchase-URL" "https://www.snapeda.com/api/url_track_click_mouser/?unipart_id=6225287&manufacturer=Murata Electronics&part_name=BLM15PE121SH1D&search_term=blm15pe121sh1d"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6149,7 +5982,7 @@
 			)
 		)
 		(property "Package" "0402 (1005 Metric) "
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6159,7 +5992,7 @@
 			)
 		)
 		(property "SnapEDA_Link" "https://www.snapeda.com/parts/BLM15PE121SH1D/Murata/view-part/?ref=snap"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6169,7 +6002,7 @@
 			)
 		)
 		(property "MP" "BLM15PE121SH1D"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6179,7 +6012,7 @@
 			)
 		)
 		(property "Description_1" "\n120 Ohms @ 100 MHz 1 Power Line Ferrite Bead 0402 (1005 Metric) 1.5A 90mOhm\n"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6189,7 +6022,7 @@
 			)
 		)
 		(property "Check_prices" "https://www.snapeda.com/parts/BLM15PE121SH1D/Murata/view-part/?ref=eda"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6199,7 +6032,7 @@
 			)
 		)
 		(property "Type" "Surface Mount "
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6208,7 +6041,7 @@
 			)
 		)
 		(property "MANUFACTURER" "Murata Electronics "
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6217,7 +6050,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "BLM15PE121SH1D"
-			(at 199.39 96.52 0)
+			(at 180.34 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6479,74 +6312,6 @@
 	(symbol
 		(lib_name "GND_1")
 		(lib_id "power:GND")
-		(at 190.5 106.68 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "921a4f2b-e464-4d1f-a779-9f29af9fb6fe")
-		(property "Reference" "#PWR041"
-			(at 196.85 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 194.31 106.6799 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 190.5 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 190.5 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 190.5 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c365b37b-77ff-443b-a2b1-9a4ac70f3245")
-		)
-		(instances
-			(project "gas_nrf52832"
-				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
-					(reference "#PWR041")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_name "GND_1")
-		(lib_id "power:GND")
 		(at 186.69 54.61 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6612,35 +6377,43 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 215.9 93.98 0)
+		(lib_id "USB4515-GF-A_REVA:USB4515-GF-A_REVA")
+		(at 157.48 110.49 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "a4e41e2b-80d2-402c-adad-a7e8a5f021b4")
-		(property "Reference" "C23"
-			(at 219.71 92.7099 0)
+		(uuid "9f9c4679-bbc5-47de-af7c-bdb88de4c071")
+		(property "Reference" "J5"
+			(at 157.48 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
-		(property "Value" "10nF"
-			(at 219.71 95.2499 0)
+		(property "Value" "USB4515-GF-A"
+			(at 157.48 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 216.8652 97.79 0)
+		(property "Footprint" "USB4515-GF-A_REVA:GCT_USB4515-GF-A_REVA"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 157.48 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6648,17 +6421,128 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
-			(at 215.9 93.98 0)
+		(property "Description" "USB Connectors USB C Rec 6P SMT Mid Mnt 1.6mm"
+			(at 157.48 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify bottom)
 				(hide yes)
 			)
 		)
-		(property "Description" "50V 10nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
-			(at 215.9 93.98 0)
+		(property "MF" "Global Connector Technology"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" "3.16 mm"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Package" "SMD-4"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Price" "None"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Check_prices" "https://www.snapeda.com/parts/USB4515-GF-A/Global+Connector+Technology/view-part/?ref=eda"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" "Manufacturer Recommendations"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" "A"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "SnapEDA_Link" "https://www.snapeda.com/parts/USB4515-GF-A/Global+Connector+Technology/view-part/?ref=snap"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MP" "USB4515-GF-A"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Availability" "In Stock"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Global Connector Technology"
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "USB4515-GF-A"
+			(at 157.48 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6667,7 +6551,110 @@
 			)
 		)
 		(property "Type" "Surface Mount "
-			(at 215.9 93.98 0)
+			(at 157.48 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "A12"
+			(uuid "b8eba223-6f28-4c94-ad84-13da31a1a7c3")
+		)
+		(pin "A9"
+			(uuid "38649c21-84f2-4c78-b0b5-3afe1e77753f")
+		)
+		(pin "A5"
+			(uuid "aa56ee66-dc5d-4acc-8f1e-0431151fb577")
+		)
+		(pin "B12"
+			(uuid "9148b95f-9779-4abf-8e0e-674fe7bb3562")
+		)
+		(pin "B5"
+			(uuid "c961db23-cb59-4a4d-8ef2-cd680d845179")
+		)
+		(pin "B9"
+			(uuid "9d4159a0-c9cc-497a-a09a-082edfd6c135")
+		)
+		(pin "S1"
+			(uuid "6e7b00b1-75b5-4c83-b0f9-7791713cf18e")
+		)
+		(pin "S2"
+			(uuid "ca241edb-f481-4505-9952-ceb15cabbcc8")
+		)
+		(pin "S3"
+			(uuid "81a2cb85-5df9-4711-9b29-0f7482105dc4")
+		)
+		(pin "S4"
+			(uuid "81e27819-de64-41b9-8a24-1f656d25575a")
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
+					(reference "J5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 196.85 95.25 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a4e41e2b-80d2-402c-adad-a7e8a5f021b4")
+		(property "Reference" "C23"
+			(at 200.66 93.9799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10nF"
+			(at 200.66 96.5199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 197.8152 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 196.85 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "50V 10nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 196.85 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 196.85 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6676,7 +6663,7 @@
 			)
 		)
 		(property "MANUFACTURER" "Samsung Electro-Mechanics"
-			(at 215.9 93.98 0)
+			(at 196.85 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6685,7 +6672,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "CL05B103KB5NNNC"
-			(at 215.9 93.98 0)
+			(at 196.85 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6694,7 +6681,7 @@
 			)
 		)
 		(property "Package" "0402 (1005 Metric)"
-			(at 215.9 93.98 0)
+			(at 196.85 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7761,7 +7748,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 194.31 93.98 0)
+		(at 175.26 95.25 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7770,7 +7757,7 @@
 		(fields_autoplaced yes)
 		(uuid "ed5411f8-5ad8-49af-9633-d1e65f1a18f8")
 		(property "Reference" "C24"
-			(at 198.12 92.7099 0)
+			(at 179.07 93.9799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7779,7 +7766,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 198.12 95.2499 0)
+			(at 179.07 96.5199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7788,7 +7775,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 195.2752 97.79 0)
+			(at 176.2252 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7797,7 +7784,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 194.31 93.98 0)
+			(at 175.26 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7806,7 +7793,7 @@
 			)
 		)
 		(property "Description" "16V 100nF X7R ±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
-			(at 194.31 93.98 0)
+			(at 175.26 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7815,7 +7802,7 @@
 			)
 		)
 		(property "Type" "Surface Mount "
-			(at 194.31 93.98 0)
+			(at 175.26 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7824,7 +7811,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "CL05B104KO5NNNC"
-			(at 194.31 93.98 0)
+			(at 175.26 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7833,7 +7820,7 @@
 			)
 		)
 		(property "MANUFACTURER" "Samsung Electro-Mechanics"
-			(at 194.31 93.98 0)
+			(at 175.26 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7842,7 +7829,7 @@
 			)
 		)
 		(property "Package" "0402 (1005 Metric)"
-			(at 194.31 93.98 0)
+			(at 175.26 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7868,7 +7855,7 @@
 	(symbol
 		(lib_name "GND_1")
 		(lib_id "power:GND")
-		(at 194.31 86.36 180)
+		(at 175.26 87.63 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7877,7 +7864,7 @@
 		(fields_autoplaced yes)
 		(uuid "f0a0135b-2318-433e-972b-676d8a5c1d88")
 		(property "Reference" "#PWR044"
-			(at 194.31 80.01 0)
+			(at 175.26 81.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7886,7 +7873,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 194.31 81.28 0)
+			(at 175.26 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7894,7 +7881,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 194.31 86.36 0)
+			(at 175.26 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7903,7 +7890,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 194.31 86.36 0)
+			(at 175.26 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7912,7 +7899,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 194.31 86.36 0)
+			(at 175.26 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7935,7 +7922,7 @@
 	(symbol
 		(lib_name "GND_1")
 		(lib_id "power:GND")
-		(at 215.9 86.36 180)
+		(at 196.85 87.63 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7944,7 +7931,7 @@
 		(fields_autoplaced yes)
 		(uuid "f59dd78f-6058-4292-8f32-0ab38939610a")
 		(property "Reference" "#PWR045"
-			(at 215.9 80.01 0)
+			(at 196.85 81.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7953,7 +7940,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 215.9 81.28 0)
+			(at 196.85 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7961,7 +7948,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 215.9 86.36 0)
+			(at 196.85 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7970,7 +7957,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 215.9 86.36 0)
+			(at 196.85 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7979,7 +7966,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 215.9 86.36 0)
+			(at 196.85 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)

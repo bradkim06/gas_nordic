@@ -1,31 +1,31 @@
-"Reference","Value","Qty","MANUFACTURER","Manufacturer_Part_Number","ì„¤ëª…","Package","Type"
-"C1,C2","12pF","2","Samsung Electro-Mechanics","CL05C120JB5NNNC","50V 12pF C0G Â±5% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS","0402 (1005 Metric)","Surface Mount "
-"C3,C7,C8,C13,C20,C21","1uF","6","Murata Electronics","GRM155C71A105ME11D","10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS","0402 (1005 Metric)","Surface Mount "
-"C4,C5,C6,C10","10uF","4","Murata Electronics","GRM155C80J106ME11D","6.3V 10uF X6S Â±20% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS","0402 (1005 Metric)","Surface Mount "
-"C11,C12,C14,C15,C16,C18,C19,C24","100nF","8","Samsung Electro-Mechanics","CL05B104KO5NNNC","16V 100nF X7R Â±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS","0402 (1005 Metric)","Surface Mount "
-"C23","10nF","1","Samsung Electro-Mechanics","CL05B103KB5NNNC","50V 10nF X7R Â±10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS","0402 (1005 Metric)","Surface Mount "
-"D2","L0603R","1","BRIGHT LED","BL-HUF36A-AV-TRB","Red Light-emitting diode ","0603 (1608 Metric)","Surface Mount "
-"D4","L0603G","1","BRIGHT LED","BL-HG036A-AV-TRB","Yellow Green Light-emitting diode ","0603 (1608 Metric)","Surface Mount "
-"E2","MDBT42Q-512KV2","1","Raytac","MDBT42Q-512KV2","Bluetooth Bluetooth v5.2 Transceiver Module","SMD-41","Surface Mount "
-"FB1,FB2","120R/0.9A","2","Murata Electronics ","BLM15PE121SH1D","FERRITE BEAD","0402 (1005 Metric) ","Surface Mount "
-"IC3,IC4,IC5","LPV821DBVR","3","Texas Instruments","LPV821DBVR","8kHz 1.5uV 7pA Single Channel Precision Op Amps ROHS","SOT-23-5","Surface Mount "
-"IC6","NPM1100-QDAA-R","1","NORDIC SEMICONDUCTOR","NPM1100-QDAA-R","Lithium-Ion/Polymer Battery Management ROHS ","QFN-24(4x4)","Surface Mount "
-"J5","USB4515-GF-A","1","Global Connector Technology","USB4515-GF-A","USB Connectors USB C Rec 6P SMT Mid Mnt 1.6mm","","Surface Mount "
-"L1","15nH","1","TDK","MLG1005S15NJT000","400mA 15nH Â±5% 350mÎ© 0402  Inductors (SMD) ROHS","0402 (1005 Metric)","Surface Mount "
-"L2","10uH","1","Murata Electronics","LQM18FN100M00D","50mA 10uH Â±20% 50mA 1.17Î© 0603  Inductors (SMD) ROHS","0603 (1608 Metric)","Surface Mount "
-"L3","2.2uH","1","Murata Electronics","1285AS-H-2R2M=P2","1.5A 2.2uH Â±20% 0806  Power Inductors ROHS","0806 (2016 Metric)","Surface Mount "
-"Q3","FDV303N","1","ONSEMI ","FDV303N","FDV303N N-Channel MOSFET, 680 mA, 25 V, 3-Pin SOT-23 ON Semiconductor","SOT-23","Surface Mount "
-"Q4","DMC2400UV-7","1","Diodes Incorporated ","DMC2400UV-7","20V 480mÎ©@200mA,5V 450mW 900mV@250uA 1PCSNChannel+1PCSPChannel SOT-563  MOSFETs ROHS","SOT-563","Surface Mount "
-"R2,R19","49.9k","2","TA-I Tech","RM04FTN4992","62.5mW Thick Film Resistors 50V Â±100ppm/â„ƒ Â±1% 49.9kÎ© 0402  Chip Resistor - Surface Mount ROHS","0402 (1005 Metric)","Surface Mount "
-"R3,R18","10k","2","TA-I Tech","RM04FTN1002","Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 10k ohm, 50V, 1% +/-Tol, 100ppm/Cel","0402 (1005 Metric)","Surface Mount "
-"R4,R5,R10","1M","3","YAGEO","RC0402FR-071ML","62.5mW Thick Film Resistors 50V Â±100ppm/â„ƒ Â±1% 1MÎ© 0402  Chip Resistor - Surface Mount ROHS","0402 (1005 Metric)","Surface Mount "
-"R6","1M5","1","YAGEO","RC0402FR-071M5L","62.5mW Thick Film Resistors 50V Â±100ppm/â„ƒ Â±1% 1.5MÎ© 0402  Chip Resistor - Surface Mount ROHS","0402 (1005 Metric)","Surface Mount "
-"R7","180k","1","TA-I Tech","RM04FTN1803","Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 180k ohm, 50V, 1% +/-Tol, 100ppm/Cel","0402 (1005 Metric)","Surface Mount "
-"R11","100","1","YAGEO","RC0402FR-07100RL","62.5mW Thick Film Resistors 50V Â±100ppm/â„ƒ Â±1% 100Î© 0402  Chip Resistor - Surface Mount ROHS","0402 (1005 Metric)","Surface Mount "
-"R12","2M","1","YAGEO","RC0402FR-072ML","62.5mW Thick Film Resistors 50V Â±100ppm/â„ƒ Â±1% 2MÎ© 0402  Chip Resistor - Surface Mount ROHS","0402 (1005 Metric)","Surface Mount "
-"R13,R14,R16","10","3","YAGEO","RC0402FR-0710RL","62.5mW Thick Film Resistors 50V Â±1% Â±200ppm/â„ƒ 10Î© 0402  Chip Resistor - Surface Mount ROHS","0402 (1005 Metric)","Surface Mount "
-"R15","100k","1","YAGEO","RC0402FR-07100KL","62.5mW Thick Film Resistors 50V Â±100ppm/â„ƒ Â±1% 100kÎ© 0402 Chip Resistor - Surface Mount ROHS","0402 (1005 Metric)","Surface Mount "
-"R22","150","1","TA-I Tech","RM04FTN1500","Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 150 ohm, 50V, 1% +/-Tol, 100ppm/Cel","0402 (1005 Metric)","Surface Mount "
-"R23,R24","5.1k","2","TA-I Tech","RM04FTN5101","Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 5.1k ohm, 50V, 1% +/-Tol, 100ppm/Cel","0402 (1005 Metric)","Surface Mount "
-"U5","BME680","1","Bosch Sensortec","BME680","Pressure Sensors ROHS","LGA-8","Surface Mount "
-"X1","32.768kHz","1","EPSON","FC-135 32.7680KA-A5","Crystals SMD 32.768kHz","SMD3215-2P","Surface Mount "
+Reference,Value,Qty,MANUFACTURER,Manufacturer_Part_Number,Description,Package,Type
+"C1,C2",12pF,2,Samsung Electro-Mechanics,CL05C120JB5NNNC,50V 12pF C0G ¡¾5% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS,0402 (1005 Metric),Surface Mount 
+"C3,C7,C8,C13,C20,C21",1uF,6,Murata Electronics,GRM155C71A105ME11D,10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS,0402 (1005 Metric),Surface Mount 
+"C4,C5,C6,C10",10uF,4,Murata Electronics,GRM155C80J106ME11D,6.3V 10uF X6S ¡¾20% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS,0402 (1005 Metric),Surface Mount 
+"C11,C12,C14,C15,C16,C18,C19,C24",100nF,8,Samsung Electro-Mechanics,CL05B104KO5NNNC,16V 100nF X7R ¡¾10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS,0402 (1005 Metric),Surface Mount 
+C23,10nF,1,Samsung Electro-Mechanics,CL05B103KB5NNNC,50V 10nF X7R ¡¾10% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS,0402 (1005 Metric),Surface Mount 
+D2,L0603R,1,BRIGHT LED,BL-HUF36A-AV-TRB,Red Light-emitting diode ,0603 (1608 Metric),Surface Mount 
+D4,L0603G,1,BRIGHT LED,BL-HG036A-AV-TRB,Yellow Green Light-emitting diode ,0603 (1608 Metric),Surface Mount 
+E2,MDBT42Q-512KV2,1,Raytac,MDBT42Q-512KV2,Bluetooth Bluetooth v5.2 Transceiver Module,SMD-41,Surface Mount 
+"FB1,FB2",120R/0.9A,2,Murata Electronics ,BLM15PE121SH1D,FERRITE BEAD,0402 (1005 Metric) ,Surface Mount 
+"IC3,IC4,IC5",LPV821DBVR,3,Texas Instruments,LPV821DBVR,8kHz 1.5uV 7pA Single Channel Precision Op Amps ROHS,SOT-23-5,Surface Mount 
+IC6,NPM1100-QDAA-R,1,NORDIC SEMICONDUCTOR,NPM1100-QDAA-R,Lithium-Ion/Polymer Battery Management ROHS ,QFN-24(4x4),Surface Mount 
+J5,USB4515-GF-A,1,Global Connector Technology,USB4515-GF-A,USB Connectors USB C Rec 6P SMT Mid Mnt 1.6mm,SMD-4,Surface Mount 
+L1,15nH,1,TDK,MLG1005S15NJT000,400mA 15nH ¡¾5% 350m¡¾ 0402  Inductors (SMD) ROHS,0402 (1005 Metric),Surface Mount 
+L2,10uH,1,Murata Electronics,LQM18FN100M00D,50mA 10uH ¡¾20% 50mA 1.17¡¾ 0603  Inductors (SMD) ROHS,0603 (1608 Metric),Surface Mount 
+L3,2.2uH,1,Murata Electronics,1285AS-H-2R2M=P2,1.5A 2.2uH ¡¾20% 0806  Power Inductors ROHS,0806 (2016 Metric),Surface Mount 
+Q3,FDV303N,1,ONSEMI ,FDV303N,"FDV303N N-Channel MOSFET, 680 mA, 25 V, 3-Pin SOT-23 ON Semiconductor",SOT-23,Surface Mount 
+Q4,DMC2400UV-7,1,Diodes Incorporated ,DMC2400UV-7,"20V 480m¡¾@200mA,5V 450mW 900mV@250uA 1PCSNChannel+1PCSPChannel SOT-563  MOSFETs ROHS",SOT-563,Surface Mount 
+"R2,R19",49.9k,2,TA-I Tech,RM04FTN4992,62.5mW Thick Film Resistors 50V ¡¾100ppm/ ¡¾1% 49.9k¥Ø 0402  Chip Resistor - Surface Mount ROHS,0402 (1005 Metric),Surface Mount 
+"R3,R18",10k,2,TA-I Tech,RM04FTN1002,"Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 10k¥Ø, 50V, 1% +/-Tol, 100ppm/Cel",0402 (1005 Metric),Surface Mount 
+"R4,R5,R10",1M,3,YAGEO,RC0402FR-071ML,62.5mW Thick Film Resistors 50V ¡¾100ppm/ ¡¾1% 1M¥Ø 0402  Chip Resistor - Surface Mount ROHS,0402 (1005 Metric),Surface Mount 
+R6,1M5,1,YAGEO,RC0402FR-071M5L,62.5mW Thick Film Resistors 50V ¡¾100ppm/ ¡¾1% 1.5M¥Ø 0402  Chip Resistor - Surface Mount ROHS,0402 (1005 Metric),Surface Mount 
+R7,180k,1,TA-I Tech,RM04FTN1803,"Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 180k¥Ø, 50V, 1% +/-Tol, 100ppm/Cel",0402 (1005 Metric),Surface Mount 
+R11,100,1,YAGEO,RC0402FR-07100RL,62.5mW Thick Film Resistors 50V ¡¾100ppm/ ¡¾1% 100¥Ø 0402  Chip Resistor - Surface Mount ROHS,0402 (1005 Metric),Surface Mount 
+R12,2M,1,YAGEO,RC0402FR-072ML,62.5mW Thick Film Resistors 50V ¡¾100ppm/ ¡¾1% 2M¥Ø 0402  Chip Resistor - Surface Mount ROHS,0402 (1005 Metric),Surface Mount 
+"R13,R14,R16",10,3,YAGEO,RC0402FR-0710RL,62.5mW Thick Film Resistors 50V ¡¾1% ¡¾200ppm/ 10¥Ø 0402  Chip Resistor - Surface Mount ROHS,0402 (1005 Metric),Surface Mount 
+R15,100k,1,YAGEO,RC0402FR-07100KL,62.5mW Thick Film Resistors 50V ¡¾100ppm/ ¡¾1% 100k¥Ø 0402 Chip Resistor - Surface Mount ROHS,0402 (1005 Metric),Surface Mount 
+R22,150,1,TA-I Tech,RM04FTN1500,"Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 150¥Ø, 50V, 1% +/-Tol, 100ppm/Cel",0402 (1005 Metric),Surface Mount 
+"R23,R24",5.1k,2,TA-I Tech,RM04FTN5101,"Fixed Resistor, Metal Glaze/thick Film, 0.0625W, 5.1k¥Ø, 50V, 1% +/-Tol, 100ppm/Cel",0402 (1005 Metric),Surface Mount 
+U5,BME680,1,Bosch Sensortec,BME680,Pressure Sensors ROHS,LGA-8,Surface Mount 
+X1,32.768kHz,1,EPSON,FC-135 32.7680KA-A5,Crystals SMD 32.768kHz,SMD3215-2P,Surface Mount 

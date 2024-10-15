@@ -50,9 +50,9 @@ static const struct level_point levels[] = {
 	// dtp-102535 800mAh Batt
 	// {10000, 4000},
 	// tw-403030 300mAh Batt
-	{10000, 3900},
+	{10000, 4000},
 	{625, 3300},
-	{0, 3000},
+	{0, 3100},
 };
 
 struct io_channel_config {

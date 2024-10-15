@@ -3,7 +3,8 @@
  *
  * @brief Code for indicating the battery status with an LED.
  *
- * The LED operates every LED_THREAD_SLEEP_INTERVAL to conserve power, staying on for LED_TIME_MS.
+ * The LED operates every LED_THREAD_SLEEP_INTERVAL to conserve power, staying on for
+ LED_TIME_MS.
  * Additionally, for low-power operation, it operates at a brightness of LED_PWM_LEVEL.
  * (If the battery status is higher than LOW_BATT_THRESHOLD, it lights up in green;
  * otherwise, it lights up in yellow).
@@ -85,9 +86,11 @@ static void led_thread_fn(void)
 
 	while (1) {
 		/* Get the battery percentage */
-		enum led_device_state led_color = (get_battery_percent().val1 >= 20)
-							  ? LED_STATE_STABLE_BATTERY
-							  : LED_STATE_LOW_BATTERY;
+		// enum led_device_state led_color = (get_battery_percent().val1 >= 20)
+		// 					  ? LED_STATE_STABLE_BATTERY
+		// 					  : LED_STATE_LOW_BATTERY;
+
+		enum led_device_state led_color = LED_STATE_STABLE_BATTERY;
 
 		/* Activate the LED with the appropriate color based on the battery status */
 		control_led((uint32_t)led_color);
@@ -96,8 +99,8 @@ static void led_thread_fn(void)
 	}
 }
 
-/* Define the stack size and priority for the LED thread */
-#define STACK_SIZE 1024
-#define PRIORITY   6
-/* Define the thread for the LED */
-K_THREAD_DEFINE(led_id, STACK_SIZE, led_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);
+// /* Define the stack size and priority for the LED thread */
+// #define STACK_SIZE 1024
+// #define PRIORITY   6
+// /* Define the thread for the LED */
+// K_THREAD_DEFINE(led_id, STACK_SIZE, led_thread_fn, NULL, NULL, NULL, PRIORITY, 0, 0);

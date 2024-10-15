@@ -15,7 +15,7 @@
 	compatible = "nordic,hhs_nrf52832";
 
 	zephyr,user {
-		io-channels = <&adc 1>, <&adc 2>;
+		io-channels = <&adc 2>, <&adc 3>;
 	};
 
 	chosen {
@@ -32,10 +32,10 @@
 	vbatt {
 		compatible = "voltage-divider";
 		status = "okay";
-		io-channels = <&adc 3>;
+		io-channels = <&adc 4>;
 		output-ohms = <180000>;
 		full-ohms = <(1500000 + 180000)>;
-		power-gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
+		power-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
 	};
 
 	leds {
@@ -97,17 +97,7 @@
      * datasheet value different, ideal 90uA +-20 (at 20.9% o2)
 	 * 1% current 5uA -> sensor vout = (Curr * Rl) * (1 + R1 / R2) =
 	 */
-	o2_mon: channel@1 {
-		reg = <1>;
-		zephyr,gain = "ADC_GAIN_1_6";
-		zephyr,reference = "ADC_REF_INTERNAL";
-		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>;
-		zephyr,input-positive = <NRF_SAADC_AIN1>; /* P0.03 */
-		zephyr,resolution = <14>;
-		zephyr,oversampling = <8>;
-	};
-
-	gas_mon: channel@2 {
+	o2_mon: channel@2 {
 		reg = <2>;
 		zephyr,gain = "ADC_GAIN_1_6";
 		zephyr,reference = "ADC_REF_INTERNAL";
@@ -116,16 +106,20 @@
 		zephyr,resolution = <14>;
 		zephyr,oversampling = <8>;
 	};
+
+	gas_mon: channel@3 {
+		reg = <3>;
+		zephyr,gain = "ADC_GAIN_1_6";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>;
+		zephyr,input-positive = <NRF_SAADC_AIN3>; /* P0.03 */
+		zephyr,resolution = <14>;
+		zephyr,oversampling = <8>;
+	};
 };
 
 &gpio0 {
 	status = "okay";
-	node-1 {
-		gpio-hog;
-		gpios = <11 GPIO_ACTIVE_HIGH>;
-		output-high;
-		line-name = "bme680 sensor enable pin";
-	};
 };
 
 serial: &uart0 {
