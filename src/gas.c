@@ -314,12 +314,12 @@ void calibrate_oxygen(char *reference_value, int len)
 
 	// Calculate the voltage based on the reference percent and the voltage divider
 	// Note: The formula for voltage calculation is specific to the sensor and circuit design
-	float voltage = gas_data[O2].raw / ((1 + 2000 / 10.7) * (reference_percent * 0.001 * 100));
+	float voltage = gas_data[O2].raw / ((1 + 200) * (reference_percent * 0.001 * 100));
 	// Round down the voltage to two decimal places
 	voltage = floor(voltage * 100) / 100;
 
 	// Calculate the new maximum measurement value in millivolts for the oxygen sensor
-	unsigned int new_mV = (voltage * 25 * 0.001 * 100) * (1 + 2000 / 10.7);
+	unsigned int new_mV = (voltage * 25 * 0.001 * 100) * (1 + 200);
 
 	// Acquire the semaphore to ensure exclusive access to shared resources
 	k_sem_take(&gas_sem, K_FOREVER);
@@ -331,7 +331,7 @@ void calibrate_oxygen(char *reference_value, int len)
 	k_sem_give(&gas_sem);
 
 	// Update the sensor configuration with the new calibration value
-	update_config(OXYGEN_CALIBRATION, new_mV);
+	update_config(OXYGEN_CALIBRATION, &new_mV);
 	// Post an event to indicate that the oxygen sensor has been calibrated
 	k_event_post(&config_event, OXYGEN_CALIBRATION);
 }
@@ -353,10 +353,6 @@ void calibrate_oxygen(char *reference_value, int len)
 #endif // DT Node assert
 static void gas_measurement_thread(void)
 {
-	k_mutex_init(&config_mutex);
-	k_condvar_init(&config_condvar);
-	k_mutex_lock(&config_mutex, K_FOREVER);
-
 	const uint8_t GAS_MEASUREMENT_INTERVAL_SEC = 2;
 	const uint8_t GAS_AVERAGE_FILTER_SIZE = 1;
 	/* Data of ADC io-channels specified in devicetree. */
@@ -383,7 +379,8 @@ static void gas_measurement_thread(void)
 	}
 
 	k_condvar_wait(&config_condvar, &config_mutex, K_FOREVER);
-	measurement_range[O2][0].lvl_mV = get_config(OXYGEN_CALIBRATION);
+	measurement_range[O2][0].lvl_mV = *(int16_t *)get_config(OXYGEN_CALIBRATION);
+	// Unlock the mutex as the initialization is complete.
 	k_mutex_unlock(&config_mutex);
 
 	/* Wait for temperature data to become available. */

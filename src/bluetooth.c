@@ -113,16 +113,31 @@ static ssize_t write_ble(struct bt_conn *conn, const struct bt_gatt_attr *attr, 
 	char *p = NULL;
 
 	// Define a constant string for the O2 calibration command.
-	const char *O2_CALIBRATION = "O2=";
+	const char *PREFIX_O2_CALIB = "O2=";
+	const char *PREFIX_BT_NAME = "BT=";
 	// Check if the buffer contains the O2 calibration command.
-	if ((p = strstr(buf, O2_CALIBRATION))) {
+	if ((p = strstr(buf, PREFIX_O2_CALIB))) {
 		// Calculate the length of the O2 calibration command prefix.
-		size_t prefix_len = strlen(O2_CALIBRATION);
+		size_t prefix_len = strlen(PREFIX_O2_CALIB);
 		// Move the pointer past the prefix to the actual calibration data.
 		p += prefix_len;
 
 		// Call a function to calibrate the oxygen sensor with the provided data.
 		calibrate_oxygen(p, len - prefix_len);
+	} else if ((p = strstr(buf, PREFIX_BT_NAME))) {
+		size_t prefix_len = strlen(PREFIX_BT_NAME);
+		p += prefix_len;
+
+		uint8_t bt_name[len - prefix_len + 1];
+		snprintf(bt_name, len - prefix_len + 1, "%s", p);
+
+		// Update the sensor configuration with the new calibration value
+		update_config(BT_ADV_NAME, bt_name);
+		// Post an event to indicate that the oxygen sensor has been calibrated
+		k_event_post(&config_event, BT_ADV_NAME);
+
+		k_sleep(K_SECONDS(3));
+		sys_reboot();
 	}
 
 	// Return the number of bytes written to indicate success.
@@ -137,23 +152,6 @@ BT_GATT_SERVICE_DEFINE(bt_hhs_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_HHS),
 					      BT_GATT_PERM_NONE, NULL, NULL, NULL),
 		       BT_GATT_CCC(mylbsbc_ccc_gas_cfg_changed,
 				   BT_GATT_PERM_READ | BT_GATT_PERM_WRITE));
-
-/* ble advertising name */
-#define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
-
-/**
- * Bluetooth advertisement data structure.
- *
- * This structure defines the Bluetooth advertisement data format,
- * including flags, device name, and other information.
- */
-static const struct bt_data ad[] = {
-	/* Set the flags for the advertisement data */
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	/* Set the device name for the advertisement data */
-	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
-};
 
 /*
  * This is a static constant structure that contains the Bluetooth data.
@@ -415,6 +413,21 @@ int bt_setup(void)
 
 	LOG_INF("Bluetooth initialized");
 
+	const char *bt_name = (char *)get_config(BT_ADV_NAME);
+
+	/**
+	 * Bluetooth advertisement data structure.
+	 *
+	 * This structure defines the Bluetooth advertisement data format,
+	 * including flags, device name, and other information.
+	 */
+	struct bt_data ad[] = {
+		/* Set the flags for the advertisement data */
+		BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+		/* Set the device name for the advertisement data */
+		BT_DATA(BT_DATA_NAME_COMPLETE, bt_name, strlen(bt_name)),
+	};
+
 	struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 		(BT_LE_ADV_OPT_CONNECTABLE |
 		 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
@@ -477,10 +490,11 @@ static int bt_gas_notify(char *p_gas_sensor_data)
  */
 static void bluetooth_thread(void)
 {
-	/* Define initial delay in seconds */
-	const uint8_t INITIAL_DELAY = 2;
-	/* Sleep for initial delay */
-	k_sleep(K_SECONDS(INITIAL_DELAY));
+	k_condvar_wait(&config_condvar, &config_mutex, K_FOREVER);
+	// Unlock the mutex as the initialization is complete.
+	k_mutex_unlock(&config_mutex);
+
+	bt_setup();
 
 	/* Convert the firmware build time to the time_t format for adding it to the current kernel
 	 * time (k_uptime_get()). */
@@ -553,8 +567,6 @@ static void bluetooth_thread(void)
 	}
 }
 
-SYS_INIT(bt_setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-
 #define STACKSIZE 2048
-#define PRIORITY  0
+#define PRIORITY  2
 K_THREAD_DEFINE(bt_thread_id, STACKSIZE, bluetooth_thread, NULL, NULL, NULL, PRIORITY, 0, 0);

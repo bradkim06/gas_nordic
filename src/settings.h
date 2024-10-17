@@ -15,11 +15,13 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 /* Define a list of Bluetooth events with their corresponding values. */
 #define CONFIG_EVENT_LIST(X)                                                                       \
 	/* event oxygen calibration */                                                             \
-	X(OXYGEN_CALIBRATION, = 0x01)
+	X(OXYGEN_CALIBRATION, = 0x01)                                                              \
+	X(BT_ADV_NAME, = 0x02)                                                                     \
+	X(ALL_CONFIG_EVENT_FLAG, = 0x03)
 DECLARE_ENUM(config_event, CONFIG_EVENT_LIST)
 
 /*  Voltage(0.1%) = (Currently measured voltage value) / ((1+2000/10.7) * (20.9*0.001*0.001*100)) */
-#define DEFAULT_O2_VALUE 2494
+#define DEFAULT_O2_VALUE 1686
 
 extern struct k_condvar config_condvar;
 extern struct k_mutex config_mutex;
@@ -38,7 +40,7 @@ extern struct k_event config_event;
  * calibration value in millivolts.
  * @return Returns true to indicate the update was successful. Currently, it always returns true.
  */
-bool update_config(enum config_event type, unsigned int value);
+bool update_config(enum config_event type, void *value);
 
 /**
  * @brief Retrieves a configuration value based on the specified event type.
@@ -55,6 +57,6 @@ bool update_config(enum config_event type, unsigned int value);
  * @return The configuration value associated with the given event type. If the
  *         event type is not supported, the function returns 0.
  */
-unsigned int get_config(enum config_event type);
+void *get_config(enum config_event type);
 
 #endif
