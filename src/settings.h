@@ -16,12 +16,14 @@ DECLARE_ENUM(gas_device, DEVICE_LIST)
 #define CONFIG_EVENT_LIST(X)                                                                       \
 	/* event oxygen calibration */                                                             \
 	X(OXYGEN_CALIBRATION, = 0x01)                                                              \
-	X(BT_ADV_NAME, = 0x02)                                                                     \
-	X(ALL_CONFIG_EVENT_FLAG, = 0x03)
+	X(NO2_CALIBRATION, = 0x02)                                                                 \
+	X(BT_ADV_NAME, = 0x04)                                                                     \
+	X(ALL_CONFIG_EVENT_FLAG, = 0x07)
 DECLARE_ENUM(config_event, CONFIG_EVENT_LIST)
 
 /*  Voltage(0.1%) = (Currently measured voltage value) / ((1+2000/10.7) * (20.9*0.001*0.001*100)) */
-#define DEFAULT_O2_VALUE 1686
+#define DEFAULT_O2_VALUE  1686
+#define DEFAULT_GAS_VALUE 440
 
 extern struct k_condvar config_condvar;
 extern struct k_mutex config_mutex;

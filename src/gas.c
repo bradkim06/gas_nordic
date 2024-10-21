@@ -134,6 +134,13 @@ static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 			is_gas_data_updated = true;
 			previous_o2_level = current_level;
 		}
+
+		// Ensure thread safety when updating the gas data
+		k_sem_take(&gas_sem, K_FOREVER);
+		gas_data[device_type].raw = avg_millivolt;
+		gas_data[device_type].val1 = current_level / 10;
+		gas_data[device_type].val2 = current_level % 10;
+		k_sem_give(&gas_sem);
 	} break;
 	case GAS: {
 		static int previous_gas_level = 0;
@@ -143,18 +150,18 @@ static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 			is_gas_data_updated = true;
 			previous_gas_level = current_level;
 		}
+
+		// Ensure thread safety when updating the gas data
+		k_sem_take(&gas_sem, K_FOREVER);
+		gas_data[device_type].raw = avg_millivolt;
+		gas_data[device_type].val1 = current_level / 100;
+		gas_data[device_type].val2 = current_level % 100;
+		k_sem_give(&gas_sem);
 	} break;
 	default:
 		// TODO: Handle the case for other types.
 		break;
 	}
-
-	// Ensure thread safety when updating the gas data
-	k_sem_take(&gas_sem, K_FOREVER);
-	gas_data[device_type].raw = avg_millivolt;
-	gas_data[device_type].val1 = current_level / 10;
-	gas_data[device_type].val2 = current_level % 10;
-	k_sem_give(&gas_sem);
 
 	return is_gas_data_updated;
 }
@@ -250,11 +257,21 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 		k_event_post(&bt_event, GAS_VAL_CHANGE);
 	}
 
-	LOG_DBG("%s - channel %d: "
-		" current %" PRId32 "mV filtered %" PRId32 "mV average %" PRId32 "mV %d.%d%s",
-		enum_to_str(gas_device_type), adc_channel_spec->channel_id, calibrated_adc_value_mv,
-		filtered_value, average_mv, gas_data[gas_device_type].val1,
-		gas_data[gas_device_type].val2, (gas_device_type == O2) ? "%" : "ppm");
+	if (gas_device_type == O2) {
+		LOG_DBG("%s - channel %d: "
+			" current %" PRId32 "mV filtered %" PRId32 "mV average %" PRId32
+			"mV %d.%d%%",
+			enum_to_str(gas_device_type), adc_channel_spec->channel_id,
+			calibrated_adc_value_mv, filtered_value, average_mv,
+			gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
+	} else if (gas_device_type == GAS) {
+		LOG_DBG("%s - channel %d: "
+			" current %" PRId32 "mV filtered %" PRId32 "mV average %" PRId32
+			"mV %d.%02dppm",
+			enum_to_str(gas_device_type), adc_channel_spec->channel_id,
+			calibrated_adc_value_mv, filtered_value, average_mv,
+			gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
+	}
 }
 
 /**
@@ -299,6 +316,37 @@ struct gas_sensor_value get_gas_data(enum gas_device gas_dev)
 	// Return the local copy of the gas sensor data.
 	// This allows the caller to use the sensor data without worrying about concurrent access
 	return gas_sensor_copy;
+}
+
+void calibrate_gas(char *reference_value, int len)
+{
+	// Create a buffer to hold the reference value string plus a null terminator
+	uint8_t str[len + 1];
+	// Copy the reference value into the buffer and ensure it's null-terminated
+	snprintf(str, len + 1, "%s",
+		 reference_value); // Fixed the format specifier from "s" to "%s"
+
+	// Convert the reference value string to a floating-point number
+	float reference_ppm = atof(str);
+	// 20ppm(NO2)
+	reference_ppm = 20.0f / reference_ppm;
+
+	// VDIFF = ISENSOR * RF(100k)
+	unsigned int new_mV = gas_data[GAS].raw * reference_ppm;
+
+	// Acquire the semaphore to ensure exclusive access to shared resources
+	k_sem_take(&gas_sem, K_FOREVER);
+
+	// Update the oxygen sensor's measurement range in millivolts
+	measurement_range[GAS][0].lvl_mV = new_mV;
+
+	// Release the semaphore
+	k_sem_give(&gas_sem);
+
+	// Update the sensor configuration with the new calibration value
+	update_config(NO2_CALIBRATION, &new_mV);
+	// Post an event to indicate that the oxygen sensor has been calibrated
+	k_event_post(&config_event, NO2_CALIBRATION);
 }
 
 void calibrate_oxygen(char *reference_value, int len)
@@ -380,6 +428,7 @@ static void gas_measurement_thread(void)
 
 	k_condvar_wait(&config_condvar, &config_mutex, K_FOREVER);
 	measurement_range[O2][0].lvl_mV = *(int16_t *)get_config(OXYGEN_CALIBRATION);
+	measurement_range[GAS][0].lvl_mV = *(int16_t *)get_config(NO2_CALIBRATION);
 	// Unlock the mutex as the initialization is complete.
 	k_mutex_unlock(&config_mutex);
 

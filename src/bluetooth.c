@@ -114,9 +114,11 @@ static ssize_t write_ble(struct bt_conn *conn, const struct bt_gatt_attr *attr, 
 
 	// Define a constant string for the O2 calibration command.
 	const char *PREFIX_O2_CALIB = "O2=";
+	const char *PREFIX_NO2_CALIB = "NO2=";
 	const char *PREFIX_BT_NAME = "BT=";
 	// Check if the buffer contains the O2 calibration command.
-	if ((p = strstr(buf, PREFIX_O2_CALIB))) {
+	if (strncmp(buf, PREFIX_O2_CALIB, strlen(PREFIX_O2_CALIB)) == 0) {
+		p = strstr(buf, PREFIX_O2_CALIB);
 		// Calculate the length of the O2 calibration command prefix.
 		size_t prefix_len = strlen(PREFIX_O2_CALIB);
 		// Move the pointer past the prefix to the actual calibration data.
@@ -124,7 +126,17 @@ static ssize_t write_ble(struct bt_conn *conn, const struct bt_gatt_attr *attr, 
 
 		// Call a function to calibrate the oxygen sensor with the provided data.
 		calibrate_oxygen(p, len - prefix_len);
-	} else if ((p = strstr(buf, PREFIX_BT_NAME))) {
+	} else if (strncmp(buf, PREFIX_NO2_CALIB, strlen(PREFIX_NO2_CALIB)) == 0) {
+		p = strstr(buf, PREFIX_NO2_CALIB);
+		// Calculate the length of the O2 calibration command prefix.
+		size_t prefix_len = strlen(PREFIX_NO2_CALIB);
+		// Move the pointer past the prefix to the actual calibration data.
+		p += prefix_len;
+
+		// Call a function to calibrate the oxygen sensor with the provided data.
+		calibrate_gas(p, len - prefix_len);
+	} else if (strncmp(buf, PREFIX_BT_NAME, strlen(PREFIX_BT_NAME)) == 0) {
+		p = strstr(buf, PREFIX_BT_NAME);
 		size_t prefix_len = strlen(PREFIX_BT_NAME);
 		p += prefix_len;
 
@@ -550,7 +562,7 @@ static void bluetooth_thread(void)
 			 environment.humidity.val1, environment.iaq.val1, environment.iaq.val2,
 			 environment.eCO2.val1, environment.breathVOC.val1);
 #else
-		const char *message_format = "%u.%u;%u.%u;%u;%u.%u;%u;%u\n";
+		const char *message_format = "%u.%u;%u.%02u;%u;%u.%u;%u;%u\n";
 		const int message_len = snprintf(NULL, 0, message_format, oxygen.val1, oxygen.val2,
 						 gas.val1, gas.val2, battery.val1,
 						 environment.temp.val1, environment.temp.val2,

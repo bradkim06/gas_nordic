@@ -10,9 +10,13 @@ LOG_MODULE_REGISTER(APP_CONFIG, CONFIG_APP_LOG_LEVEL);
 #define FAIL_MSG "fail (err %d)"
 
 /* Definitions used to store and retrieve BSEC state from the settings API */
-#define SETTINGS_NAME_CONF    "config"
+#define SETTINGS_NAME_CONF "config"
+
 #define SETTINGS_KEY_OXYGEN   "oxygen"
 #define SETTINGS_OXYGEN_VALUE SETTINGS_NAME_CONF "/" SETTINGS_KEY_OXYGEN
+
+#define SETTINGS_KEY_NO2   "no2"
+#define SETTINGS_NO2_VALUE SETTINGS_NAME_CONF "/" SETTINGS_KEY_NO2
 
 #define SETTINGS_KEY_BT_NAME "name"
 #define SETTINGS_BT_VALUE    SETTINGS_NAME_CONF "/" SETTINGS_KEY_BT_NAME
@@ -23,6 +27,7 @@ struct k_event config_event;
 
 #define BT_NAME_LEN 15
 static unsigned int oxygen_mV = DEFAULT_O2_VALUE;
+static unsigned int no2_mV = DEFAULT_GAS_VALUE;
 static char bt_name[BT_NAME_LEN] = "HHS_G0022";
 
 /**
@@ -65,6 +70,22 @@ static int config_set(const char *name, size_t len, settings_read_cb read_cb, vo
 		return rc; // Return the error code from the callback function.
 	}
 
+	if (settings_name_steq(name, SETTINGS_KEY_NO2, &next) && !next) {
+		// Verify that the length of the data is equal to the expected size for the oxygen
+		// setting.
+		if (len != sizeof(no2_mV)) {
+			return -EINVAL; // Return error if the length does not match.
+		}
+
+		// Use the callback function to read the data for the oxygen setting.
+		rc = read_cb(cb_arg, &no2_mV, sizeof(no2_mV));
+		if (rc >= 0) {
+			return 0; // Return success if the callback function was successful.
+		}
+
+		return rc; // Return the error code from the callback function.
+	}
+
 	if (settings_name_steq(name, SETTINGS_KEY_BT_NAME, &next) && !next) {
 		// Verify that the length of the data is equal to the expected size for the oxygen
 		// setting.
@@ -96,6 +117,12 @@ bool update_config(enum config_event type, void *value)
 
 		// Log the new calibration value for debugging or informational purposes
 		LOG_INF("new oxygen calibration value : %d", oxygen_mV);
+	} else if (type == NO2_CALIBRATION) {
+		// Update the oxygen calibration value with the new value provided
+		no2_mV = *(unsigned int *)value;
+
+		// Log the new calibration value for debugging or informational purposes
+		LOG_INF("new gas calibration value : %d", no2_mV);
 	} else if (type == BT_ADV_NAME) {
 		strcpy(bt_name, (char *)value);
 
@@ -116,6 +143,10 @@ void *get_config(enum config_event type)
 		ret_value = &oxygen_mV; // Retrieve the oxygen calibration millivolt value
 		LOG_INF("oxygen_mV: %d",
 			oxygen_mV); // Log the retrieved value for debugging purposes
+	} else if (type == NO2_CALIBRATION) {
+		ret_value = &no2_mV; // Retrieve the oxygen calibration millivolt value
+		LOG_INF("gas_mV: %d",
+			no2_mV); // Log the retrieved value for debugging purposes
 	} else if (type == BT_ADV_NAME) {
 		ret_value = bt_name; // Retrieve the oxygen calibration millivolt value
 		LOG_INF("bt_name: %s",
@@ -181,6 +212,13 @@ static void config_thread(void)
 			// errors.
 			rc = settings_save_one(SETTINGS_OXYGEN_VALUE, &oxygen_mV,
 					       sizeof(oxygen_mV));
+			if (rc) {
+				LOG_ERR("settings_save, error: %d", rc);
+			}
+		} else if (events == NO2_CALIBRATION) {
+			// Save the oxygen calibration value to persistent storage and check for
+			// errors.
+			rc = settings_save_one(SETTINGS_NO2_VALUE, &no2_mV, sizeof(no2_mV));
 			if (rc) {
 				LOG_ERR("settings_save, error: %d", rc);
 			}

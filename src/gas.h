@@ -13,8 +13,8 @@
 		},                                                                                 \
 		{                                                                                  \
 			/*  Measurement Range Max 100ppm H2S*/                                     \
-			{5000, 700},                                                               \
-			{0, 50},                                                                   \
+			{2000, DEFAULT_GAS_VALUE},                                                 \
+			{0, 0},                                                                    \
 		},                                                                                 \
 	}
 
@@ -76,5 +76,6 @@ struct gas_sensor_value get_gas_data(enum gas_device gas_dev);
  * @param len The length of the reference_value string.
  */
 void calibrate_oxygen(char *reference_value, int len);
+void calibrate_gas(char *reference_value, int len);
 
 #endif // __APP_GAS_H__
