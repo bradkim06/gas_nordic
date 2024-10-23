@@ -23,7 +23,7 @@ DECLARE_ENUM(config_event, CONFIG_EVENT_LIST)
 
 /*  Voltage(0.1%) = (Currently measured voltage value) / ((1+2000/10.7) * (20.9*0.001*0.001*100)) */
 #define DEFAULT_O2_VALUE  1686
-#define DEFAULT_GAS_VALUE 440
+#define DEFAULT_GAS_VALUE 900
 
 extern struct k_condvar config_condvar;
 extern struct k_mutex config_mutex;

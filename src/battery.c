@@ -263,6 +263,7 @@ static bool measure_battery_status(moving_average_t *battery_status)
 {
 	// Get current battery voltage
 	int current_battery_mV = battery_sample();
+	LOG_WRN("test]] battery %d", current_battery_mV);
 	// Calculate moving average
 	int average_battery_mV = calculate_moving_average(battery_status, current_battery_mV);
 	// Calculate power-to-time-to-charge ratio
@@ -341,8 +342,6 @@ static void battery_measurement_thread(void)
 		/* Call function for measuring battery */
 		measure_battery_status(battery_status);
 
-		/* Sleep for thread period */
-		battery_measure_enable(false);
 		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
 		battery_measure_enable(true);
 	}

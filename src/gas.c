@@ -237,9 +237,10 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 
 	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer_value);
 	if (adc_value_mv <= 0) {
+		LOG_WRN("Gas Minus [%s] %d", enum_to_str(gas_device_type), adc_value_mv);
 		adc_value_mv = 0;
-		update_gas_data(adc_value_mv, gas_device_type);
-		return;
+		// update_gas_data(adc_value_mv, gas_device_type);
+		// return;
 	}
 
 	int32_t calibrated_adc_value_mv = calculate_calibrated_mv(adc_value_mv, gas_device_type);

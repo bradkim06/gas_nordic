@@ -14,7 +14,7 @@
 		{                                                                                  \
 			/*  Measurement Range Max 100ppm H2S*/                                     \
 			{2000, DEFAULT_GAS_VALUE},                                                 \
-			{0, 0},                                                                    \
+			{0, 420},                                                                  \
 		},                                                                                 \
 	}
 
