@@ -14,4 +14,6 @@
   (lib (name "FDV303N")(type "KiCad")(uri "/Users/bradkim06/Library/CloudStorage/OneDrive-UOU/kicad/library/LIB_FDV303N/FDV303N.pretty")(options "")(descr ""))
   (lib (name "HHS")(type "KiCad")(uri "/Users/bradkim06/Library/CloudStorage/OneDrive-UOU/kicad/library/HHS.pretty")(options "")(descr ""))
   (lib (name "MURATA_BLM15PE121SH1D")(type "KiCad")(uri "/Users/bradkim06/Library/CloudStorage/OneDrive-UOU/kicad/library/MURATA_BLM15PE121SH1D.pretty")(options "")(descr ""))
+  (lib (name "REF1112AIDBZR")(type "KiCad")(uri "/Users/bradkim06/Library/CloudStorage/OneDrive-UOU/kicad/library/LIB_REF1112AIDBZR/REF1112AIDBZR.pretty")(options "")(descr ""))
+  (lib (name "MMBFJ177")(type "KiCad")(uri "/Users/bradkim06/Library/CloudStorage/OneDrive-UOU/kicad/library/MMBFJ177.pretty")(options "")(descr ""))
 )

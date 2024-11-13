@@ -2540,10 +2540,22 @@
 		)
 	)
 	(junction
+		(at 91.44 45.72)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "000658ab-84c9-4dbd-9b4a-76e72164bad7")
+	)
+	(junction
 		(at 99.06 83.82)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "110427e7-314d-4ab7-b1f2-c3a718762c43")
+	)
+	(junction
+		(at 87.63 27.94)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "11ab11a0-3769-4d68-93f1-922d90b77d22")
 	)
 	(junction
 		(at 172.72 120.65)
@@ -2640,6 +2652,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a27e4133-c2ac-4e23-9b31-bd969fdd2604")
+	)
+	(junction
+		(at 87.63 21.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a6e440c3-ef8e-441f-998d-082e30128d45")
 	)
 	(junction
 		(at 64.77 119.38)
@@ -2791,6 +2809,16 @@
 	)
 	(wire
 		(pts
+			(xy 82.55 27.94) (xy 87.63 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0ff901ae-97a7-499f-a916-5397cf6e1cbb")
+	)
+	(wire
+		(pts
 			(xy 85.09 60.96) (xy 64.77 60.96)
 		)
 		(stroke
@@ -2921,6 +2949,16 @@
 	)
 	(wire
 		(pts
+			(xy 91.44 40.64) (xy 91.44 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2726c103-3af8-44bd-b34c-d53b2367f46c")
+	)
+	(wire
+		(pts
 			(xy 40.64 57.15) (xy 44.45 57.15)
 		)
 		(stroke
@@ -2978,6 +3016,16 @@
 			(type default)
 		)
 		(uuid "3288e5e2-9e61-4565-aed6-79719c37a7e7")
+	)
+	(wire
+		(pts
+			(xy 82.55 33.02) (xy 82.55 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3335d5be-f391-4080-88b5-250190634866")
 	)
 	(wire
 		(pts
@@ -3081,7 +3129,7 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 22.86) (xy 50.8 31.75)
+			(xy 50.8 21.59) (xy 50.8 31.75)
 		)
 		(stroke
 			(width 0)
@@ -3308,6 +3356,26 @@
 			(type default)
 		)
 		(uuid "755f78dc-4036-48ad-afc9-56dbd240159a")
+	)
+	(wire
+		(pts
+			(xy 91.44 27.94) (xy 91.44 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7848bbc6-9d95-41b5-ae46-329a5d3b8dee")
+	)
+	(wire
+		(pts
+			(xy 87.63 27.94) (xy 91.44 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "78cdc803-7467-4190-a961-4d92a34a90e3")
 	)
 	(wire
 		(pts
@@ -3551,6 +3619,26 @@
 	)
 	(wire
 		(pts
+			(xy 82.55 40.64) (xy 82.55 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b9563d1d-9b97-4027-87d7-b56c1cba32d1")
+	)
+	(wire
+		(pts
+			(xy 87.63 21.59) (xy 87.63 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba104fc9-4e2c-40d0-9305-06e9f1d1fcee")
+	)
+	(wire
+		(pts
 			(xy 106.68 95.25) (xy 109.22 95.25)
 		)
 		(stroke
@@ -3701,6 +3789,16 @@
 	)
 	(wire
 		(pts
+			(xy 87.63 21.59) (xy 104.14 21.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d6c72845-667f-4e0f-b8e8-c9cdc6594e14")
+	)
+	(wire
+		(pts
 			(xy 64.77 119.38) (xy 59.69 119.38)
 		)
 		(stroke
@@ -3721,7 +3819,7 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 22.86) (xy 53.34 22.86)
+			(xy 50.8 21.59) (xy 87.63 21.59)
 		)
 		(stroke
 			(width 0)
@@ -3891,6 +3989,26 @@
 	)
 	(wire
 		(pts
+			(xy 91.44 45.72) (xy 82.55 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f6017a61-e9cb-4fae-9954-bde37a00bcdd")
+	)
+	(wire
+		(pts
+			(xy 91.44 45.72) (xy 91.44 49.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f7da4f4f-1319-4cab-887b-5298b161212a")
+	)
+	(wire
+		(pts
 			(xy 222.25 36.83) (xy 217.17 36.83)
 		)
 		(stroke
@@ -4043,7 +4161,7 @@
 	)
 	(global_label "VDD_nRF"
 		(shape input)
-		(at 53.34 22.86 0)
+		(at 104.14 21.59 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4053,7 +4171,7 @@
 		)
 		(uuid "5f405940-c3a3-4d5e-b9ac-dedc3d414393")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 64.429 22.86 0)
+			(at 115.229 21.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4602,6 +4720,217 @@
 			(project "gas_nrf52832"
 				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
 					(reference "BT1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 82.55 36.83 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1e2fddd2-64b2-4e57-a574-75e727182823")
+		(property "Reference" "C28"
+			(at 74.93 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF"
+			(at 74.93 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 81.5848 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 82.55 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "6.3V 10uF X6S ±20% 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 82.55 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C80J106ME11D"
+			(at 82.55 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 82.55 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 82.55 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 82.55 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "53b12572-abc0-4316-aa8f-785611a0b08c")
+		)
+		(pin "2"
+			(uuid "e778fc32-32f5-4149-b5bd-d3bbcb24aa82")
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
+					(reference "C28")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 91.44 36.83 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1f4d7fc9-687e-4783-83f9-f63c5c47bf64")
+		(property "Reference" "C27"
+			(at 95.25 35.5599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "1uF"
+			(at 95.25 38.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 90.4748 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 91.44 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "10V 1uF X7S 0402  Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
+			(at 91.44 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "GRM155C71A105ME11D"
+			(at 91.44 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "Surface Mount "
+			(at 91.44 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Murata Electronics"
+			(at 91.44 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" "0402 (1005 Metric)"
+			(at 91.44 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "91c72775-a51d-46a4-b90a-ec36f309ae74")
+		)
+		(pin "2"
+			(uuid "5d206cf5-e50d-4b2e-8a47-455f20e555e7")
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
+					(reference "C27")
 					(unit 1)
 				)
 			)
@@ -5327,6 +5656,74 @@
 			(project "gas_nrf52832"
 				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
 					(reference "#PWR016")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "GND_1")
+		(lib_id "power:GND")
+		(at 91.44 49.53 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "475e52c5-ed30-46c1-98de-7499c95df974")
+		(property "Reference" "#PWR037"
+			(at 91.44 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 91.4401 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 91.44 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 91.44 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 91.44 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "31b02908-60f8-49e5-a4fc-8fb842c38452")
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e/bde5cdb7-75b3-4ea7-bddb-6d74f43c7bd4"
+					(reference "#PWR037")
 					(unit 1)
 				)
 			)

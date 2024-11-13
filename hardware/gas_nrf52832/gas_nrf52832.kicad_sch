@@ -22,6 +22,8 @@
 		(effects
 			(font
 				(size 2.5 2.5)
+				(thickness 0.5)
+				(bold yes)
 			)
 			(justify left bottom)
 		)
@@ -33,6 +35,8 @@
 		(effects
 			(font
 				(size 2.5 2.5)
+				(thickness 0.5)
+				(bold yes)
 			)
 			(justify left bottom)
 		)
@@ -44,10 +48,25 @@
 		(effects
 			(font
 				(size 2.5 2.5)
+				(thickness 0.5)
+				(bold yes)
 			)
 			(justify left bottom)
 		)
 		(uuid "8da4f622-7cfb-4158-91d5-176f1a4a63d7")
+	)
+	(text "Rev 1.0.4\nGas Circuit\n- R14 10 -> 10k\n- C8,C13,C20,C21 1 -> 10uF\nNew\n- R1,R8,C9\n- New Bias Circuit\n- C27, C28"
+		(exclude_from_sim no)
+		(at 22.86 189.23 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+				(thickness 0.5)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "ab64ab13-e44e-49a0-92bc-b89674c97d3b")
 	)
 	(text "Rev 1.0.3\n- USB Edge cut fix"
 		(exclude_from_sim no)
@@ -55,6 +74,8 @@
 		(effects
 			(font
 				(size 2.5 2.5)
+				(thickness 0.5)
+				(bold yes)
 			)
 			(justify left bottom)
 		)
