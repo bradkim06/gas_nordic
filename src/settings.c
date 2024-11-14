@@ -28,7 +28,7 @@ struct k_event config_event;
 #define BT_NAME_LEN 15
 static unsigned int oxygen_mV = DEFAULT_O2_VALUE;
 static unsigned int no2_mV = DEFAULT_GAS_VALUE;
-static char bt_name[BT_NAME_LEN] = "HHS_G0014";
+static char bt_name[BT_NAME_LEN] = "DC_G0099";
 
 /**
  * @brief Sets the configuration for a given setting based on its name.

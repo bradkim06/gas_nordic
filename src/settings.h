@@ -9,7 +9,8 @@
 	/* O2 gas sensor*/                                                                         \
 	X(O2, = 0)                                                                                 \
 	/* optional select gas sensor(H2S, CO, NH3, SO2) are common */                             \
-	X(GAS, )
+	X(GAS, )                                                                                   \
+	X(TEST, )
 DECLARE_ENUM(gas_device, DEVICE_LIST)
 
 /* Define a list of Bluetooth events with their corresponding values. */
@@ -23,7 +24,7 @@ DECLARE_ENUM(config_event, CONFIG_EVENT_LIST)
 
 /*  Voltage(0.1%) = (Currently measured voltage value) / ((1+2000/10.7) * (20.9*0.001*0.001*100)) */
 #define DEFAULT_O2_VALUE  1686
-#define DEFAULT_GAS_VALUE 900
+#define DEFAULT_GAS_VALUE 300
 
 extern struct k_condvar config_condvar;
 extern struct k_mutex config_mutex;

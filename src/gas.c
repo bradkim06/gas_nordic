@@ -37,11 +37,14 @@ K_SEM_DEFINE(gas_sem, 1, 1);
 GAS_LEVEL_POINT_STRUCT();
 GAS_COEFFICIENT_STRUCT();
 /* Current value of the gas sensor. */
-static struct gas_sensor_value gas_data[2];
+static struct gas_sensor_value gas_data[3];
 static bool is_temperature_invalid;
+static int32_t batt_adc = 0;
+static bool is_calib = false;
+static bool is_boot = true;
 
-#define DATA_BUFFER_SIZE 300 // 데이터 버퍼 크기
-#define SIGMA_MULTIPLIER 3   // 3-시그마 규칙을 위한 승수
+#define DATA_BUFFER_SIZE 30 // 데이터 버퍼 크기
+#define SIGMA_MULTIPLIER 3  // 3-시그마 규칙을 위한 승수
 
 typedef struct {
 	int32_t buffer[DATA_BUFFER_SIZE];
@@ -154,8 +157,8 @@ static bool update_gas_data(int32_t avg_millivolt, enum gas_device device_type)
 		// Ensure thread safety when updating the gas data
 		k_sem_take(&gas_sem, K_FOREVER);
 		gas_data[device_type].raw = avg_millivolt;
-		gas_data[device_type].val1 = current_level / 100;
-		gas_data[device_type].val2 = current_level % 100;
+		gas_data[device_type].val1 = current_level / 10;
+		gas_data[device_type].val2 = current_level % 10;
 		k_sem_give(&gas_sem);
 	} break;
 	default:
@@ -213,6 +216,12 @@ static int32_t apply_3_sigma_rule(CircularBuffer *cb, int32_t value)
 	return value;
 }
 
+void set_no2_zero_calib()
+{
+	is_calib = true;
+	is_boot = false;
+}
+
 static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 				    moving_average_t *gas_moving_avg,
 				    enum gas_device gas_device_type)
@@ -236,8 +245,29 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 	}
 
 	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer_value);
+	if (gas_device_type == GAS) {
+		static int offset = 0;
+
+		gas_data[TEST].raw = abs(batt_adc - adc_value_mv - offset);
+		if (is_calib) {
+			int diff = batt_adc - adc_value_mv;
+			offset = diff;
+			is_calib = false;
+			LOG_WRN("Gas data %d = %d - %d - %d", gas_data[TEST].raw, batt_adc,
+				adc_value_mv, offset);
+		}
+		adc_value_mv = gas_data[TEST].raw;
+
+		if (adc_value_mv > 600) {
+			adc_value_mv = 0;
+		}
+
+		if (is_boot) {
+			adc_value_mv = 0;
+		}
+	}
+
 	if (adc_value_mv <= 0) {
-		LOG_WRN("Gas Minus [%s] %d", enum_to_str(gas_device_type), adc_value_mv);
 		adc_value_mv = 0;
 		// update_gas_data(adc_value_mv, gas_device_type);
 		// return;
@@ -268,7 +298,7 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 	} else if (gas_device_type == GAS) {
 		LOG_DBG("%s - channel %d: "
 			" current %" PRId32 "mV filtered %" PRId32 "mV average %" PRId32
-			"mV %d.%02dppm",
+			"mV %d.%dppm",
 			enum_to_str(gas_device_type), adc_channel_spec->channel_id,
 			calibrated_adc_value_mv, filtered_value, average_mv,
 			gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
@@ -410,6 +440,8 @@ static void gas_measurement_thread(void)
 		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 0),
 		// gas
 		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 1),
+		// battery test]]
+		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 2),
 	};
 
 	for (size_t idx = 0U; idx < ARRAY_SIZE(gas_adc_channels); idx++) {
@@ -432,6 +464,8 @@ static void gas_measurement_thread(void)
 	measurement_range[GAS][0].lvl_mV = *(int16_t *)get_config(NO2_CALIBRATION);
 	// Unlock the mutex as the initialization is complete.
 	k_mutex_unlock(&config_mutex);
+	LOG_WRN("test]] o2=%d gas=%d", measurement_range[O2][0].lvl_mV,
+		measurement_range[GAS][0].lvl_mV);
 
 	/* Wait for temperature data to become available. */
 	if (k_sem_take(&temperature_semaphore, K_SECONDS(20)) != 0) {
@@ -444,9 +478,31 @@ static void gas_measurement_thread(void)
 		is_temperature_invalid = false;
 	}
 
+	int16_t adc_buffer_value = 0;
+	struct adc_sequence adc_sequence = {
+		.buffer = &adc_buffer_value,
+		.buffer_size = sizeof(adc_buffer_value),
+	};
+
+	int error = adc_sequence_init_dt(&gas_adc_channels[TEST], &adc_sequence);
+	if (error < 0) {
+		LOG_WRN("Could not Init ADC channel (%d)", error);
+		return;
+	}
+
 	while (1) {
 		/* Perform gas sensor measurements. */
 		perform_adc_measurement(&gas_adc_channels[O2], gas_moving_avg[O2], O2);
+
+		error = adc_read(gas_adc_channels[TEST].dev, &adc_sequence);
+		if (error < 0) {
+			LOG_WRN("Could not perform ADC read (%d)", error);
+			return;
+		}
+
+		batt_adc = convert_adc_to_mv(&gas_adc_channels[TEST], adc_buffer_value);
+		LOG_WRN("test]] batt adc %d", batt_adc);
+
 		/* Perform gas sensor measurements. */
 		perform_adc_measurement(&gas_adc_channels[GAS], gas_moving_avg[GAS], GAS);
 

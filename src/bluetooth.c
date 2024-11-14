@@ -548,21 +548,7 @@ static void bluetooth_thread(void)
 		char timestamp[sizeof("01-01T00:00:00")];
 		strftime(timestamp, sizeof(timestamp), "%m-%dT%X", gmtime(&current_time));
 
-		/* Create string for notification data */
-#if defined(CONFIG_BME68X_IAQ_EN)
-		const char *message_format = "%u.%u;%u.%u;%u;%u;%u;%u;%u.%u;%u;%u\n";
-		const int message_len = snprintf(
-			NULL, 0, message_format, oxygen.val1, oxygen.val2, gas.val1, gas.val2,
-			battery.val1, environment.temp.val1, environment.press.val1,
-			environment.humidity.val1, environment.iaq.val1, environment.iaq.val2,
-			environment.eCO2.val1, environment.breathVOC.val1);
-		char *notify_data = malloc(message_len + 1);
-		snprintf(notify_data, message_len + 1, oxygen.val1, oxygen.val2, gas.val1, gas.val2,
-			 battery.val1, environment.temp.val1, environment.press.val1,
-			 environment.humidity.val1, environment.iaq.val1, environment.iaq.val2,
-			 environment.eCO2.val1, environment.breathVOC.val1);
-#else
-		const char *message_format = "%u.%u;%u.%02u;%u;%u.%u;%u;%u\n";
+		const char *message_format = "%u.%u;%u.%u;%u;%u.%u;%u;%u\n";
 		const int message_len = snprintf(NULL, 0, message_format, oxygen.val1, oxygen.val2,
 						 gas.val1, gas.val2, battery.val1,
 						 environment.temp.val1, environment.temp.val2,
@@ -571,7 +557,6 @@ static void bluetooth_thread(void)
 		snprintf(notify_data, message_len + 1, message_format, oxygen.val1, oxygen.val2,
 			 gas.val1, gas.val2, battery.val1, environment.temp.val1,
 			 environment.temp.val2, environment.press.val1, environment.humidity.val1);
-#endif // CONFIG_BME68X_IAQ_EN
 
 		/* Send gas notification */
 		bt_gas_notify(notify_data);
