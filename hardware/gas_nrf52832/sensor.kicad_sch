@@ -2642,7 +2642,7 @@
 	)
 	(wire
 		(pts
-			(xy 33.02 128.27) (xy 34.29 128.27)
+			(xy 30.48 128.27) (xy 34.29 128.27)
 		)
 		(stroke
 			(width 0)
@@ -2702,7 +2702,7 @@
 	)
 	(wire
 		(pts
-			(xy 27.94 109.22) (xy 27.94 123.19)
+			(xy 25.4 109.22) (xy 25.4 123.19)
 		)
 		(stroke
 			(width 0)
@@ -3082,7 +3082,7 @@
 	)
 	(wire
 		(pts
-			(xy 27.94 161.29) (xy 34.29 161.29)
+			(xy 25.4 161.29) (xy 34.29 161.29)
 		)
 		(stroke
 			(width 0)
@@ -3502,7 +3502,7 @@
 	)
 	(wire
 		(pts
-			(xy 27.94 109.22) (xy 35.56 109.22)
+			(xy 25.4 109.22) (xy 35.56 109.22)
 		)
 		(stroke
 			(width 0)
@@ -3602,7 +3602,7 @@
 	)
 	(wire
 		(pts
-			(xy 27.94 133.35) (xy 27.94 161.29)
+			(xy 25.4 133.35) (xy 25.4 161.29)
 		)
 		(stroke
 			(width 0)
@@ -5080,7 +5080,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "12f46f3a-332e-4190-a09d-8a5578591c9e")
 		(property "Reference" "R25"
 			(at 254 46.9899 0)
@@ -9982,7 +9981,7 @@
 	)
 	(symbol
 		(lib_id "ss2198_h2s:ss2198_h2s")
-		(at 27.94 128.27 180)
+		(at 25.4 128.27 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -9991,7 +9990,7 @@
 		(fields_autoplaced yes)
 		(uuid "fa5c02d0-4a95-4d61-bd4e-374aab480b4c")
 		(property "Reference" "U2"
-			(at 22.86 127.6349 0)
+			(at 20.32 127.6349 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10000,7 +9999,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 22.86 129.54 0)
+			(at 20.32 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10009,7 +10008,7 @@
 			)
 		)
 		(property "Footprint" "HHS:SS2198_H2S"
-			(at 27.94 128.27 0)
+			(at 25.4 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10018,7 +10017,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 27.94 128.27 0)
+			(at 25.4 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10027,7 +10026,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 27.94 128.27 0)
+			(at 25.4 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10036,7 +10035,7 @@
 			)
 		)
 		(property "Type" ""
-			(at 27.94 128.27 0)
+			(at 25.4 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)

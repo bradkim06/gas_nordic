@@ -2417,10 +2417,6 @@
 		(uuid "28eacfee-5b51-4b8a-8f6b-c639e78e3384")
 	)
 	(no_connect
-		(at 77.47 69.85)
-		(uuid "3a33b3c9-25c0-4d40-9829-bd43abbee7ac")
-	)
-	(no_connect
 		(at 128.27 85.09)
 		(uuid "4414415b-aefa-4dde-9c93-06e35a032808")
 	)
@@ -2443,10 +2439,6 @@
 	(no_connect
 		(at 77.47 92.71)
 		(uuid "6ba9bd07-e6be-4d70-ba42-2cd5d9513fb3")
-	)
-	(no_connect
-		(at 128.27 100.33)
-		(uuid "846ca264-abb6-409e-86c5-2957b2945e5d")
 	)
 	(no_connect
 		(at 128.27 80.01)
@@ -2952,6 +2944,26 @@
 	)
 	(wire
 		(pts
+			(xy 68.58 69.85) (xy 77.47 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b95802da-f43e-4036-bd40-27e0789be238")
+	)
+	(wire
+		(pts
+			(xy 128.27 100.33) (xy 135.89 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c00ffbb1-26e9-45d2-b078-140195c063d5")
+	)
+	(wire
+		(pts
 			(xy 63.5 54.61) (xy 77.47 54.61)
 		)
 		(stroke
@@ -3234,6 +3246,28 @@
 		)
 		(uuid "8df97e7b-e823-49e4-853e-c488c4550609")
 	)
+	(global_label "POWER"
+		(shape input)
+		(at 135.89 100.33 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1ef3e546-9bf5-42a5-8a31-3905d10bc1f6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 145.3461 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "SCL"
 		(shape input)
 		(at 67.31 100.33 180)
@@ -3256,7 +3290,7 @@
 			)
 		)
 	)
-	(global_label "VSYS"
+	(global_label "VSYS_RAW"
 		(shape input)
 		(at 191.77 27.94 180)
 		(fields_autoplaced yes)
@@ -3268,7 +3302,7 @@
 		)
 		(uuid "2247fb95-fb53-40d8-893d-883c215e24a9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 184.1886 27.94 0)
+			(at 179.411 27.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3467,6 +3501,28 @@
 		(uuid "e056d74f-b627-47ed-bc6d-f8ed7b057136")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 56.9467 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Vref"
+		(shape input)
+		(at 68.58 69.85 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e2d2a7c6-5ffb-42c3-b3cf-a28c1faa68c4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 61.9057 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3807,7 +3863,7 @@
 		(at 208.28 27.94 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -3828,7 +3884,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
+		(property "Footprint" "WP1533BQ_ID:WP1533BQ"
 			(at 208.28 27.94 0)
 			(effects
 				(font
@@ -3846,7 +3902,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Yellow Green Light-emitting diode "
+		(property "Description" "LED Circuit Board Indicator Single Green Diffused"
 			(at 208.28 27.94 0)
 			(effects
 				(font
@@ -3855,7 +3911,7 @@
 				(hide yes)
 			)
 		)
-		(property "Type" "Surface Mount "
+		(property "Type" "Through Hole"
 			(at 208.28 27.94 0)
 			(effects
 				(font
@@ -3864,7 +3920,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer_Part_Number" "BL-HG036A-AV-TRB"
+		(property "Manufacturer_Part_Number" "WP1533BQ/GD"
 			(at 208.28 27.94 0)
 			(effects
 				(font
@@ -3873,7 +3929,7 @@
 				(hide yes)
 			)
 		)
-		(property "MANUFACTURER" "BRIGHT LED"
+		(property "MANUFACTURER" "Kingbright"
 			(at 208.28 27.94 0)
 			(effects
 				(font
@@ -3882,7 +3938,7 @@
 				(hide yes)
 			)
 		)
-		(property "Package" "0603 (1608 Metric)"
+		(property "Package" "Tube"
 			(at 208.28 27.94 0)
 			(effects
 				(font
@@ -4206,7 +4262,7 @@
 				(hide yes)
 			)
 		)
-		(property "Type" ""
+		(property "Type" "Through Hole"
 			(at 185.42 88.9 0)
 			(effects
 				(font
@@ -4238,7 +4294,7 @@
 		(at 58.42 57.15 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -4286,7 +4342,7 @@
 				(hide yes)
 			)
 		)
-		(property "Type" ""
+		(property "Type" "Through Hole"
 			(at 58.42 57.15 0)
 			(effects
 				(font

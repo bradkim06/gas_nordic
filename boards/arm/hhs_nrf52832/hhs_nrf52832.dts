@@ -15,7 +15,7 @@
 	compatible = "nordic,hhs_nrf52832";
 
 	zephyr,user {
-		io-channels = <&adc 2>, <&adc 3>, <&adc 4>;
+		io-channels = <&adc 2>, <&adc 3>, <&adc 6>;
 	};
 
 	chosen {
@@ -117,12 +117,12 @@
 		zephyr,oversampling = <8>;
 	};
 
-	batt_mon: channel@4 {
-		reg = <4>;
+	batt_mon: channel@6 {
+		reg = <6>;
 		zephyr,gain = "ADC_GAIN_1_6";
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>;
-		zephyr,input-positive = <NRF_SAADC_AIN4>; /* P0.03 */
+		zephyr,input-positive = <NRF_SAADC_AIN6>; /* P0.03 */
 		zephyr,resolution = <14>;
 		zephyr,oversampling = <8>;
 	};
