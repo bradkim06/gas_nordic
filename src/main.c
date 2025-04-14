@@ -38,12 +38,6 @@ int main(void)
 	LOG_INF("Board:%s SoC:%s Rom:%dkb Ram:%dkb", CONFIG_BOARD, CONFIG_SOC, CONFIG_FLASH_SIZE,
 		CONFIG_SRAM_SIZE);
 
-	k_sleep(K_SECONDS(600));
-
-	char *o2_calibration = "20.9";
-	calibrate_oxygen(o2_calibration, strlen(o2_calibration));
-	set_no2_zero_calib();
-
 	return 0;
 }
 

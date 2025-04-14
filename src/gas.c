@@ -40,8 +40,6 @@ GAS_COEFFICIENT_STRUCT();
 static struct gas_sensor_value gas_data[3];
 static bool is_temperature_invalid;
 static int32_t batt_adc = 0;
-static bool is_calib = false;
-static bool is_boot = true;
 
 #define DATA_BUFFER_SIZE 30 // 데이터 버퍼 크기
 #define SIGMA_MULTIPLIER 3  // 3-시그마 규칙을 위한 승수
@@ -53,6 +51,88 @@ typedef struct {
 } CircularBuffer;
 
 static CircularBuffer adc_buffer[2] = {0}; // O2와 GAS를 위한 두 개의 버퍼
+
+// 1 mV/sec 변화
+#define O2_DERIVATIVE_THRESHOLD 16.0f
+#define O2_BASELINE_TOLERANCE   40 // 기준값과 차이가 40 mV(0.5%) 이하이면 보정 필요
+
+// 동적 보정 함수: 최근 평균값과 이전 평균값의 변화율이 작으면 보정 실행
+static void dynamic_oxygen_calibration(int32_t current_avg)
+{
+	static int32_t prev_o2_avg = 0;
+	static int64_t boot_time = 0; // 부팅 시점 기록 (초)
+	static int64_t prev_time = 0; // 마지막 측정 시각 (초)
+
+	int64_t now = k_uptime_get() / 1000; // 현재 시간을 초 단위로 얻음
+	if (boot_time == 0) {
+		boot_time = now;
+	}
+
+	int expected_o2_raw =
+		measurement_range[O2][0].lvl_mV * 20.9 / 25; // 기준 보정 전의 예상 raw 값
+
+	// 부팅 후 초기 1분은 무조건 보정
+	if ((now - boot_time) < 60) {
+		LOG_INF("Initial dynamic O2 calibration (boot phase): current_avg=%d", current_avg);
+		calibrate_oxygen("20.9", strlen("20.9"));
+	} else if (abs(measurement_range[O2][0].lvl_mV - DEFAULT_O2_VALUE) <= 300) {
+		float dt = (float)(now - prev_time);
+		float derivative = (current_avg - prev_o2_avg) / dt;
+		LOG_DBG("O2 derivative : %.2f mV/s", derivative);
+
+		// 조건을 만족하면 보정 실행
+		if (fabsf(derivative) < O2_DERIVATIVE_THRESHOLD &&
+		    abs(current_avg - expected_o2_raw) < O2_BASELINE_TOLERANCE) {
+			LOG_INF("Dynamic O2 calibration triggered: derivative=%.2f, current_avg=%d",
+				derivative, current_avg);
+			calibrate_oxygen("20.9", strlen("20.9"));
+		}
+	}
+
+	prev_o2_avg = current_avg;
+	prev_time = now;
+}
+
+// offset 변화율 임계값 (mV/s), 작으면 안정적임
+#define GAS_OFFSET_DERIVATIVE_THRESHOLD 3.0f
+#define GAS_OFFSET_DIFF_TOLERANCE       15 // offset 차이가 이 값보다 작아야 보정 진행
+#define GAS_REFERENCE_VOLTAGE           610 // mV
+
+static void dynamic_gas_offset_calibration(int32_t adc_value_mv)
+{
+	static int offset = 0;
+	static int64_t boot_time = 0; // 부팅 시점 기록 (초)
+	static int64_t last_time = 0;
+	static int prev_offset = 0;
+
+	int64_t now = k_uptime_get() / 1000;
+	if (boot_time == 0) {
+		boot_time = now;
+	}
+
+	int new_offset = -adc_value_mv;
+
+	// 부팅 후 초기 1분은 무조건 보정
+	if ((now - boot_time) < 60) {
+		offset = new_offset;
+		LOG_INF("Initial GAS offset calibration (boot phase): offset = %d", offset);
+	} else if (abs(GAS_REFERENCE_VOLTAGE + new_offset) <= 50) {
+		float dt = (float)(now - last_time);
+		float offset_derivative = (float)(new_offset - prev_offset) / dt;
+		LOG_DBG("Gas derivative: %.2f mV/s", offset_derivative);
+
+		// 조건을 만족하면 보정 실행
+		if (abs(new_offset - offset) < GAS_OFFSET_DIFF_TOLERANCE &&
+		    fabsf(offset_derivative) < GAS_OFFSET_DERIVATIVE_THRESHOLD) {
+			offset = new_offset;
+			LOG_INF("Dynamic GAS offset updated: new offset = %d", offset);
+		}
+	}
+
+	prev_offset = offset;
+	last_time = now;
+	gas_data[TEST].raw = abs(adc_value_mv + offset);
+}
 
 /**
  * @brief Converts ADC raw data to millivolts.
@@ -216,12 +296,6 @@ static int32_t apply_3_sigma_rule(CircularBuffer *cb, int32_t value)
 	return value;
 }
 
-void set_no2_zero_calib()
-{
-	is_calib = true;
-	is_boot = false;
-}
-
 static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 				    moving_average_t *gas_moving_avg,
 				    enum gas_device gas_device_type)
@@ -245,27 +319,6 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 	}
 
 	int32_t adc_value_mv = convert_adc_to_mv(adc_channel_spec, adc_buffer_value);
-	if (gas_device_type == GAS) {
-		static int offset = 0;
-
-		gas_data[TEST].raw = abs(batt_adc - adc_value_mv - offset);
-		if (is_calib) {
-			int diff = batt_adc - adc_value_mv;
-			offset = diff;
-			is_calib = false;
-			LOG_WRN("Gas data %d = %d - %d - %d", gas_data[TEST].raw, batt_adc,
-				adc_value_mv, offset);
-		}
-		adc_value_mv = gas_data[TEST].raw;
-
-		if (adc_value_mv > 600) {
-			adc_value_mv = 0;
-		}
-
-		if (is_boot) {
-			adc_value_mv = 0;
-		}
-	}
 
 	if (adc_value_mv <= 0) {
 		adc_value_mv = 0;
@@ -273,12 +326,21 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 		// return;
 	}
 
-	int32_t calibrated_adc_value_mv = calculate_calibrated_mv(adc_value_mv, gas_device_type);
+	// int32_t calibrated_adc_value_mv = calculate_calibrated_mv(adc_value_mv, gas_device_type);
 
 	// 3-시그마 규칙 적용
-	add_to_buffer(&adc_buffer[gas_device_type], calibrated_adc_value_mv);
-	int32_t filtered_value =
-		apply_3_sigma_rule(&adc_buffer[gas_device_type], calibrated_adc_value_mv);
+	add_to_buffer(&adc_buffer[gas_device_type], adc_value_mv);
+	int32_t filtered_value = apply_3_sigma_rule(&adc_buffer[gas_device_type], adc_value_mv);
+
+	if (gas_device_type == GAS) {
+		// 배터리 ADC 값은 별도로 읽은 batt_adc 값으로 설정되어 있음.
+		// batt_adc는 이미 갱신된 값이라고 가정.
+		// 동적 offset 보정을 실행하여 gas_data[TEST].raw를 업데이트
+		dynamic_gas_offset_calibration(filtered_value);
+		filtered_value = gas_data[TEST].raw;
+	} else {
+		dynamic_oxygen_calibration(filtered_value);
+	}
 
 	int32_t average_mv = calculate_moving_average(gas_moving_avg, filtered_value);
 
@@ -289,19 +351,17 @@ static void perform_adc_measurement(const struct adc_dt_spec *adc_channel_spec,
 	}
 
 	if (gas_device_type == O2) {
+		// 동적 보정 판단: 변화율 및 기준값 차이를 확인
+
 		LOG_DBG("%s - channel %d: "
-			" current %" PRId32 "mV filtered %" PRId32 "mV average %" PRId32
-			"mV %d.%d%%",
-			enum_to_str(gas_device_type), adc_channel_spec->channel_id,
-			calibrated_adc_value_mv, filtered_value, average_mv,
-			gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
+			"mV filtered %" PRId32 "mV average %" PRId32 "mV %d.%d%%",
+			enum_to_str(gas_device_type), adc_channel_spec->channel_id, filtered_value,
+			average_mv, gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
 	} else if (gas_device_type == GAS) {
 		LOG_DBG("%s - channel %d: "
-			" current %" PRId32 "mV filtered %" PRId32 "mV average %" PRId32
-			"mV %d.%dppm",
-			enum_to_str(gas_device_type), adc_channel_spec->channel_id,
-			calibrated_adc_value_mv, filtered_value, average_mv,
-			gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
+			"mV filtered %" PRId32 "mV average %" PRId32 "mV %d.%dppm",
+			enum_to_str(gas_device_type), adc_channel_spec->channel_id, filtered_value,
+			average_mv, gas_data[gas_device_type].val1, gas_data[gas_device_type].val2);
 	}
 }
 
@@ -440,7 +500,7 @@ static void gas_measurement_thread(void)
 		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 0),
 		// gas
 		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 1),
-		// battery test]]
+		// battery test
 		ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 2),
 	};
 
@@ -462,7 +522,7 @@ static void gas_measurement_thread(void)
 	k_condvar_wait(&config_condvar, &config_mutex, K_FOREVER);
 	measurement_range[O2][0].lvl_mV = *(int16_t *)get_config(OXYGEN_CALIBRATION);
 	measurement_range[GAS][0].lvl_mV = *(int16_t *)get_config(NO2_CALIBRATION);
-	// Unlock the mutex as the initialization is complete.
+	/* Unlock the mutex as the initialization is complete. */
 	k_mutex_unlock(&config_mutex);
 	LOG_WRN("test]] o2=%d gas=%d", measurement_range[O2][0].lvl_mV,
 		measurement_range[GAS][0].lvl_mV);
@@ -470,10 +530,8 @@ static void gas_measurement_thread(void)
 	/* Wait for temperature data to become available. */
 	if (k_sem_take(&temperature_semaphore, K_SECONDS(20)) != 0) {
 		LOG_WRN("Temperature Input data not available!");
-		// TODO: Temperature sensor error case
 		is_temperature_invalid = true;
 	} else {
-		/* Fetch available data. */
 		LOG_INF("Gas temperature sensing ok");
 		is_temperature_invalid = false;
 	}
@@ -491,22 +549,12 @@ static void gas_measurement_thread(void)
 	}
 
 	while (1) {
-		/* Perform gas sensor measurements. */
+		// O2 채널 측정 및 moving average 계산
 		perform_adc_measurement(&gas_adc_channels[O2], gas_moving_avg[O2], O2);
 
-		error = adc_read(gas_adc_channels[TEST].dev, &adc_sequence);
-		if (error < 0) {
-			LOG_WRN("Could not perform ADC read (%d)", error);
-			return;
-		}
-
-		batt_adc = convert_adc_to_mv(&gas_adc_channels[TEST], adc_buffer_value);
-		LOG_WRN("test]] batt adc %d", batt_adc);
-
-		/* Perform gas sensor measurements. */
+		// GAS 채널 측정
 		perform_adc_measurement(&gas_adc_channels[GAS], gas_moving_avg[GAS], GAS);
 
-		/* Wait for the specified period of time. */
 		k_sleep(K_SECONDS(GAS_MEASUREMENT_INTERVAL_SEC));
 	}
 }

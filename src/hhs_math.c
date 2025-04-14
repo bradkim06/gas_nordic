@@ -1,8 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <zephyr/logging/log.h>
 
 #include "hhs_math.h"
+
+/* Module registration for Gas Monitor with the specified log level. */
+LOG_MODULE_REGISTER(HHS_MATH, CONFIG_APP_LOG_LEVEL);
 
 int calculate_moving_average(moving_average_t *av_obj, int new_element)
 {
@@ -68,26 +72,53 @@ void free_moving_average(moving_average_t **avg_obj)
 
 unsigned int calculate_level_pptt(unsigned int voltage_mV, const struct level_point *curvePoints)
 {
-	const struct level_point *currentPoint = curvePoints;
+#define MAX_LEVEL_POINTS 100 // curvePoints 배열에서 최대 점 개수 (안전 검사용)
+	/* NULL 포인터 검사 */
+	if (curvePoints == NULL) {
+		LOG_ERR("calculate_level_pptt: curvePoints pointer is NULL");
+		return 0;
+	}
 
-	/* If the measured voltage is above the highest point, cap at maximum. */
+	const struct level_point *currentPoint = curvePoints;
+	int iterations = 0;
+
+	/* 측정 전압이 최고점 이상의 경우, 최대 레벨로 제한 */
 	if (voltage_mV >= currentPoint->lvl_mV) {
 		return currentPoint->lvl_pptt;
 	}
 
-	/* Iterate to the last point at or below the measured voltage. */
+	/* 무한 루프 방지를 위해 최대 반복 횟수를 제한하면서, 측정 전압보다 큰 구간을 탐색 */
 	while ((currentPoint->lvl_pptt > 0) && (voltage_mV < currentPoint->lvl_mV)) {
 		++currentPoint;
+		iterations++;
+		if (iterations > MAX_LEVEL_POINTS) {
+			LOG_ERR("calculate_level_pptt: Exceeded maximum iterations. Check "
+				"curvePoints array.");
+			break;
+		}
 	}
 
-	/* If the measured voltage is below the lowest point, cap at minimum. */
+	/* 측정 전압이 최저점 이하인 경우, 최소 레벨로 제한 */
 	if (voltage_mV < currentPoint->lvl_mV) {
 		return currentPoint->lvl_pptt;
 	}
 
-	/* Perform linear interpolation between the points below and above the measured voltage. */
+	/* 선형 보간을 위해 이전 점이 존재하는지 확인 */
+	if (currentPoint == curvePoints) {
+		LOG_ERR("calculate_level_pptt: Not enough curve points for interpolation.");
+		return currentPoint->lvl_pptt;
+	}
+
 	const struct level_point *previousPoint = currentPoint - 1;
 
+	/* 분모가 0인 경우(두 점의 전압값이 같은 경우) 방지 */
+	if (previousPoint->lvl_mV == currentPoint->lvl_mV) {
+		LOG_ERR("calculate_level_pptt: Division by zero in interpolation. Identical lvl_mV "
+			"values.");
+		return currentPoint->lvl_pptt;
+	}
+
+	/* 선형 보간 계산 */
 	return currentPoint->lvl_pptt + ((previousPoint->lvl_pptt - currentPoint->lvl_pptt) *
 					 (voltage_mV - currentPoint->lvl_mV) /
 					 (previousPoint->lvl_mV - currentPoint->lvl_mV));
