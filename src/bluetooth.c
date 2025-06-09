@@ -443,8 +443,8 @@ int bt_setup(void)
 	struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 		(BT_LE_ADV_OPT_CONNECTABLE |
 		 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-		1600,                         /* Min Advertising Interval 500ms (800*0.625ms) */
-		3200,                         /* Max Advertising Interval 2000ms (3200*0.625ms) */
+		400,                          /* Min Advertising Interval 500ms (800*0.625ms) */
+		800,                          /* Max Advertising Interval 2000ms (3200*0.625ms) */
 		NULL);                        /* Set to NULL for undirected advertising */
 
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
