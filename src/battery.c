@@ -286,6 +286,11 @@ static bool measure_battery_status(moving_average_t *battery_status)
 	// Allocate memory for log_message. The allocated memory size is log_len + 1.
 	char *log_message = malloc(log_len + 1);
 
+	if (!log_message) {
+		LOG_ERR("Failed to allocate battery log message");
+		return is_low_battery;
+	}
+
 	// Use snprintf to compose the formatted log message into log_message.
 	snprintf(log_message, log_len + 1, log_format, current_battery_mV, average_battery_mV,
 		 pptt);
