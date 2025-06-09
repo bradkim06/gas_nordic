@@ -5,7 +5,7 @@
       "Application": "Pcbnew",
       "Version": "8.0.2-1"
     },
-    "CreationDate": "2024-09-30T14:56:41+09:00"
+    "CreationDate": "2025-01-23T13:43:47+09:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -14,8 +14,8 @@
       "Revision": "rev?"
     },
     "Size": {
-      "X": 64.01,
-      "Y": 35.01
+      "X": 66.01,
+      "Y": 42.01
     },
     "LayerNumber": 4,
     "BoardThickness": 1.0,
@@ -90,6 +90,16 @@
       "Path": "gas_nrf52832-B_Mask.gbs",
       "FileFunction": "SolderMask,Bot",
       "FilePolarity": "Negative"
+    },
+    {
+      "Path": "gas_nrf52832-User_Drawings.gbr",
+      "FileFunction": "Other,User",
+      "FilePolarity": "Positive"
+    },
+    {
+      "Path": "gas_nrf52832-User_Comments.gbr",
+      "FileFunction": "Other,User",
+      "FilePolarity": "Positive"
     },
     {
       "Path": "gas_nrf52832-Edge_Cuts.gm1",

@@ -1,4 +1,11 @@
-23407634643684596
+23418051136770166
+124019772112A
+AMPHENOL_124019772112A
+
+
+0
+22
+22
 ADS1299-4PAGR
 QFP50P1200X1200X120-64N
 ADS1299-4PAGR
@@ -63727,6 +63734,13 @@ Inductor
 0
 2
 2
+MMBFJ177
+SOT23
+<b>SMALL OUTLINE TRANSISTOR</b><p>reflow soldering
+
+0
+3
+3
 MURATA_BLM15PE121SH1D
 MURATA_BLM15PE121SH1D_0
 Power Line Ferrite Bead for Automotive 120Ω @ 100MHz 25% 1.5A 0.09Ω 0402
@@ -84363,6 +84377,13 @@ Potentiometer vertical vishay
 0
 3
 3
+REF1112AIDBZR
+SOT95P237X112-3N
+DBZ
+Integrated Circuit
+0
+3
+3
 RF
 Skyworks_SKY13575_639LF
 http://www.skyworksinc.com/uploads/documents/SKY13575_639LF_203270D.pdf
@@ -89445,6 +89466,13 @@ SOT50P160X60-6N
 0
 6
 6
+TS11-674-43-BK-100-RA-D
+SW_TS11-674-43-BK-100-RA-D
+
+
+0
+4
+4
 TYPE-C-31-M-12
 HRO_TYPE-C-31-M-12
 
@@ -94723,6 +94751,13 @@ igbt diode module
 0
 25
 25
+UJ20-C-G-MSMT-TR-68
+CUI_UJ20-C-G-MSMT-TR-68
+
+
+0
+14
+14
 USB4105-GF-A
 GCT_USB4105-GF-A
 
@@ -95525,6 +95560,13 @@ Varistor
 Varistor_Panasonic_VF
 Panasonic VF series varistor, 6x8mm body, 3.2mm height, https://mediap.industry.panasonic.eu/assets/imported/industrial.panasonic.com/cdbs/www-data/pdf/AWA0000/AWA0000C4.pdf
 Varistor VF
+0
+2
+2
+WP1533BQ_ID
+WP1533BQ
+WP1533BQ/ID-1
+LED
 0
 2
 2

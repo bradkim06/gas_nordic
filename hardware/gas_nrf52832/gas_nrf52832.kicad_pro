@@ -37,9 +37,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.762,
-          "height": 1.524,
-          "width": 1.524
+          "drill": 0.4,
+          "height": 1.7,
+          "width": 0.95
         },
         "silk_line_width": 0.15,
         "silk_text_italic": false,
@@ -95,7 +95,7 @@
         "padstack": "warning",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
-        "silk_edge_clearance": "error",
+        "silk_edge_clearance": "ignore",
         "silk_over_copper": "warning",
         "silk_overlap": "warning",
         "skew_out_of_range": "error",
@@ -115,7 +115,7 @@
       },
       "rules": {
         "max_error": 0.005,
-        "min_clearance": 0.0,
+        "min_clearance": 0.15,
         "min_connection": 0.1,
         "min_copper_edge_clearance": 0.0,
         "min_hole_clearance": 0.25,
@@ -127,7 +127,7 @@
         "min_text_height": 0.8,
         "min_text_thickness": 0.08,
         "min_through_hole_diameter": 0.3,
-        "min_track_width": 0.15,
+        "min_track_width": 0.2,
         "min_via_annular_width": 0.1,
         "min_via_diameter": 0.5,
         "solder_mask_clearance": 0.0,
@@ -180,6 +180,7 @@
       ],
       "track_widths": [
         0.0,
+        0.1,
         0.15,
         0.2,
         0.3,
@@ -719,8 +720,8 @@
       "filter_string": "",
       "group_symbols": true,
       "name": "",
-      "sort_asc": true,
-      "sort_field": "Reference"
+      "sort_asc": false,
+      "sort_field": "Type"
     },
     "connection_grid_size": 50.0,
     "drawing": {
@@ -777,6 +778,10 @@
     [
       "b8ce7ae9-40f3-4682-a875-327e7c1cd28b",
       "Sensor Sheet"
+    ],
+    [
+      "2047ad4e-7aae-4ae9-b414-257573d9d67a",
+      "Rev 1.0.X"
     ]
   ],
   "text_variables": {}

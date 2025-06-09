@@ -341,10 +341,7 @@ static void battery_measurement_thread(void)
 		/* Call function for measuring battery */
 		measure_battery_status(battery_status);
 
-		/* Sleep for thread period */
-		battery_measure_enable(false);
 		k_sleep(K_SECONDS(THREAD_PERIOD_SEC));
-		battery_measure_enable(true);
 	}
 }
 

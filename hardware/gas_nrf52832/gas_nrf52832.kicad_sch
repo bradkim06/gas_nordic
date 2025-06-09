@@ -4,6 +4,9 @@
 	(generator_version "8.0")
 	(uuid "49921ab5-3ded-458c-bdac-830c92c2ee0e")
 	(paper "A4")
+	(title_block
+		(date "2025-01-13")
+	)
 	(lib_symbols)
 	(text "Revision History"
 		(exclude_from_sim no)
@@ -16,49 +19,56 @@
 		)
 		(uuid "339bc1c8-fbde-4cd1-9660-2b0750198d4b")
 	)
-	(text "Rev 1.0.1\n- Oxygen Sensor\n	- Voltage Amplification Ratio AdjustmentR11(100 -> 10.7), R12(5.1k -> 2.0k)\n	- Addition of Capacitor for Noise Reduction (C22)\n- Gas Sensor\n	- Addition of Capacitor for Noise Reduction (R19, C23)\n- Battery Connector pitch fix (2.5mm -> 1.25mm)"
+	(text "Rev 2.0.1\n- Design Change"
 		(exclude_from_sim no)
-		(at 22.86 74.93 0)
+		(at 25.654 29.21 0)
 		(effects
 			(font
 				(size 2.5 2.5)
+				(thickness 0.5)
+				(bold yes)
 			)
 			(justify left bottom)
 		)
-		(uuid "7052e634-f647-4e2d-b97d-dc75354d40e1")
+		(uuid "456440cd-ec3d-49f6-9c65-fc8da47258d0")
 	)
-	(text "Rev 1.0.0\n- 65mm/34mm Edge Cut Size\n- 3V0 VDD Capacitor(bypass) & Beads\n- Sensor & Battery Bug Fix"
-		(exclude_from_sim no)
-		(at 22.86 40.64 0)
-		(effects
-			(font
-				(size 2.5 2.5)
-			)
-			(justify left bottom)
+	(sheet
+		(at 248.92 21.59)
+		(size 24.13 16.51)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
 		)
-		(uuid "71f987b9-f1a6-487c-a5d1-60f8a6aac86b")
-	)
-	(text "Rev 1.0.2\n- Oxygen Sensor\n	- Voltage Amplification Ratio AdjustmentR18(10.7 -> 10k), R12(2.0k -> 2M)\n	-> Reduce Current Consumption\n	- Addition of lowpass filter for Noise Reduction\n- Gas Sensor\n	- Addition of lowpass filter for Noise Reduction\n- 2 Layter -> 4 Layer\n- hansam digitec requirement\n	- If USB and RC are very close, errors may occur\n	so increase the distance (R1, R23, R24, C22)\n- BME680 Sensor Enable ctrl remove\n- 32k Crystal Layout fix"
-		(exclude_from_sim no)
-		(at 23.114 134.366 0)
-		(effects
-			(font
-				(size 2.5 2.5)
-			)
-			(justify left bottom)
+		(fill
+			(color 0 0 0 0.0000)
 		)
-		(uuid "8da4f622-7cfb-4158-91d5-176f1a4a63d7")
-	)
-	(text "Rev 1.0.3\n- USB Edge cut fix"
-		(exclude_from_sim no)
-		(at 22.86 152.146 0)
-		(effects
-			(font
-				(size 2.5 2.5)
+		(uuid "2047ad4e-7aae-4ae9-b414-257573d9d67a")
+		(property "Sheetname" "Rev 1.0.X"
+			(at 248.92 20.8784 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
 			)
-			(justify left bottom)
 		)
-		(uuid "dde6aa3d-0995-4c55-9f17-d245bafeb28f")
+		(property "Sheetfile" "untitled.kicad_sch"
+			(at 248.92 38.6846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "gas_nrf52832"
+				(path "/49921ab5-3ded-458c-bdac-830c92c2ee0e"
+					(page "5")
+				)
+			)
+		)
 	)
 	(sheet
 		(at -295.91 254)
