@@ -554,6 +554,10 @@ static void bluetooth_thread(void)
 						 environment.temp.val1, environment.temp.val2,
 						 environment.press.val1, environment.humidity.val1);
 		char *notify_data = malloc(message_len + 1);
+		if (!notify_data) {
+			LOG_ERR("notify data alloc failed");
+			continue;
+		}
 		snprintf(notify_data, message_len + 1, message_format, oxygen.val1, oxygen.val2,
 			 gas.val1, gas.val2, battery.val1, environment.temp.val1,
 			 environment.temp.val2, environment.press.val1, environment.humidity.val1);
