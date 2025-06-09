@@ -39,10 +39,10 @@
 	DEFINE_ENUM(EnumType, ENUM_DEF)
 
 /* Code for concise writing of if-else statements */
-#define CODE_IF_ELSE(enable, code1, code2)                                                         \
-	if (enable == 1) {                                                                         \
+#define CODE_IF_ELSE(cond, code1, code2)                                                           \
+	if (cond) {                                                                                \
 		code1;                                                                             \
-	} else if (enable == 0) {                                                                  \
+	} else {                                                                                   \
 		code2;                                                                             \
 	}
 #endif // __APP_GLOBAL_MACRO_H__
