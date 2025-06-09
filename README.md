@@ -93,20 +93,20 @@ Custom board, Out of Tree
 | :-: | :------------------------------ | ---- |
 | ⚠️  | Dangerous on prolonged exposure | 5000 |
 | 😡  | Negative health effects         | 2000 |
-| 😩  | Ventilatian necessary           | 1200 |
-| 🙁  | Ventlation desirable            | 1000 |
-| 🙂  | Accepted level                  | 800  |
+| 😩  | Ventilation necessary           | 1200 |
+| 🙁  | Ventilation desirable            | 1000 |
+| 🙂  | Acceptable level                  | 800  |
 | 😀  | Healthy indoor climate          | 600  |
 | 😆  | Healthy outside air level       | 350  |
 
 #### VOC
 
-| Level     | Hygienic Rating     | Recommendation                                                 | Exposure    | TVOC \[ppm\]   |
+| Level     | Hygienic Rating     | Recommendation | Exposure    | TVOC [ppm]   |
 | --------- | ------------------- | -------------------------------------------------------------- | ----------- | ------------ |
-| Unhealthy | Unhealty acceptabio | Intense ventilation necess ense ventilation necessary          | hours       | 2.2-5.5      |
-| Poor      | Major objections    | Intensifed ventilation / airing Searchfor sources              | \< 1 month   | 0.66-2.2     |
-| Moderate  | Some obiections     | Intensified ventilation / airing recommenaco searchtor sources | \< 12 months | 0.22 - 0.66  |
-| Good      | No relevant         | Ventilation / airing recommended                               | no limit    | 0.065 - 0.22 |
+| Unhealthy | Unhealthy acceptable | Intense ventilation necessary          | hours       | 2.2-5.5      |
+| Poor      | Major objections    | Intensified ventilation / airing search for sources              | \< 1 month   | 0.66-2.2     |
+| Moderate  | Some objections     | Intensified ventilation / airing recommendation; search for sources | \< 12 months | 0.22 - 0.66  |
+| Good      | No relevant objections         | Ventilation / airing recommended                               | no limit    | 0.065 - 0.22 |
 | Excellent | No objections       | Target value                                                   | no limit    | 0-0.065      |
 
 ## dependency
