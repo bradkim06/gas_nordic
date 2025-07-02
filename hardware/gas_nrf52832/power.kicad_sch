@@ -6562,7 +6562,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "SWITCH TACTILE SPST-NO 0.05A 12V"
+		(property "Description" "SWITCH TACTILE SPST"
 			(at 33.02 29.21 0)
 			(effects
 				(font
@@ -6601,7 +6601,7 @@
 				(hide yes)
 			)
 		)
-		(property "MANUFACTURER" "CUI Devices"
+		(property "MANUFACTURER" "SUNGMUN"
 			(at 33.02 29.21 0)
 			(effects
 				(font
@@ -6611,7 +6611,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer_Part_Number" "TS11-674-43-BK-100-RA-D"
+		(property "Manufacturer_Part_Number" "STP-1117"
 			(at 33.02 29.21 0)
 			(effects
 				(font
