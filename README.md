@@ -54,6 +54,12 @@ stateDiagram-v2
 
 Custom board, Out of Tree
 
+### Power Switch
+
+P0.31 is connected to a tact switch acting as the power button. Holding the
+button for roughly one second places the system into system-off mode. Pressing
+the same button again wakes the device.
+
 ## Electrochemical Gas Sensor
 
 - O2

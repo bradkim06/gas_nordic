@@ -19,4 +19,5 @@ project(gas_ces)
 
 zephyr_include_directories(include)
 file(GLOB app_sources src/*.c)
+list(APPEND app_sources src/power_switch.c)
 target_sources(app PRIVATE ${app_sources})

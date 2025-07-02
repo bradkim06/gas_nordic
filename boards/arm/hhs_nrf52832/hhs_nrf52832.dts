@@ -38,8 +38,8 @@
 		power-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
 	};
 
-	leds {
-		compatible = "gpio-leds";
+        leds {
+                compatible = "gpio-leds";
         status = "okay";
 
 		led0: led_0 {
@@ -49,8 +49,18 @@
 		led1: led_1 {
 			gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
 			label = "low battery indicator led Yellow";
-		};
-	};
+                };
+        };
+
+        buttons {
+                compatible = "gpio-keys";
+                status = "okay";
+
+                button0: sw0 {
+                        gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
+                        label = "Power Switch";
+                };
+        };
 
 	pwmleds {
 		compatible = "pwm-leds";
@@ -68,13 +78,14 @@
 	};
 
 	/* These aliases are provided for compatibility with samples */
-	aliases {
-		watchdog0 = &wdt0;
-		led0 = &led0;
-		led1 = &led1;
+        aliases {
+                watchdog0 = &wdt0;
+                led0 = &led0;
+                led1 = &led1;
+                sw0 = &button0;
         greenled = &pwm_led0;
         yellowled = &pwm_led1;
-	};
+        };
 };
 
 &pwm0 {
