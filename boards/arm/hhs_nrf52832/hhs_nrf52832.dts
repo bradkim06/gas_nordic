@@ -67,6 +67,16 @@
 		};
 	};
 
+    /* P0.31(== D31 핀)에 버튼을 정의하고 sw0 별칭을 바꾼다 */
+    buttons: buttons {               /* ← 노드 이름 fixed string ‘buttons’ 권장 */
+        compatible = "gpio-keys";
+
+        btn_p031: button_0 {
+            gpios = <&gpio0 31 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+            label = "Tack switch P0.31";
+        };
+    };
+
 	/* These aliases are provided for compatibility with samples */
 	aliases {
 		watchdog0 = &wdt0;
@@ -74,6 +84,7 @@
 		led1 = &led1;
         greenled = &pwm_led0;
         yellowled = &pwm_led1;
+		sw0 = &btn_p031;
 	};
 };
 
@@ -93,7 +104,7 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	/* 
+	/*
      * datasheet value different, ideal 90uA +-20 (at 20.9% o2)
 	 * 1% current 5uA -> sensor vout = (Curr * Rl) * (1 + R1 / R2) =
 	 */

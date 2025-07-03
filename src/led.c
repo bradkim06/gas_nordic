@@ -29,11 +29,11 @@
 LOG_MODULE_REGISTER(LED, CONFIG_APP_LOG_LEVEL);
 
 /* The battery thread's running period */
-#define LED_THREAD_SLEEP_INTERVAL 5
+#define LED_THREAD_SLEEP_INTERVAL 10
 /* LED on time */
-#define LED_TIME_MS 100
+#define LED_TIME_MS 50
 /* LED Brightness level */
-#define LED_PWM_LEVEL 50
+#define LED_PWM_LEVEL 100
 
 /* access the Devicetree for the pwm_led node */
 #define LED_PWM_NODE_ID DT_COMPAT_GET_ANY_STATUS_OKAY(pwm_leds)
