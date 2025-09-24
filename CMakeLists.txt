@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 set_property(GLOBAL PROPERTY CSTD c11)
 
-set(BOARD_ROOT ${CMAKE_SOURCE_DIR})
+set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(BOARD hhs_nrf52832)
 # set(BOARD_FLASH_RUNNER jlink)
 set(APP_ROOT ${CMAKE_SOURCE_DIR})

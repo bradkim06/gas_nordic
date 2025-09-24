@@ -5,25 +5,26 @@
 
 #include "hhs_util.h"
 
-#define DEVICE_LIST(X)                                                                             \
-	/* O2 gas sensor*/                                                                         \
-	X(O2, = 0)                                                                                 \
-	/* optional select gas sensor(H2S, CO, NH3, SO2) are common */                             \
-	X(GAS, )                                                                                   \
-	X(TEST, )
+#define DEVICE_LIST(X)                                                         \
+    /* O2 gas sensor*/                                                         \
+    X(O2, = 0)                                                                 \
+    /* optional select gas sensor(H2S, CO, NH3, SO2) are common */             \
+    X(GAS, )                                                                   \
+    X(TEST, )
 DECLARE_ENUM(gas_device, DEVICE_LIST)
 
 /* Define a list of Bluetooth events with their corresponding values. */
-#define CONFIG_EVENT_LIST(X)                                                                       \
-	/* event oxygen calibration */                                                             \
-	X(OXYGEN_CALIBRATION, = 0x01)                                                              \
-	X(NO2_CALIBRATION, = 0x02)                                                                 \
-	X(BT_ADV_NAME, = 0x04)                                                                     \
-	X(ALL_CONFIG_EVENT_FLAG, = 0x07)
+#define CONFIG_EVENT_LIST(X)                                                   \
+    /* event oxygen calibration */                                             \
+    X(OXYGEN_CALIBRATION, = 0x01)                                              \
+    X(NO2_CALIBRATION, = 0x02)                                                 \
+    X(BT_ADV_NAME, = 0x04)                                                     \
+    X(ALL_CONFIG_EVENT_FLAG, = 0x07)
 DECLARE_ENUM(config_event, CONFIG_EVENT_LIST)
 
-/*  Voltage(0.1%) = (Currently measured voltage value) / ((1+2000/10.7) * (20.9*0.001*0.001*100)) */
-#define DEFAULT_O2_VALUE  1940
+/*  Voltage(0.1%) = (Currently measured voltage value) / ((1+2000/10.7) *
+ * (20.9*0.001*0.001*100)) */
+#define DEFAULT_O2_VALUE 1900
 #define DEFAULT_GAS_VALUE 300
 
 extern struct k_condvar config_condvar;
@@ -31,17 +32,21 @@ extern struct k_mutex config_mutex;
 extern struct k_event config_event;
 
 /**
- * @brief Updates the configuration based on the type of event and the provided value.
+ * @brief Updates the configuration based on the type of event and the provided
+ * value.
  *
- * This function is responsible for updating the configuration settings of a system.
- * It currently handles the oxygen calibration event by updating the calibration value.
- * The function can be extended to handle other types of configuration events.
+ * This function is responsible for updating the configuration settings of a
+ * system. It currently handles the oxygen calibration event by updating the
+ * calibration value. The function can be extended to handle other types of
+ * configuration events.
  *
  * @param type The type of configuration event that is triggering the update.
- *             This is an enumerated type that should list all possible configuration events.
- * @param value The value associated with the event. For oxygen calibration, this is the new
- * calibration value in millivolts.
- * @return Returns true to indicate the update was successful. Currently, it always returns true.
+ *             This is an enumerated type that should list all possible
+ * configuration events.
+ * @param value The value associated with the event. For oxygen calibration,
+ * this is the new calibration value in millivolts.
+ * @return Returns true to indicate the update was successful. Currently, it
+ * always returns true.
  */
 bool update_config(enum config_event type, void *value);
 
