@@ -52,9 +52,9 @@ static void configure_gpios_for_poweroff(void) {
         case 31: /* wake-up 버튼 – 건드리지 않음 */
             break;
 
-        case 29: /* VBATT 전원 스위치 – Low 로 끔 */
-        case 26: /* Green LED 게이트 ─ 끄기 */
-        case 27: /* Yellow LED 게이트 ─ 끄기 */
+        case 29: /* VBATT 전원 스위치 및 LED 게이트 전원 차단 */
+        case 26: /* LED 게이트는 VBATT 스위치를 Low 로 당겨 공유 차단 */
+        case 27: /* LED 게이트는 VBATT 스위치를 Low 로 당겨 공유 차단 */
             gpio_pin_configure(gpio0, 29, GPIO_OUTPUT_LOW);
             break;
 
@@ -157,10 +157,10 @@ int main(void) {
  * This function sets up the watchdog timer and continuously feeds it.
  */
 static void watchdog_thread_fn(void) {
-    int setup_error_status;  // More descriptive variable name
-    int watchdog_channel_id; // More descriptive variable name
+    int setup_error_status;  // wdt_setup 결과 코드 저장
+    int watchdog_channel_id; // 설치된 watchdog 채널 식별자
     const struct device *const watchdog_device =
-        DEVICE_DT_GET(DT_ALIAS(watchdog0)); // More descriptive variable name
+        DEVICE_DT_GET(DT_ALIAS(watchdog0)); // watchdog 주변장치 핸들
 
     // Check if the device is ready before proceeding
     if (!device_is_ready(watchdog_device)) {

@@ -116,44 +116,44 @@ static ssize_t write_ble(struct bt_conn *conn, const struct bt_gatt_attr *attr, 
 	const char *PREFIX_O2_CALIB = "O2=";
 	const char *PREFIX_NO2_CALIB = "NO2=";
 	const char *PREFIX_BT_NAME = "BT=";
-	// Check if the buffer contains the O2 calibration command.
-	if (strncmp(buf, PREFIX_O2_CALIB, strlen(PREFIX_O2_CALIB)) == 0) {
-		p = strstr(buf, PREFIX_O2_CALIB);
-		// Calculate the length of the O2 calibration command prefix.
-		size_t prefix_len = strlen(PREFIX_O2_CALIB);
-		// Move the pointer past the prefix to the actual calibration data.
-		p += prefix_len;
+        // Check if the buffer contains the O2 calibration command.
+        if (strncmp(buf, PREFIX_O2_CALIB, strlen(PREFIX_O2_CALIB)) == 0) {
+                p = strstr(buf, PREFIX_O2_CALIB);
+                // Calculate the length of the O2 calibration command prefix.
+                size_t prefix_len = strlen(PREFIX_O2_CALIB);
+                // Move the pointer past the prefix to the actual calibration data.
+                p += prefix_len;
 
-		// Call a function to calibrate the oxygen sensor with the provided data.
-		calibrate_oxygen(p, len - prefix_len);
-	} else if (strncmp(buf, PREFIX_NO2_CALIB, strlen(PREFIX_NO2_CALIB)) == 0) {
-		p = strstr(buf, PREFIX_NO2_CALIB);
-		// Calculate the length of the O2 calibration command prefix.
-		size_t prefix_len = strlen(PREFIX_NO2_CALIB);
-		// Move the pointer past the prefix to the actual calibration data.
-		p += prefix_len;
+                // Call a function to calibrate the oxygen sensor with the provided data.
+                calibrate_oxygen(p, len - prefix_len);
+        } else if (strncmp(buf, PREFIX_NO2_CALIB, strlen(PREFIX_NO2_CALIB)) == 0) {
+                p = strstr(buf, PREFIX_NO2_CALIB);
+                // Calculate the length of the NO2 calibration command prefix.
+                size_t prefix_len = strlen(PREFIX_NO2_CALIB);
+                // Move the pointer past the prefix to the actual calibration data.
+                p += prefix_len;
 
-		// Call a function to calibrate the oxygen sensor with the provided data.
-		calibrate_gas(p, len - prefix_len);
-	} else if (strncmp(buf, PREFIX_BT_NAME, strlen(PREFIX_BT_NAME)) == 0) {
-		p = strstr(buf, PREFIX_BT_NAME);
-		size_t prefix_len = strlen(PREFIX_BT_NAME);
-		p += prefix_len;
+                // Update the electrochemical gas calibration with the provided data.
+                calibrate_gas(p, len - prefix_len);
+        } else if (strncmp(buf, PREFIX_BT_NAME, strlen(PREFIX_BT_NAME)) == 0) {
+                p = strstr(buf, PREFIX_BT_NAME);
+                size_t prefix_len = strlen(PREFIX_BT_NAME);
+                p += prefix_len;
 
-		uint8_t bt_name[len - prefix_len + 1];
-		snprintf(bt_name, len - prefix_len + 1, "%s", p);
+                uint8_t bt_name[len - prefix_len + 1];
+                snprintf(bt_name, len - prefix_len + 1, "%s", p);
 
-		// Update the sensor configuration with the new calibration value
-		update_config(BT_ADV_NAME, bt_name);
-		// Post an event to indicate that the oxygen sensor has been calibrated
-		k_event_post(&config_event, BT_ADV_NAME);
+                // Persist the requested Bluetooth advertising name.
+                update_config(BT_ADV_NAME, bt_name);
+                // Notify the configuration thread that the advertising name changed.
+                k_event_post(&config_event, BT_ADV_NAME);
 
 		k_sleep(K_SECONDS(3));
 		sys_reboot();
 	}
 
-	// Return the number of bytes written to indicate success.
-	return len;
+        // Return the number of bytes written to indicate success.
+        return len;
 }
 
 /* Service Declaration */
@@ -495,8 +495,8 @@ static int bt_gas_notify(char *p_gas_sensor_data)
  * starts advertising, and handles Bluetooth notifications. It also converts the firmware build time
  * to the time_t format for adding it to the current kernel time (k_uptime_get()). It periodically
  * sends notifications if a client is subscribed and gas sensor data is available. The function
- * constructs the notification data, including gas sensor values, battery percentage, and, if
- * enabled, environmental sensor data (temperature, pressure, humidity, IAQ, eCO2, and breath VOC).
+ * constructs the notification payload with gas sensor values, battery percentage, and the subset of
+ * BME680 environmental data currently exposed (temperature, pressure, humidity).
  *
  * @note The function sends notifications only if a client is subscribed.
  */
